@@ -31,7 +31,7 @@ public class LabuonapastaFX extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
     	stage = primaryStage;     
-        goToMenu(new UsuarioNE().obterUsuario("deividt"));
+        goToMenu(new UsuarioNE().obterUsuario("deivid"));
         stage.show();
     }
     
