@@ -1,5 +1,5 @@
 package labuonapastafx.model;
-//Teste no elipse
+
 public enum ProdutoEnum {
 	
 	MASSA("Massa", 01), MOLHO("Molho", 02), BEBIDA("Bebida", 03), SALADA("Salada", 04),
