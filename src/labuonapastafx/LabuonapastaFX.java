@@ -18,7 +18,7 @@ import labuonapastafx.model.Usuario;
 
 /**
  * Cadastro de produtos e pedidos.
- * @author Deivid
+ * @author Deivid Teste no Eclipse
  */
 public class LabuonapastaFX extends Application {
     
