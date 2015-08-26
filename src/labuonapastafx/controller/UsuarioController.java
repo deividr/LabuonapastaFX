@@ -227,8 +227,7 @@ public class UsuarioController extends StackPane implements Initializable {
             }
         });
 
-        tblcolLogin.getCellFactory().call(new TableColumn<Usuario, String>() {
-        	
+        tblcolLogin.getCellFactory().call(new TableColumn<Usuario, String>() {        	
         	public TableCell<Usuario, String> call(TableColumn<Usuario, String> table) {
         		return new TableCell<Usuario, String> () {
         			
