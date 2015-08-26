@@ -92,7 +92,7 @@ public class Usuario implements Serializable {
         this.tipoAcesso.set(tipoAcesso);
     }
     
-    public ObjectProperty tipoAcessoProperty() {
+    public ObjectProperty<AcessoEnum> tipoAcessoProperty() {
         return this.tipoAcesso;
     }
 
@@ -116,7 +116,7 @@ public class Usuario implements Serializable {
         this.ativo.set(ativo);
     }
     
-    public ObjectProperty ativoProperty() {
+    public ObjectProperty<Byte> ativoProperty() {
         return this.ativo;
     }
 

@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -53,7 +54,7 @@ public class UsuarioController extends StackPane implements Initializable {
     @FXML
     private TableColumn<Usuario, String> tblcolNome;
     @FXML
-    private TableColumn<Usuario, String> tblcolAcesso;
+    private TableColumn<Usuario, AcessoEnum> tblcolAcesso;
     @FXML
     private TableColumn<Usuario, String> tblcolAtivo;
 
@@ -217,15 +218,46 @@ public class UsuarioController extends StackPane implements Initializable {
         tblcolLogin.setCellValueFactory(cellData -> cellData.getValue().loginProperty());
         tblcolNome.setCellValueFactory(cellData -> cellData.getValue().nomeCompletoProperty());
         tblcolAcesso.setCellValueFactory(cellData -> cellData.getValue().tipoAcessoProperty());
-        
+
         tblcolAtivo.setCellValueFactory(cellData -> {
             if (cellData.getValue().isAtivo()) {
                 return new SimpleStringProperty("Sim");
             } else {
                 return new SimpleStringProperty("Não");
-            }            
+            }
+        });
+
+        tblcolLogin.getCellFactory().call(new TableColumn<Usuario, String>() {
+        	
+        	public TableCell<Usuario, String> call(TableColumn<Usuario, String> table) {
+        		return new TableCell<Usuario, String> () {
+        			
+        		};
+        	}
         });
         
+        /*
+        tblcolLogin.setCellFactory(col -> {
+            
+            public TableCell<Usuario, String> call(TableColumn<Usuario, String> login) {
+	        	return new TableCell<Usuario, String>() {
+                    public void updateItem(final Boolean item, final boolean empty) {
+
+                    }
+                };
+            }
+        });
+        */
+
+        /*
+         tblUsuario.getColumns().forEach((col) -> {
+         col.setCellFactory(column -> {
+         return new TableCell<Usuario, Object>() {
+        			
+         };
+         });
+         });
+         */
         tblUsuario.setItems(users);
     }
 

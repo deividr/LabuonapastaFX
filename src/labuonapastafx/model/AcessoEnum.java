@@ -32,7 +32,7 @@ public enum AcessoEnum {
         
         public static ArrayList<String> valuesDescricoes() {
 
-            ArrayList acessos = new ArrayList<>();
+            ArrayList<String> acessos = new ArrayList<>();
             
             for (AcessoEnum acesso : AcessoEnum.values()) {
                 acessos.add(acesso.obterDescricao());
