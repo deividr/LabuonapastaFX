@@ -4,64 +4,71 @@ import static org.junit.Assert.*;
 import labuonapastafx.controller.ProdutoNE;
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
+import labuonapastafx.model.UnidadeEnum;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class ProdutoTest {
 
-    private ProdutoNE prodt;
+	private ProdutoNE prodt;
 
-    @Before
-    public void setUp() throws Exception {
-        prodt = new ProdutoNE();
-    }
+	@Before
+	public void setUp() throws Exception {
+		// Criar o objeto do Negócio.
+		prodt = new ProdutoNE();
 
-    @Test
-    public void testIncluirProduto() {
+		// Excluir das bases todos os produtos usados nos testes, para o caso de
+		// algum existir
+		// ainda de testes anteriores.
+		prodt.excluirProduto("Incluir Produto Tal");
+		prodt.excluirProduto("Alterar Produto Tal");
+		prodt.excluirProduto("Excluir Produto Tal");
+	}
 
-        assertTrue(prodt.incluirProduto("Incluir Produto Tal", "UN", 123.45, ProdutoEnum.MASSA));
+	@Test
+	public void testIncluirProduto() {
 
-        Produto produto = prodt.obterProduto("Incluir Produto Tal");
+		assertTrue(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, 123.45, ProdutoEnum.MASSA));
 
-        assertEquals("Incluir Produto Tal", produto.getNome());
-        assertEquals("UN", produto.getUnidade());
-        assertEquals(123.45, produto.getValor(), 0);
-        assertEquals(ProdutoEnum.MASSA, produto.getTipo());
+		Produto produto = prodt.obterProduto("Incluir Produto Tal");
 
-        assertFalse(prodt.incluirProduto("Incluir Produto Tal", "UN", 123.45, ProdutoEnum.MOLHO));
+		assertEquals("Incluir Produto Tal", produto.getNome());
+		assertEquals(UnidadeEnum.UNIDADE, produto.getUnidade());
+		assertEquals(123.45, produto.getValor(), 0);
+		assertEquals(ProdutoEnum.MASSA, produto.getTipo());
 
-        prodt.excluirProduto("Incluir Produto Tal");
+		assertFalse(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, 123.45, ProdutoEnum.MOLHO));
 
-    }
+		prodt.excluirProduto("Incluir Produto Tal");
 
-    /*
-     @Test
-     public void testAlterarProduto() {
+	}
 
-     prodt.incluirProduto("Alterar Produto Tal", "UN", 123,45, ProdutoEnum.MASSA);
-		
-     assertTrue(prodt.alterarProduto("Alterar Produto Tal como foi incluido", "KG", 678,90, ProdutoEnum.MOLHO));
-		
-     Produto produto = prodt.obterProduto("Alterar Produto Tal");
-		
-     assertEquals("Alterar Produto Tal como foi incluido", produto.getNome());
-     assertEquals("KG", produto.getUnidade());
-     assertEquals(678,90, produto.getValor());
-     assertEquals(ProdutoEnum.MOLHO, produto.getTipoProduto());
-		
-     prodt.excluirProduto("Alterar Produto Tal");
-		
-     }
+	@Test
+	public void testAlterarProduto() {
 
-     @Test
-     public void testExcluirProduto() {
+		prodt.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, 123.45, ProdutoEnum.MASSA);
 
-     prodt.incluirProduto("Excluir Produto Tal conforme alteracao", "UN", 123,45, ProdutoEnum.MASSA);
-		
-     assertTrue(prodt.excluirProduto("Excluir Produto Tal"));
-		
-     assertEquals(null, prodt.obterProduto("Excluir Produto Tal"));
-     }
-     */
+		assertTrue(prodt.alterarProduto("Alterar Produto Tal", UnidadeEnum.LITROS, 678.90, ProdutoEnum.MOLHO));
+
+		Produto produto = prodt.obterProduto("Alterar Produto Tal");
+
+		assertEquals(UnidadeEnum.LITROS, produto.getUnidade());
+		assertEquals(678.90, produto.getValor(), 0);
+		assertEquals(ProdutoEnum.MOLHO, produto.getTipo());
+
+		prodt.excluirProduto("Alterar Produto Tal");
+
+	}
+
+	@Test
+	public void testExcluirProduto() {
+
+		prodt.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, 106.26, ProdutoEnum.SALADA);
+
+		assertTrue(prodt.excluirProduto("Excluir Produto Tal"));
+
+		assertEquals(null, prodt.obterProduto("Excluir Produto Tal"));
+	}
+
 }

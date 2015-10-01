@@ -50,7 +50,7 @@ public class UsuarioNE {
      * @param senha
      * @param nomeCompleto
      * @param tipoAcesso
-     * @return
+     * @return true se incluido com sucesso e false se ocorreu algum erro (Ex.: Usuário já existe)
      */
     public boolean incluirUsuario(String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha) {
 
@@ -68,6 +68,15 @@ public class UsuarioNE {
 
     }
 
+    /**
+     * Alterar as informações do usuário conforme passado via parâmetro.
+     * 
+     * @param login
+     * @param nomeCompleto
+     * @param tipoAcesso
+     * @param senha
+     * @return true Se a alteração ocorreu com sucesso, ou false se ocorreu algum erro(Ex.: Usuário já existe)
+     */
     public boolean alterarUsuario(String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha) {
 
         Usuario usuario = obterUsuario(login);
@@ -88,6 +97,13 @@ public class UsuarioNE {
 
     }
 
+    /**
+     * Excluir o usuário logicamente, essa exclusão não irá eliminar o usuário
+     * da tabela, apenas torna-lo inativo. Isso é útil para o histórico do sistema
+     * 
+     * @param login
+     * @return
+     */
     public boolean exclusaoLogica(String login) {
 
         if (obterUsuario(login) != null) {
@@ -100,6 +116,13 @@ public class UsuarioNE {
 
     }
 
+    /**
+     * Excluir o usuário fisicamente das bases de dados. CUIDADO:Essa exclusão pode
+     * compromenter as informações de históricos do sistema
+     * 
+     * @param login
+     * @return
+     */
     public boolean excluirUsuario(String login) {
 
         if (obterUsuario(login) != null) {
@@ -112,18 +135,37 @@ public class UsuarioNE {
 
     }
 
+    /**
+     * Retorna uma lista dos usuários cadastrados na base de dados.
+     * 
+     * @return
+     */
     public ArrayList<Usuario> listarUsuarios() {
 
         return getUsuarioDAO().listar();
 
     }
 
+    /**
+     * Retorna uma lista das usuários que começam com a informação
+     * passa por parâmetro.
+     * 
+     * @param login
+     * @return
+     */
     public ArrayList<Usuario> listarUsuarios(String login) {
 
         return getUsuarioDAO().listar(login);
 
     }
 
+    /**
+     * Irá retornar um objeto da classe de persistência UsuarioDAO.
+     * Esse método tem por objetivo evitar a criação de diversas instâncias dessa
+     * classe que pode ocorrer durante o uso do sistema.
+     * 
+     * @return
+     */
     private UsuarioDAO getUsuarioDAO() {
         if (this.usuarioDAO == null) {
             this.usuarioDAO = new UsuarioDAO();

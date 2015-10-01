@@ -21,8 +21,8 @@
             </Menu>
                 <Menu mnemonicParsing="false" text="Cadastro">
                     <items>
-                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false" onAction="#mntmCadUsuarioListener" text="Usuário" />
-                        <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false" onAction="#mntmAltSenhaListener" text="Alterar Senha" />
+                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false" onAction="#mntmUsuarioListener" text="Usuário" />
+                        <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false" onAction="#mntmSenhaListener" text="Alterar Senha" />
                     </items>
                 </Menu>
             </menus>

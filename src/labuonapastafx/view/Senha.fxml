@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="fundo-opcao" stylesheets="@Labuonapasta.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.SenhaController">
+    <children>
+        <AnchorPane prefHeight="350.0">
+            <children>
+                <TitledPane animated="false" collapsible="false" contentDisplay="TOP" styleClass="titled-opcao" text="Alterar Senha" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                    <content>
+                        <VBox fx:id="vboxPane" spacing="5.0">
+                            <children>
+                                  <Label text="Senha:" GridPane.columnIndex="1" />
+                                  <PasswordField fx:id="txtSenha" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="300.0" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                                  <Label text="Nova Senha:" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                                  <PasswordField fx:id="txtNovaSenha" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                                  <Label text="Confirmar Senha:" GridPane.rowIndex="4" />
+                                  <PasswordField fx:id="txtConfirmSenha" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="300.0" GridPane.columnSpan="4" GridPane.rowIndex="3" />
+                                <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity">
+                                    <children>
+                                        <Button mnemonicParsing="false" onAction="#botaoAlterarListener" prefHeight="34.0" prefWidth="140.0" text="Alterar">
+                                            <HBox.margin>
+                                                <Insets bottom="10.0" right="10.0" top="10.0" />
+                                            </HBox.margin>
+                                            <graphic>
+                                                <ImageView pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@imagens/editar.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                        <Button mnemonicParsing="false" onAction="#botaoSairListener" prefHeight="34.0" prefWidth="140.0" text="Sair">
+                                            <HBox.margin>
+                                                <Insets bottom="10.0" left="10.0" top="10.0" />
+                                            </HBox.margin>
+                                            <graphic>
+                                                <ImageView pickOnBounds="true" preserveRatio="true">
+                                                    <image>
+                                                        <Image url="@imagens/sair.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" top="10.0" />
+                                    </VBox.margin>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>

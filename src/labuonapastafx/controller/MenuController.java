@@ -16,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import labuonapastafx.LabuonapastaFX;
+import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
 
 /**
@@ -38,7 +39,8 @@ public class MenuController extends VBox implements Initializable {
     @FXML
     private Label lblUsuario;
     
-    LabuonapastaFX app;
+    protected Usuario user;
+    protected LabuonapastaFX app;
     
     /**
      * Inicializações principais para o funcionamento da classe.
@@ -48,15 +50,28 @@ public class MenuController extends VBox implements Initializable {
      */
     public void setApp(LabuonapastaFX app, Usuario user) {
         this.app = app;
-        lblUsuario.setText(user.getNomeCompleto());
+        this.user = user;
+        lblUsuario.setText(this.user.getNomeCompleto());
+        
+        if (user.getTipoAcesso() != AcessoEnum.ADMINISTRADOR) {
+        	mntmCadUsuario.setVisible(false);
+        } else if (user.getTipoAcesso() != AcessoEnum.CADASTRO) {
+        
+        }
+        
     }
     
     /**
      * Mostrar a tela de alteração de senha.
+     * 
      * @param event 
      */
-    public void mntmAltSenhaListener(ActionEvent event) {
-
+    public void mntmSenhaListener(ActionEvent event) {
+    	SenhaController senhaControl;
+    	
+    	senhaControl = (SenhaController) loadView(LabuonapastaFX.VIEW_ALTERAR_SENHA);
+    	
+    	senhaControl.setApp(this);
     }
     
     /**
@@ -64,7 +79,7 @@ public class MenuController extends VBox implements Initializable {
      * 
      * @param event 
      */
-    public void mntmCadUsuarioListener(ActionEvent event) {
+    public void mntmUsuarioListener(ActionEvent event) {
         UsuarioController userControl;
         
         userControl = (UsuarioController) loadView(LabuonapastaFX.VIEW_USUARIO);

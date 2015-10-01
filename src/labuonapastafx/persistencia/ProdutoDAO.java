@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
+import labuonapastafx.model.UnidadeEnum;
 
 public class ProdutoDAO {
 	
@@ -29,7 +30,8 @@ public class ProdutoDAO {
 			
 			if (rs.next()){
 				ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt(5));
-				produto = new Produto(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDouble(4), produtoEnum);
+				UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
+				produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getDouble(4), produtoEnum);
 			}
 				
 			
@@ -54,7 +56,7 @@ public class ProdutoDAO {
 		try(Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, produto.getNome());
-			stm.setString(2, produto.getUnidade());
+			stm.setString(2, produto.getUnidade().getCodigo());
 			stm.setDouble(3, produto.getValor());
 			stm.setInt(4, produto.getTipo().getCodigo());
 			stm.executeUpdate();
@@ -62,6 +64,28 @@ public class ProdutoDAO {
 			throw new RuntimeException("Erro ao incluir produto: " + e.getMessage());
 		}
 				
+	}
+	
+	/**
+	 * Atualizar as informacões do Produto que foi passado como parametro
+	 * 
+	 * @param produto Produto com as informacoes para serem atualizadas na base
+	 */
+	public void atualizar(Produto produto) {
+		String sql = "UPDATE produto SET nm_produto = ?, st_unidade = ?,"
+				+ "vl_produto = ?, cd_tipo_produto = ? WHERE cd_produto = ?";
+		
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)){
+			stm.setString(1, produto.getNome());
+			stm.setString(2, produto.getUnidade().getCodigo());
+			stm.setDouble(3, produto.getValor());
+			stm.setInt(4, produto.getTipo().getCodigo());
+			stm.setInt(5, produto.getCodigo());
+			stm.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
+		}		
 	}
 
 	/**

@@ -13,8 +13,8 @@ public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private StringProperty login, nomeCompleto, senha;
-    private IntegerProperty userID;
-    private ObjectProperty<Byte> ativo; 
+    private IntegerProperty userId;
+    private ObjectProperty<Byte> ativo;
     private ObjectProperty<AcessoEnum> tipoAcesso;
  
     /**
@@ -35,7 +35,7 @@ public class Usuario implements Serializable {
      * @param ativo         Informa se o usuário está ativo ou não no sistema
      */
     public Usuario(int userID, String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha, byte ativo) {
-        this.userID = new SimpleIntegerProperty(userID);
+        this.userId = new SimpleIntegerProperty(userID);
         this.login = new SimpleStringProperty(login);
         this.nomeCompleto = new SimpleStringProperty(nomeCompleto);
         this.tipoAcesso = new SimpleObjectProperty<>(tipoAcesso);
@@ -43,86 +43,82 @@ public class Usuario implements Serializable {
         this.ativo = new SimpleObjectProperty<>(ativo);
     }
 
-    public int getUserID() {
-        return userID.get();
-    }
+	public final StringProperty loginProperty() {
+		return this.login;
+	}
+	
+	public final String getLogin() {
+		return this.loginProperty().get();
+	}
+	
+	public final void setLogin(final String login) {
+		this.loginProperty().set(login);
+	}
+	
+	public final StringProperty nomeCompletoProperty() {
+		return this.nomeCompleto;
+	}
 
-    public void setUserID(int userID) {
-        this.userID.set(userID);
-    }
-    
-    public IntegerProperty userIDProperty() {
-        return userID;
-    }
+	public final String getNomeCompleto() {
+		return this.nomeCompletoProperty().get();
+	}
 
-    public String getSenha() {
-        return senha.get();
-    }
+	public final void setNomeCompleto(final String nomeCompleto) {
+		this.nomeCompletoProperty().set(nomeCompleto);
+	}
 
-    public void setSenha(String senha) {
-        this.senha.set(senha);
-    }
-    
-    public StringProperty senhaProperty() {
-        return senha;
-    }
+	public final StringProperty senhaProperty() {
+		return this.senha;
+	}
 
-    public String getNomeCompleto() {
-        return nomeCompleto.get();
-    }
+	public final java.lang.String getSenha() {
+		return this.senhaProperty().get();
+	}
+	
+	public final void setSenha(final String senha) {
+		this.senhaProperty().set(senha);
+	}
+	
+	public final IntegerProperty userIDProperty() {
+		return this.userId;
+	}
+	
+	public final int getUserID() {
+		return this.userIDProperty().get();
+	}
+	
+	public final void setUserID(final int userID) {
+		this.userIDProperty().set(userID);
+	}
 
-    public void setNomeCompleto(String nomeCompleto) {
-        this.nomeCompleto.set(nomeCompleto);
-    }
-    
-    /**
-     * Obter o objeto Property do nome completo do usuário
-     * 
-     * @return Objeto StringProperty da propriedade NomeCompleto.
-     */
-    public StringProperty nomeCompletoProperty() {
-        return nomeCompleto;
-    }
-
-    public AcessoEnum getTipoAcesso() {
-        return tipoAcesso.get();
-    }
-
-    public void setTipoAcesso(AcessoEnum tipoAcesso) {
-        this.tipoAcesso.set(tipoAcesso);
-    }
-    
-    public ObjectProperty<AcessoEnum> tipoAcessoProperty() {
-        return this.tipoAcesso;
-    }
-
-    public String getLogin() {
-        return login.get();
-    }
-
-    public void setLogin(String login) {
-        this.login.set(login);
-    }
-    
-    public StringProperty loginProperty() {
-        return this.login;
-    }
-
-    public byte getAtivo() {
-        return ativo.get();
-    }
-
-    public void setAtivo(byte ativo) {
-        this.ativo.set(ativo);
-    }
-    
-    public ObjectProperty<Byte> ativoProperty() {
-        return this.ativo;
-    }
+	public final ObjectProperty<Byte> ativoProperty() {
+		return this.ativo;
+	}
+	
+	public final byte getAtivo() {
+		return this.ativoProperty().get();
+	}
+	
+	public final void setAtivo(final Byte tipoAcesso) {
+		this.ativoProperty().set(tipoAcesso);
+	}	
 
     public boolean isAtivo() {
         return getAtivo() == 1;
     }
+
+	public final ObjectProperty<AcessoEnum> tipoAcessoProperty() {
+		return this.tipoAcesso;
+	}
+	
+	public final AcessoEnum getTipoAcesso() {
+		return this.tipoAcessoProperty().get();
+	}
+	
+	public final void setTipoAcesso(final AcessoEnum tipoAcesso) {
+		this.tipoAcessoProperty().set(tipoAcesso);
+	}
+	
 
     @Override
     public String toString() {
