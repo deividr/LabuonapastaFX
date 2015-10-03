@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
-import labuonapastafx.persistencia.UsuarioDAO;
+import labuonapastafx.persistencia.UsuarioDao;
 
-public class UsuarioNE {
+public class UsuarioNe {
 
-    private UsuarioDAO usuarioDAO;
+    private UsuarioDao usuarioDao;
 
     /**
      * Metodo para verificar se existe usuario informado cadastrado na base de
@@ -99,7 +99,7 @@ public class UsuarioNE {
 
     /**
      * Excluir o usuário logicamente, essa exclusão não irá eliminar o usuário
-     * da tabela, apenas torna-lo inativo. Isso é útil para o histórico do sistema
+     * da tabela, apenas torna-lo inativo. Isso é útil para o histórico do sistema.
      * 
      * @param login
      * @return
@@ -160,17 +160,17 @@ public class UsuarioNE {
     }
 
     /**
-     * Irá retornar um objeto da classe de persistência UsuarioDAO.
+     * Irá retornar um objeto da classe de persistência UsuarioDao.
      * Esse método tem por objetivo evitar a criação de diversas instâncias dessa
      * classe que pode ocorrer durante o uso do sistema.
      * 
      * @return
      */
-    private UsuarioDAO getUsuarioDAO() {
-        if (this.usuarioDAO == null) {
-            this.usuarioDAO = new UsuarioDAO();
+    private UsuarioDao getUsuarioDAO() {
+        if (this.usuarioDao == null) {
+            this.usuarioDao = new UsuarioDao();
         }
 
-        return this.usuarioDAO;
+        return this.usuarioDao;
     }
 }

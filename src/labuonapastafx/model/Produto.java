@@ -13,123 +13,127 @@ import javafx.beans.property.StringProperty;
 
 public class Produto implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private IntegerProperty prodId;
-	private StringProperty produto;
-	private ObjectProperty<UnidadeEnum> unidade;
-	private DoubleProperty valor;
-	private ObjectProperty<ProdutoEnum> tipo;
+    private static final long serialVersionUID = 1L;
 
-	public Produto() {
-		this(0, "", UnidadeEnum.UNIDADE, 0.0, ProdutoEnum.DIVERSOS);
-	}
-	
-	public Produto(int prodID, String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
-		this.prodId = new SimpleIntegerProperty(prodID);
-		this.produto = new SimpleStringProperty(nome);
-		this.unidade = new SimpleObjectProperty<UnidadeEnum>(unidade);
-		this.valor = new SimpleDoubleProperty(valor);
-		this.tipo = new SimpleObjectProperty<ProdutoEnum>(tipo);
-	}	
+    private IntegerProperty prodId;
+    private StringProperty nome;
+    private ObjectProperty<UnidadeEnum> unidade;
+    private DoubleProperty valor;
+    private ObjectProperty<ProdutoEnum> tipo;
+    private ObjectProperty<Byte> ativo;
 
-	public final IntegerProperty prodIDProperty() {
-		return this.prodId;
-	}
-	
+    public Produto() {
+        this(0, "", UnidadeEnum.UNIDADE, 0.0, ProdutoEnum.DIVERSOS, (byte) 1);
+    }
 
-	public final int getProdID() {
-		return this.prodIDProperty().get();
-	}
-	
+    public Produto(int prodId, String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo, Byte ativo) {
+        this.prodId = new SimpleIntegerProperty(prodId);
+        this.nome = new SimpleStringProperty(nome);
+        this.unidade = new SimpleObjectProperty<>(unidade);
+        this.valor = new SimpleDoubleProperty(valor);
+        this.tipo = new SimpleObjectProperty<>(tipo);
+        this.ativo = new SimpleObjectProperty<>(ativo);
+    }
 
-	public final void setProdID(final int prodID) {
-		this.prodIDProperty().set(prodID);
-	}
+    public final IntegerProperty prodIdProperty() {
+        return this.prodId;
+    }
 
-	public final StringProperty produtoProperty() {
-		return this.produto;
-	}
-	
+    public final int getProdId() {
+        return this.prodIdProperty().get();
+    }
 
-	public final String getProduto() {
-		return this.produtoProperty().get();
-	}
-	
+    public final void setProdId(final int prodID) {
+        this.prodIdProperty().set(prodID);
+    }
 
-	public final void setProduto(final String produto) {
-		this.produtoProperty().set(produto);
-	}
-	
+    public final StringProperty nomeProperty() {
+        return this.nome;
+    }
 
-	public final ObjectProperty<ProdutoEnum> tipoProperty() {
-		return this.tipo;
-	}
-	
+    public final String getNome() {
+        return this.nomeProperty().get();
+    }
 
-	public final ProdutoEnum getTipo() {
-		return this.tipoProperty().get();
-	}
-	
+    public final void setNome(final String nome) {
+        this.nomeProperty().set(nome);
+    }
 
-	public final void setTipo(final ProdutoEnum tipo) {
-		this.tipoProperty().set(tipo);
-	}
-	
+    public final ObjectProperty<ProdutoEnum> tipoProperty() {
+        return this.tipo;
+    }
 
-	public final ObjectProperty<UnidadeEnum> unidadeProperty() {
-		return this.unidade;
-	}
-	
+    public final ProdutoEnum getTipo() {
+        return this.tipoProperty().get();
+    }
 
-	public final UnidadeEnum getUnidade() {
-		return this.unidadeProperty().get();
-	}
-	
+    public final void setTipo(final ProdutoEnum tipo) {
+        this.tipoProperty().set(tipo);
+    }
 
-	public final void setUnidade(final UnidadeEnum unidade) {
-		this.unidadeProperty().set(unidade);
-	}
-	
+    public final ObjectProperty<UnidadeEnum> unidadeProperty() {
+        return this.unidade;
+    }
 
-	public final DoubleProperty valorProperty() {
-		return this.valor;
-	}
-	
+    public final UnidadeEnum getUnidade() {
+        return this.unidadeProperty().get();
+    }
 
-	public final double getValor() {
-		return this.valorProperty().get();
-	}
-	
+    public final void setUnidade(final UnidadeEnum unidade) {
+        this.unidadeProperty().set(unidade);
+    }
 
-	public final void setValor(final double valor) {
-		this.valorProperty().set(valor);
-	}
+    public final DoubleProperty valorProperty() {
+        return this.valor;
+    }
 
+    public final double getValor() {
+        return this.valorProperty().get();
+    }
 
-	@Override
-	public String toString() {
-		return "O produto " + getProduto() + "eh cobrado por " + getUnidade() +
-				". E o seu valor eh " + getValor() + ".";
-	}
-	
-	@Override
-	public boolean equals(Object o) {
+    public final void setValor(final double valor) {
+        this.valorProperty().set(valor);
+    }
+
+    public final ObjectProperty<Byte> ativoProperty() {
+        return this.ativo;
+    }
+
+    public final byte getAtivo() {
+        return this.ativoProperty().get();
+    }
+
+    public final void setAtivo(final Byte tipoAcesso) {
+        this.ativoProperty().set(tipoAcesso);
+    }
+
+    public final boolean isAtivo() {
+        return getAtivo() == 1;
+    }
+
+    @Override
+    public String toString() {
+        return "O produto " + getNome() + "eh cobrado por " + getUnidade()
+                + ". E o seu valor eh " + getValor() + ".";
+    }
+
+    @Override
+    public boolean equals(Object o) {
 		//se o objeto recebido for diferente de null e a sua classe for um Produto verifica
-		//igualdade no codigo do usuario.
-		if (o != null && o.getClass() == this.getClass()) {
-			Produto prod = (Produto) o;
-			if (prod.getProdID() == this.getProdID()) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	@Override
-	public int hashCode() {
-		return getProduto().hashCode();
-	}
+        //igualdade no codigo do usuario.
+        if (o != null && o.getClass() == this.getClass()) {
+            Produto prod = (Produto) o;
+            if (prod.getProdId() == this.getProdId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return getNome().hashCode();
+    }
 
 }

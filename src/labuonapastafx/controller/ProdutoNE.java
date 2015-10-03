@@ -1,67 +1,70 @@
 package labuonapastafx.controller;
 
+import java.util.ArrayList;
+
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
 import labuonapastafx.model.UnidadeEnum;
-import labuonapastafx.persistencia.ProdutoDAO;
+import labuonapastafx.persistencia.ProdutoDao;
 
-public class ProdutoNE {
+public class ProdutoNe {
 
-	private ProdutoDAO produtoDAO;
+    private ProdutoDao produtoDao;
 
-	/**
-	 * Obter o produto que corresponde ao nome informado.
-	 * 
-	 * @param nome a qual se deseja pesquisar
-	 * @return retorna objeto produto correspondente ao nome informado
-	 */
-	public Produto obterProduto(String nome) {
+    /**
+     * Obter o {@code Produto} que corresponde ao nome informado.
+     *
+     * @param nome a qual se deseja pesquisar
+     * @return retorna objeto {@code Produto} correspondente ao nome informado
+     */
+    public Produto obterProduto(String nome) {
 
-		return getProdutoDAO().ler(nome);
-		
-	}
-	
-	/**
-	 * Incluir um usuário.
-	 * 
-	 * @param nome
-	 * @param unidade
-	 * @param valor
-	 * @param tipo
-	 * @return true se a inclusão ocorreu com sucesso, e false se ocorreu algum erro 
-	 * (Ex.: Produto já existe).
-	 */
-	public boolean incluirProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
-		
-		//Se o produto nao existir faca a inclusao
-		if (obterProduto(nome) == null) {
-			Produto produto = new Produto(0, nome, unidade, valor, tipo);
-			getProdutoDAO().incluir(produto);
-			return true;
-		} else {
-			//Se o produto jah existir o retorno serah false
-			return false;
-		}
+        return getProdutoDAO().ler(nome);
 
-	}
+    }
 
-	/**
-	 * Atualizar as informações do Produto que foi passado como parâmetro.
-	 * 
-	 * @param nome
-	 * @param unidade
-	 * @param valor
-	 * @param tipo
-	 * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum erro 
-	 * (Ex.: Produto não existe).
-	 */
-	public boolean alterarProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
+    /**
+     * Incluir um {@code Produto}.
+     *
+     * @param nome
+     * @param unidade
+     * @param valor
+     * @param tipo
+     * @return true se a inclusão ocorreu com sucesso, e false se ocorreu algum
+     * erro (Ex.: Produto já existe).
+     */
+    public boolean incluirProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
 
-		Produto prod = obterProduto(nome);
+        //Se o produto nao existir faca a inclusao
+        if (obterProduto(nome) == null) {
+            Produto produto = new Produto(0, nome, unidade, valor, tipo, (byte) 1);
+            getProdutoDAO().incluir(produto);
+            return true;
+        } else {
+            //Se o produto jah existir o retorno serah false
+            return false;
+        }
+
+    }
+
+    /**
+     * Atualizar as informações do {@code Produto} que foi passado como
+     * parâmetro.
+     *
+     * @param nome
+     * @param unidade
+     * @param valor
+     * @param tipo
+     * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
+     * erro (Ex.: Produto não existe).
+     */
+    public boolean alterarProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
+
+        Produto prod = obterProduto(nome);
 
         // se o usuario existir atualiza, senão retorna false para o chamador
         if (prod != null) {
-            prod.setProduto(nome);
+            prod.setNome(nome);
             prod.setUnidade(unidade);
             prod.setValor(valor);
             prod.setTipo(tipo);
@@ -72,38 +75,85 @@ public class ProdutoNE {
         } else {
             return false;
         }
-	}
+    }
 
-	/**
-	 * Excluir o produto cujo nome seja igual ao informado com parametro
-	 * 
-	 * @param nome do produto que se deseja excluir
-	 */
-	public boolean excluirProduto(String nome) {
-		
-		if (obterProduto(nome) != null) {
-			getProdutoDAO().excluir(nome);
-			return true;
-		} else {
-			return false;
-		}
-		
-	}
-	
-	/**
-     * Irá retornar um objeto da classe de persistência ProdutoDAO.
-     * Esse método tem por objetivo evitar a criação de diversas instâncias dessa
+    /**
+     * Excluir o {@code Produto} logicamente, essa exclusão não irá eliminar o
+     * {@code Produto} da tabela, apenas torna-lo inativo. Isso é útil para o
+     * histórico do sistema.
+     *
+     * @param nome
+     * @return
+     */
+    public boolean exclusaoLogica(String nome) {
+
+        if (obterProduto(nome) != null) {
+            getProdutoDAO().exclusaoLogica(nome);
+            return true;
+        } else {
+            //Produto não existe
+            return false;
+        }
+
+    }
+
+    /**
+     * Excluir o {@code Produto} fisicamente das bases de dados. CUIDADO:Essa exclusão pode
+     * compromenter as informações de históricos do sistema
+     *
+     * @param nome do {@code Produto} que se deseja excluir
+     * @return True se exclusão foi ok, ou False se ocorreu algum erro
+     */
+    public boolean excluirProduto(String nome) {
+
+        if (obterProduto(nome) != null) {
+            getProdutoDAO().excluir(nome);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
+     * Retorna uma lista dos produtos cadastrados na base de dados.
+     *
+     * @return
+     */
+    public ArrayList<Produto> listarProdutos() {
+
+        return getProdutoDAO().listar();
+
+    }
+
+    /**
+     * Retorna uma lista das produtos que começam com a informação passa por
+     * parâmetro.
+     *
+     * @param nome
+     * @return
+     */
+    public ArrayList<Produto> listarProdutos(String nome) {
+
+        return getProdutoDAO().listar(nome);
+
+    }
+
+    /**
+     * Irá retornar um objeto da classe de persistência {@code ProdutoDao}. Esse
+     * método tem por objetivo evitar a criação de diversas instâncias dessa
      * classe que pode ocorrer durante o uso do sistema.
-	 * 
-	 * @return
-	 */
-	private ProdutoDAO getProdutoDAO() {
-		
-		if (produtoDAO == null)
-			produtoDAO = new ProdutoDAO();
-		
-		return produtoDAO;
-		
-	}
+     *
+     * @return
+     */
+    private ProdutoDao getProdutoDAO() {
+
+        if (produtoDao == null) {
+            produtoDao = new ProdutoDao();
+        }
+
+        return produtoDao;
+
+    }
 
 }

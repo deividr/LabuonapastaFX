@@ -13,109 +13,110 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import labuonapastafx.controller.LoginController;
 import labuonapastafx.controller.MenuController;
-import labuonapastafx.controller.UsuarioNE;
+import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
 
 /**
  * Cadastro de produtos e pedidos.
- * 
+ *
  * @author Deivid
  */
 public class LabuonapastaFX extends Application {
 
-	public static final String VIEW_LOGIN = "view/Login.fxml";
-	public static final String VIEW_MENU = "view/Menu.fxml";
-	public static final String VIEW_USUARIO = "view/Usuario.fxml";
-	public static final String VIEW_ALTERAR_SENHA = "view/Senha.fxml";
+    public static final String VIEW_LOGIN = "view/Login.fxml";
+    public static final String VIEW_MENU = "view/Menu.fxml";
+    public static final String VIEW_USUARIO = "view/Usuario.fxml";
+    public static final String VIEW_ALTERAR_SENHA = "view/Senha.fxml";
+    public static final String VIEW_PRODUTO = "view/produto.fxml";
+    public static final String VIEW_CLIENTE = "view/Cliente.fxml";
 
-	private Stage stage;
+    private Stage stage;
 
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		stage = primaryStage;
-		goToMenu(new UsuarioNE().obterUsuario("deivid"));
-		stage.show();
-	}
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
+        goToMenu(new UsuarioNe().obterUsuario("deivid"));
+        stage.show();
+    }
 
-	/**
-	 * Efetuar a construção da tela de Login.
-	 */
-	public void goToLogin() {
+    /**
+     * Efetuar a construção da tela de Login.
+     */
+    public void goToLogin() {
 
-		LoginController login;
+        LoginController login;
 
-		try {
-			login = (LoginController) replaceSceneContent(VIEW_LOGIN);
-			login.setApp(this);
-		} catch (Exception ex) {
-			Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        try {
+            login = (LoginController) replaceSceneContent(VIEW_LOGIN);
+            login.setApp(this);
+        } catch (Exception ex) {
+            Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-		stage.setResizable(false);
-	}
+        stage.setResizable(false);
+    }
 
-	/**
-	 * Efetuar a construção da tela de Menu.
-	 * 
-	 * @param user
-	 */
-	public void goToMenu(Usuario user) {
+    /**
+     * Efetuar a construção da tela de Menu.
+     *
+     * @param user
+     */
+    public void goToMenu(Usuario user) {
 
-		MenuController menuControl;
+        MenuController menuControl;
 
-		try {
-			menuControl = (MenuController) replaceSceneContent(VIEW_MENU);
-			menuControl.setApp(this, user);
-		} catch (Exception ex) {
-			Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
-		}
+        try {
+            menuControl = (MenuController) replaceSceneContent(VIEW_MENU);
+            menuControl.setApp(this, user);
+        } catch (Exception ex) {
+            Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-		stage.setResizable(true);
-	}
+        stage.setResizable(true);
+    }
 
-	/**
-	 * Efetuar a transição de telas remodulando o conteúdo.
-	 * 
-	 * @param fxml
-	 * @return Objeto Initializable referente a tela a ser carregada
-	 * @throws Exception
-	 */
-	private Initializable replaceSceneContent(String fxml) throws Exception {
+    /**
+     * Efetuar a transição de telas remodulando o conteúdo.
+     *
+     * @param fxml
+     * @return Objeto Initializable referente a tela a ser carregada
+     * @throws Exception
+     */
+    private Initializable replaceSceneContent(String fxml) throws Exception {
 
-		FXMLLoader loader = new FXMLLoader();
+        FXMLLoader loader = new FXMLLoader();
 
-		Parent page;
+        Parent page;
 
-		try (InputStream in = LabuonapastaFX.class.getResourceAsStream(fxml)) {
-			loader.setBuilderFactory(new JavaFXBuilderFactory());
-			loader.setLocation(LabuonapastaFX.class.getResource(fxml));
-			page = loader.load(in);
-		}
+        try (InputStream in = LabuonapastaFX.class.getResourceAsStream(fxml)) {
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
+            loader.setLocation(LabuonapastaFX.class.getResource(fxml));
+            page = loader.load(in);
+        }
 
-		Scene scene = new Scene(page);
+        Scene scene = new Scene(page);
 
-		stage.setScene(scene);
-		stage.setTitle("Labuonapasta Produtos Alimenticios");
-		stage.getIcons().add(new Image(getClass().getResource("view/imagens/brasao_menu.png").toString()));
-		stage.centerOnScreen();
+        stage.setScene(scene);
+        stage.setTitle("Labuonapasta Produtos Alimenticios");
+        stage.getIcons().add(new Image(getClass().getResource("view/imagens/brasao_menu.png").toString()));
+        stage.centerOnScreen();
 
-		return (Initializable) loader.getController();
+        return (Initializable) loader.getController();
 
-	}
+    }
 
-	/**
-	 * Sair do sistema.
-	 */
-	public void exit() {
-		stage.close();
-	}
+    /**
+     * Sair do sistema.
+     */
+    public void exit() {
+        stage.close();
+    }
 
-	/**
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(String[] args) {
-		launch(args);
-	}
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
 
 }

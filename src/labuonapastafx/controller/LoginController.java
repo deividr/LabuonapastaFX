@@ -29,7 +29,7 @@ public class LoginController extends AnchorPane implements Initializable {
     @FXML
     private Hyperlink lnkSair;
 
-    private UsuarioNE usuarioNE;
+    private UsuarioNe usuarioNe;
 
     private LabuonapastaFX app;
 
@@ -90,11 +90,11 @@ public class LoginController extends AnchorPane implements Initializable {
         this.app = app;
     }
     
-    private UsuarioNE obterUsuarioNE() {
-        if (usuarioNE == null)
-            usuarioNE = new UsuarioNE();
+    private UsuarioNe obterUsuarioNE() {
+        if (usuarioNe == null)
+            usuarioNe = new UsuarioNe();
         
-        return usuarioNE;
+        return usuarioNe;
     }
 
 }

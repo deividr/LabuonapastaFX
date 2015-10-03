@@ -16,7 +16,7 @@ import labuonapastafx.model.Usuario;
  * @version  %I%, %G%
  * @since    1.0
  */
-public class UsuarioDAO {
+public class UsuarioDao {
 	
 	/**
 	 * Obter o usuario relacionado ao login passado como parametro.
@@ -60,7 +60,7 @@ public class UsuarioDAO {
 	public void incluir(Usuario usuario) {
 
 		String sql = "INSERT INTO usuario (nm_login, nm_usuario, st_acesso, "
-				+ "ds_senha, cd_ativo) VALUES(?,?,?,?,1)";
+				+ "ds_senha, cd_ativo) VALUES(?, ?, ?, ?, 1)";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
@@ -82,7 +82,7 @@ public class UsuarioDAO {
 	 */
 	public void atualizar(Usuario usuario) {
 		
-		String sql = "UPDATE USUARIO SET nm_usuario = ?, st_acesso = ?,"
+		String sql = "UPDATE usuario SET nm_usuario = ?, st_acesso = ?,"
 				+ "ds_senha = ?, cd_ativo = ? WHERE nm_login = ?";
 		
 		try (Connection con = Conexao.getConexao();
@@ -109,7 +109,7 @@ public class UsuarioDAO {
 	 */
 	public void excluir(String login) {
 
-		String sql = "DELETE FROM USUARIO WHERE nm_login = ?";
+		String sql = "DELETE FROM usuario WHERE nm_login = ?";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
@@ -130,7 +130,7 @@ public class UsuarioDAO {
 	 */
 	public void exclusaoLogica(String login) {
 		
-		String sql = "UPDATE USUARIO SET cd_ativo = 0 WHERE nm_login = ?";
+		String sql = "UPDATE usuario SET cd_ativo = 0 WHERE nm_login = ?";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
@@ -151,7 +151,7 @@ public class UsuarioDAO {
 	public ArrayList<Usuario> listar() {
 		
 		String sql = "SELECT cd_usuario, nm_login, nm_usuario, "
-				+ "st_acesso, ds_senha, cd_ativo FROM USUARIO";
+				+ "st_acesso, ds_senha, cd_ativo FROM usuario";
 		
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 		
@@ -178,7 +178,7 @@ public class UsuarioDAO {
 	public ArrayList<Usuario> listar(String login) {
 		
 		String sql = "SELECT cd_usuario, nm_login, nm_usuario, "
-				+ "st_acesso, ds_senha, cd_ativo FROM USUARIO WHERE nm_login LIKE ?";
+				+ "st_acesso, ds_senha, cd_ativo FROM usuario WHERE nm_login LIKE ?";
 		
 		ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
 		

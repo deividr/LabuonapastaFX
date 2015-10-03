@@ -104,21 +104,9 @@
 												</ImageView>
 											</graphic>
 										</Button>
-										<Button mnemonicParsing="false" onAction="#botaoConsultarListener" text="Consultar">
-											<HBox.margin>
-												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
-											</HBox.margin>
-											<graphic>
-												<ImageView pickOnBounds="true" preserveRatio="true">
-													<image>
-														<Image url="@imagens/pesquisar.png" />
-													</image>
-												</ImageView>
-											</graphic>
-										</Button>
 										<Button mnemonicParsing="false" onAction="#botaoSairListener" prefHeight="34.0" prefWidth="111.0" text="Sair">
 											<HBox.margin>
-												<Insets bottom="10.0" left="10.0" top="10.0" />
+												<Insets bottom="10.0" left="145.0" top="10.0" />
 											</HBox.margin>
 											<graphic>
 												<ImageView pickOnBounds="true" preserveRatio="true">

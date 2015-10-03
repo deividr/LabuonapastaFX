@@ -30,6 +30,6 @@
     -fx-text-fill: rgba(0,168,89,1);
 }
 
-.usuario-inativo {
+.item-inativo {
     -fx-background-color: rgba(0,168,89,1);
 }

@@ -119,7 +119,6 @@ public class Usuario implements Serializable {
 		this.tipoAcessoProperty().set(tipoAcesso);
 	}
 	
-
     @Override
     public String toString() {
 

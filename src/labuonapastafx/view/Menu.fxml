@@ -19,9 +19,18 @@
                   <MenuItem fx:id="mntmSair" mnemonicParsing="false" onAction="#mntmSairListener" text="Sair" />
               </items>
             </Menu>
+            <Menu mnemonicParsing="false" text="Pedido">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Incluir" />
+                  <MenuItem mnemonicParsing="false" text="Alterar" />
+                  <MenuItem mnemonicParsing="false" text="Consultar" />
+              </items>
+            </Menu>
                 <Menu mnemonicParsing="false" text="Cadastro">
                     <items>
-                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false" onAction="#mntmUsuarioListener" text="Usuário" />
+                  <MenuItem fx:id="mntmCadProduto" mnemonicParsing="false" onAction="#mntmCadProdutoListener" text="Produto" />
+                  <MenuItem fx:id="mntmCadCliente" mnemonicParsing="false" text="Cliente" />
+                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false" onAction="#mntmCadUsuarioListener" text="Usuário" />
                         <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false" onAction="#mntmSenhaListener" text="Alterar Senha" />
                     </items>
                 </Menu>

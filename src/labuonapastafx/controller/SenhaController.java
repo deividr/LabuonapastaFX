@@ -33,7 +33,7 @@ public class SenhaController extends StackPane implements Initializable {
 
 	// Variaveis de controle geral
 	private MenuController menuControl;
-	private UsuarioNE usuarioNE;
+	private UsuarioNe usuarioNe;
 
 	// Variaveis de controle do formulário da tela
 	private String senha;
@@ -142,16 +142,16 @@ public class SenhaController extends StackPane implements Initializable {
 	}
 
 	/**
-	 * Retorna o objeto instaciado da classe UsuarioNE
+	 * Retorna o objeto instaciado da classe UsuarioNe
 	 *
-	 * @return usuarioNE Eh uma instancia da clase UsuarioNE
+	 * @return usuarioNe Eh uma instancia da clase UsuarioNe
 	 */
-	private UsuarioNE getUsuarioNE() {
-		if (usuarioNE == null) {
-			usuarioNE = new UsuarioNE();
+	private UsuarioNe getUsuarioNE() {
+		if (usuarioNe == null) {
+			usuarioNe = new UsuarioNe();
 		}
 
-		return this.usuarioNE;
+		return this.usuarioNe;
 	}
 
 	/**

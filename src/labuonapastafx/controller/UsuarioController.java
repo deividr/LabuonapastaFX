@@ -39,358 +39,357 @@ import labuonapastafx.model.Usuario;
  */
 public class UsuarioController extends StackPane implements Initializable {
 
-	@FXML
-	private TitledPane titledPane;
-	@FXML
-	private GridPane gridForm;
-	@FXML
-	private TextField txtID;
-	@FXML
-	private TextField txtLogin;
-	@FXML
-	private TextField txtNome;
-	@FXML
-	private TextField txtSenha;
-	@FXML
-	private TextField txtConfirmSenha;
-	@FXML
-	private ChoiceBox<AcessoEnum> cbxAcesso;
-	@FXML
-	private TableView<Usuario> tblUsuario;
-	@FXML
-	private TableColumn<Usuario, String> tblcolLogin;
-	@FXML
-	private TableColumn<Usuario, String> tblcolNome;
-	@FXML
-	private TableColumn<Usuario, AcessoEnum> tblcolAcesso;
-	@FXML
-	private TableColumn<Usuario, String> tblcolAtivo;
+    @FXML
+    private TitledPane titledPane;
+    @FXML
+    private GridPane gridForm;
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtLogin;
+    @FXML
+    private TextField txtNome;
+    @FXML
+    private TextField txtSenha;
+    @FXML
+    private TextField txtConfirmSenha;
+    @FXML
+    private ChoiceBox<AcessoEnum> cbxAcesso;
+    @FXML
+    private TableView<Usuario> tblUsuario;
+    @FXML
+    private TableColumn<Usuario, String> tblcolLogin;
+    @FXML
+    private TableColumn<Usuario, String> tblcolNome;
+    @FXML
+    private TableColumn<Usuario, AcessoEnum> tblcolAcesso;
+    @FXML
+    private TableColumn<Usuario, String> tblcolAtivo;
 
-	// Variaveis de controle geral
-	private MenuController menuControl;
-	private UsuarioNE usuarioNE;
-	private ObservableList<Usuario> users;
+    // Variaveis de controle geral
+    private MenuController menuControl;
+    private UsuarioNe usuarioNe;
+    private ObservableList<Usuario> users;
 
-	// Variaveis de controle do formulário da tela
-	private String login;
-	private String nome;
-	private String senha;
-	private String confirmSenha;
-	private AcessoEnum acesso;
+    // Variaveis de controle do formulário da tela
+    private String login;
+    private String nome;
+    private String senha;
+    private String confirmSenha;
+    private AcessoEnum acesso;
 
-	/**
-	 * Procedimento a serem tomados quando pressionado o botao {@code Incluir}
-	 *
-	 * @param event Objeto do evento que foi executado
-	 */
-	@FXML
-	public void botaoIncluirListener(ActionEvent event) {
+    /**
+     * Procedimento a serem tomados quando pressionado o botao {@code Incluir}
+     *
+     * @param event Objeto do evento que foi executado
+     */
+    @FXML
+    public void botaoIncluirListener(ActionEvent event) {
 
 		// Efetuar a inclusão somente se as informações passadas estiverem
-		// corretas.
-		if (validarInformacoes()) {
+        // corretas.
+        if (validarInformacoes()) {
 			// Se o retorno da inclusão do usuário for true significa que a
-			// inclusão foi ok
-			if (getUsuarioNE().incluirUsuario(login, nome, acesso, senha)) {
-				showAlert("Inclusão de usuário efetuada com sucesso");
-				txtLogin.requestFocus();
-				limparCampos();
-				reiniciarListaUsuario();
-			} else {
+            // inclusão foi ok
+            if (getUsuarioNE().incluirUsuario(login, nome, acesso, senha)) {
+                showAlert("Inclusão de usuário efetuada com sucesso");
+                txtLogin.requestFocus();
+                limparCampos();
+                reiniciarListaUsuario();
+            } else {
 				// inclusão nao foi efetuada porque o usário ja existe na base
-				// de dados
-				showAlert("Usuário já existe na base de dados");
-				txtLogin.requestFocus();
-			}
+                // de dados
+                showAlert("Usuário já existe na base de dados");
+                txtLogin.requestFocus();
+            }
 
-		}
-	}
+        }
+    }
 
-	/**
-	 * Procedimento a serem tomados quando pressionado o botao {@code Alterar}
-	 *
-	 * @param event Evento startado pelo usuário
-	 */
-	@FXML
-	public void botaoAlterarListener(ActionEvent event) {
+    /**
+     * Procedimento a serem tomados quando pressionado o botao {@code Alterar}
+     *
+     * @param event Evento startado pelo usuário
+     */
+    @FXML
+    public void botaoAlterarListener(ActionEvent event) {
 
 		// Efetuar a alteração somente se as informações passadas estiverem
-		// corretas
-		if (validarInformacoes()) {
+        // corretas
+        if (validarInformacoes()) {
 
-			Usuario usuario = getUsuarioNE().obterUsuario(this.login);
+            Usuario usuario = getUsuarioNE().obterUsuario(this.login);
 
-			if (usuario != null) {
+            if (usuario != null) {
 				// Se o retorno da inclusao do usuario for true significa que a
-				// inclusao foi ok
-				if (getUsuarioNE().alterarUsuario(login, nome, acesso, senha)) {
-					showAlert("Alteracao de usuario efetuada com sucesso");
-					limparCampos();
-					reiniciarListaUsuario();
-				} else {
+                // inclusao foi ok
+                if (getUsuarioNE().alterarUsuario(login, nome, acesso, senha)) {
+                    showAlert("Alteracao de usuario efetuada com sucesso");
+                    limparCampos();
+                    reiniciarListaUsuario();
+                } else {
 					// inclusao nao foi efetuada porque o usario ja existe na
-					// base de dados
-					showAlert("Usuario nao existe");
-				}
-			} else {
-				showAlert("Usuario nao existe");
-			}
+                    // base de dados
+                    showAlert("Usuario nao existe");
+                }
+            } else {
+                showAlert("Usuario nao existe");
+            }
 
-		}
+        }
 
-	}
+    }
 
-	/**
-	 * Procedimento a serem tomados quando pressionado o botao {@code Excluir}
-	 *
-	 * @param event  Evento startado pelo usuário
-	 */
-	@FXML
-	public void botaoExcluirListener(ActionEvent event) {
-		getValueFields();
+    /**
+     * Procedimento a serem tomados quando pressionado o botao {@code Excluir}
+     *
+     * @param event Evento startado pelo usuário
+     */
+    @FXML
+    public void botaoExcluirListener(ActionEvent event) {
+        getValueFields();
 
-		if (login.equals("")) {
-			showAlert("Informar o login");
-		} else {
-			new Alert(AlertType.CONFIRMATION, "Confirma a exclusao do usuário").showAndWait().ifPresent(response -> {
-				if (response == ButtonType.OK) {
-					if (getUsuarioNE().exclusaoLogica(this.login)) {
-						showAlert("Exclusao efetuada com sucesso");
-						limparCampos();
-						reiniciarListaUsuario();
-					} else {
-						showAlert("Usuario nao encontrado na base");
-					}
-				}
-				txtLogin.requestFocus();
-			});
-		}
-	}
+        if (login.equals("")) {
+            showAlert("Informar o login");
+        } else {
+            new Alert(AlertType.CONFIRMATION, "Confirma a exclusao do usuário").showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    if (getUsuarioNE().exclusaoLogica(this.login)) {
+                        showAlert("Exclusao efetuada com sucesso");
+                        limparCampos();
+                        reiniciarListaUsuario();
+                    } else {
+                        showAlert("Usuario nao encontrado na base");
+                    }
+                }
+                txtLogin.requestFocus();
+            });
+        }
+    }
 
-	/**
-	 * Procedimento a serem tomados quando pressionado o botao {@code Consultar}
-	 *
-	 * @param event Evento startado pelo usuário
-	 */
-	@FXML
-	public void botaoConsultarListener(ActionEvent event) {
-		getValueFields();
+    /**
+     * Procedimento a serem tomados quando pressionado o botao {@code Consultar}
+     *
+     * @param event Evento startado pelo usuário
+     */
+    @FXML
+    public void botaoConsultarListener(ActionEvent event) {
+        getValueFields();
 
-		Usuario usuario = getUsuarioNE().obterUsuario(this.login);
+        Usuario usuario = getUsuarioNE().obterUsuario(this.login);
 
-		if (usuario == null) {
-			showAlert("Usuario não encontrado");
-			return;
-		}
+        if (usuario == null) {
+            showAlert("Usuario não encontrado");
+            return;
+        }
 
-		setValueFields(usuario);
+        setValueFields(usuario);
 
-	}
+    }
 
-	/**
-	 * Procedimento a serem tomados quando pressionado uma linha da
-	 * {@code Tabela de Usuarios}
-	 *
-	 * @param event Evento startado pelo usuário
-	 */
-	@FXML
-	private void tabelaUsuarioListener(MouseEvent event) {
+    /**
+     * Procedimento a serem tomados quando pressionado uma linha da
+     * {@code Tabela de Usuarios}
+     *
+     * @param event Evento startado pelo usuário
+     */
+    @FXML
+    private void tabelaUsuarioListener(MouseEvent event) {
 		// Se foi clicado duas vezes e o item não está nulo então processa a
-		// consulta
-		if (event.getClickCount() == 2 && tblUsuario.getSelectionModel().getSelectedItem() != null) {
+        // consulta
+        if (event.getClickCount() == 2 && tblUsuario.getSelectionModel().getSelectedItem() != null) {
 
-			Usuario usuario = tblUsuario.getSelectionModel().getSelectedItem();
+            Usuario usuario = tblUsuario.getSelectionModel().getSelectedItem();
 
-			setValueFields(usuario);
-		}
-	}
+            setValueFields(usuario);
+        }
+    }
 
-	@FXML
-	public void botaoSairListener() {
-		menuControl.unloadView();
-	}
+    @FXML
+    public void botaoSairListener() {
+        menuControl.unloadView();
+    }
 
-	/**
-	 * Limpar os campos do fomulario de usuarios
-	 */
-	private void limparCampos() {
+    /**
+     * Limpar os campos do fomulario de usuarios
+     */
+    private void limparCampos() {
 
-		gridForm.getChildren().stream().forEach((c) -> {
-			if (c instanceof TextField) {
-				((TextField) c).setText("");
-			} else if (c instanceof ChoiceBox) {
-				((ChoiceBox<?>) c).getSelectionModel().select(1);
-			}
-		});
+        gridForm.getChildren().stream().forEach((c) -> {
+            if (c instanceof TextField) {
+                ((TextField) c).setText("");
+            } else if (c instanceof ChoiceBox) {
+                ((ChoiceBox<?>) c).getSelectionModel().select(1);
+            }
+        });
 
-		txtLogin.requestFocus();
-	}
+        txtLogin.requestFocus();
+    }
 
-	/**
-	 * Procedimento a serem tomados quando o usuario digitar algum texto no
-	 * campo {@code Login}
-	 */
-	@FXML
-	private void txtLoginListener(KeyEvent event) {
-		reiniciarListaUsuario();
-	}
+    /**
+     * Procedimento a serem tomados quando o usuario digitar algum texto no
+     * campo {@code Login}
+     */
+    @FXML
+    private void txtLoginListener(KeyEvent event) {
+        reiniciarListaUsuario();
+    }
 
-	/**
-	 * Obter o texto digitado no {@code Login} e atualizar a lista de usuarios
-	 * que possuam os caracteres informados
-	 */
-	private void reiniciarListaUsuario() {
-		users.setAll(getUsuarioNE().listarUsuarios(txtLogin.getText()));
-	}
+    /**
+     * Obter o texto digitado no {@code Login} e atualizar a lista de usuarios
+     * que possuam os caracteres informados
+     */
+    private void reiniciarListaUsuario() {
+        users.setAll(getUsuarioNE().listarUsuarios(txtLogin.getText()));
+    }
 
-	/**
-	 * Obter os valores dos componentes do formulario de usuarios
-	 */
-	private void getValueFields() {
-		this.login = txtLogin.getText();
-		this.nome = txtNome.getText();
-		this.acesso = cbxAcesso.getValue();
-		this.senha = txtSenha.getText();
-		this.confirmSenha = txtConfirmSenha.getText();
-	}
+    /**
+     * Obter os valores dos componentes do formulario de usuarios
+     */
+    private void getValueFields() {
+        this.login = txtLogin.getText();
+        this.nome = txtNome.getText();
+        this.acesso = cbxAcesso.getValue();
+        this.senha = txtSenha.getText();
+        this.confirmSenha = txtConfirmSenha.getText();
+    }
 
-	/**
-	 * Valorizar os componentes do formuario conforme variaveis internas da
-	 * classe UsuarioGUI
-	 */
-	private void setValueFields(Usuario user) {
-		txtID.setText(Integer.toString(user.getUserID()));
-		txtLogin.setText(user.getLogin());
-		txtNome.setText(user.getNomeCompleto());
-		cbxAcesso.setValue(user.getTipoAcesso());
-		txtSenha.setText(user.getSenha());
-		txtConfirmSenha.setText(user.getSenha());
-	}
+    /**
+     * Valorizar os componentes do formuario conforme variaveis internas da
+     * classe UsuarioGUI
+     */
+    private void setValueFields(Usuario user) {
+        txtID.setText(Integer.toString(user.getUserID()));
+        txtLogin.setText(user.getLogin());
+        txtNome.setText(user.getNomeCompleto());
+        cbxAcesso.setValue(user.getTipoAcesso());
+        txtSenha.setText(user.getSenha());
+        txtConfirmSenha.setText(user.getSenha());
+    }
 
-	/**
-	 * Validar as informações passadas pelo usuário
-	 */
-	private boolean validarInformacoes() {
+    /**
+     * Validar as informações passadas pelo usuário
+     */
+    private boolean validarInformacoes() {
 
-		getValueFields();
+        getValueFields();
 
-		if (login.equals("")) {
-			showAlert("Informar o login");
-			txtLogin.requestFocus();
-			return false;
-		} else if (nome.equals("")) {
-			showAlert("Informar o nome do usuario");
-			txtNome.requestFocus();
-			return false;
-		} else if (senha.equals("")) {
-			showAlert("Informar senha");
-			txtSenha.requestFocus();
-			return false;
-		} else if (confirmSenha.equals("")) {
-			showAlert("Confirmar senha");
-			txtConfirmSenha.requestFocus();
-			return false;
-		} else if (!senha.equals(confirmSenha)) {
-			showAlert("Senhas não confirmam");
-			txtSenha.requestFocus();
-			return false;
-		}
-		
-		return true;
-	}
+        if (login.equals("")) {
+            showAlert("Informar o login");
+            txtLogin.requestFocus();
+            return false;
+        } else if (nome.equals("")) {
+            showAlert("Informar o nome do usuario");
+            txtNome.requestFocus();
+            return false;
+        } else if (senha.equals("")) {
+            showAlert("Informar senha");
+            txtSenha.requestFocus();
+            return false;
+        } else if (confirmSenha.equals("")) {
+            showAlert("Confirmar senha");
+            txtConfirmSenha.requestFocus();
+            return false;
+        } else if (!senha.equals(confirmSenha)) {
+            showAlert("Senhas não confirmam");
+            txtSenha.requestFocus();
+            return false;
+        }
 
-	/**
-	 * Mostrar tela de mensagem para apontar erro ao usuário.
-	 *
-	 * @param msg Mensagem que se deseja passar para o usuário.
-	 */
-	private void showAlert(String msg) {
-		Alert alert = new Alert(Alert.AlertType.WARNING);
-		alert.setTitle("Informação Inválida");
-		alert.setHeaderText(null);
-		alert.setContentText(msg);
-		((Stage)alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
-		alert.showAndWait();
-	}
+        return true;
+    }
 
-	/**
-	 * Retorna o objeto instaciado da classe UsuarioNE
-	 *
-	 * @return usuarioNE Eh uma instancia da clase UsuarioNE
-	 */
-	private UsuarioNE getUsuarioNE() {
-		if (usuarioNE == null) {
-			usuarioNE = new UsuarioNE();
-		}
+    /**
+     * Mostrar tela de mensagem para apontar erro ao usuário.
+     *
+     * @param msg Mensagem que se deseja passar para o usuário.
+     */
+    private void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Informação Inválida");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
+        alert.showAndWait();
+    }
 
-		return this.usuarioNE;
-	}
+    /**
+     * Retorna o objeto instaciado da classe UsuarioNe
+     *
+     * @return usuarioNe Eh uma instancia da clase UsuarioNe
+     */
+    private UsuarioNe getUsuarioNE() {
+        if (usuarioNe == null) {
+            usuarioNe = new UsuarioNe();
+        }
 
-	/**
-	 * Initializes the controller class.
-	 *
-	 * @param url
-	 * @param rb
-	 */
-	@Override
-	public void initialize(URL url, ResourceBundle rb) {
+        return this.usuarioNe;
+    }
 
-		txtLogin.textProperty().addListener(new LimitedTextListener<String>(txtLogin, 15));
-		txtNome.textProperty().addListener(new LimitedTextListener<String>(txtNome, 50));
-		txtSenha.textProperty().addListener(new LimitedTextListener<String>(txtSenha, 20));
-		txtConfirmSenha.textProperty().addListener(new LimitedTextListener<String>(txtConfirmSenha, 20));
+    /**
+     * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
 
-		cbxAcesso.getItems().addAll(AcessoEnum.values());
-		cbxAcesso.setValue(AcessoEnum.CADASTRO);
+        txtLogin.textProperty().addListener(new LimitedTextListener<>(txtLogin, 15));
+        txtNome.textProperty().addListener(new LimitedTextListener<>(txtNome, 50));
+        txtSenha.textProperty().addListener(new LimitedTextListener<>(txtSenha, 20));
+        txtConfirmSenha.textProperty().addListener(new LimitedTextListener<>(txtConfirmSenha, 20));
 
-		// Obter a lista inicial dos usuários cadastrados na base de dados.
-		users = FXCollections.observableArrayList(getUsuarioNE().listarUsuarios());
+        cbxAcesso.getItems().addAll(AcessoEnum.values());
+        cbxAcesso.setValue(AcessoEnum.CADASTRO);
 
-		// Formatar a TableView com as informações dos usuários obtidos.
-		tblcolLogin.setCellValueFactory(cellData -> cellData.getValue().loginProperty());
-		tblcolNome.setCellValueFactory(cellData -> cellData.getValue().nomeCompletoProperty());
-		tblcolAcesso.setCellValueFactory(cellData -> cellData.getValue().tipoAcessoProperty());
+        // Obter a lista inicial dos usuários cadastrados na base de dados.
+        users = FXCollections.observableArrayList(getUsuarioNE().listarUsuarios());
 
-		tblcolAtivo.setCellValueFactory(cellData -> {
-			if (cellData.getValue().isAtivo()) {
-				return new SimpleStringProperty("Sim");
-			} else {
-				return new SimpleStringProperty("Não");
-			}
-		});
+        // Formatar a TableView com as informações dos usuários obtidos.
+        tblcolLogin.setCellValueFactory(cellData -> cellData.getValue().loginProperty());
+        tblcolNome.setCellValueFactory(cellData -> cellData.getValue().nomeCompletoProperty());
+        tblcolAcesso.setCellValueFactory(cellData -> cellData.getValue().tipoAcessoProperty());
 
-		tblUsuario.setRowFactory((TableView<Usuario> table) -> new TableRow<Usuario>() {
-			@Override
-			protected void updateItem(Usuario user, boolean empty) {
+        tblcolAtivo.setCellValueFactory(cellData -> {
+            if (cellData.getValue().isAtivo()) {
+                return new SimpleStringProperty("Sim");
+            } else {
+                return new SimpleStringProperty("Não");
+            }
+        });
+
+        tblUsuario.setRowFactory((TableView<Usuario> table) -> new TableRow<Usuario>() {
+            @Override
+            protected void updateItem(Usuario user, boolean empty) {
 				// Sempre chamar o metodo herdado para que a atualiação das
-				// linhas ocorra com sucesso:
-				super.updateItem(user, empty);
+                // linhas ocorra com sucesso:
+                super.updateItem(user, empty);
 
-				if (!empty) {
-					if (!user.isAtivo()) {
-						getStyleClass().add("usuario-inativo");
-					} else {
-						getStyleClass().removeAll(Collections.singleton("usuario-inativo"));
-					}
-				} else {
-					this.setVisible(false);
-					getStyleClass().removeAll(Collections.singleton("usuario-inativo"));
-				}
-			}
-		});
+                if (!empty) {
+                    if (!user.isAtivo()) {
+                        getStyleClass().add("item-inativo");
+                    } else {
+                        getStyleClass().removeAll(Collections.singleton("item-inativo"));
+                    }
+                } else {
+                    this.setVisible(false);
+                    getStyleClass().removeAll(Collections.singleton("item-inativo"));
+                }
+            }
+        });
 
-		tblUsuario.setItems(users);
+        tblUsuario.setItems(users);
 
-	}
+    }
 
-	/**
-	 * Efetuar configurações iniciais para o controlador.
-	 *
-	 * @param menuControl
-	 *            Objeto Controller do Menu principal
-	 */
-	public void setApp(MenuController menuControl) {
-		this.menuControl = menuControl;
-	}
+    /**
+     * Efetuar configurações iniciais para o controlador.
+     *
+     * @param menuControl Objeto Controller do Menu principal
+     */
+    public void setApp(MenuController menuControl) {
+        this.menuControl = menuControl;
+    }
 
 }

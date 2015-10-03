@@ -1,7 +1,7 @@
 package labuonapastafx.test;
 
 import static org.junit.Assert.*;
-import labuonapastafx.controller.UsuarioNE;
+import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
 
@@ -17,7 +17,7 @@ public class UsuarioTest {
     @Test
     public void testIncluirUsuario() {
 
-        UsuarioNE user = new UsuarioNE();
+        UsuarioNe user = new UsuarioNe();
 
         assertTrue(user.incluirUsuario("incluir", "Teste de Inclusao", AcessoEnum.CADASTRO, "incluir"));
 
@@ -38,7 +38,7 @@ public class UsuarioTest {
     @Test
     public void testValidarSenha() {
 
-        UsuarioNE user = new UsuarioNE();
+        UsuarioNe user = new UsuarioNe();
 
         user.incluirUsuario("validarSenha", "Teste de Validar Senha", AcessoEnum.CADASTRO, "validarSenha");
 
@@ -52,7 +52,7 @@ public class UsuarioTest {
 
     @Test
     public void testExcluirLogicamente() {
-        UsuarioNE user = new UsuarioNE();
+        UsuarioNe user = new UsuarioNe();
 
         user.incluirUsuario("exclusaoLogica", "Teste de Exclusao Logica", AcessoEnum.CADASTRO, "exclusaoLogica");
 
@@ -74,7 +74,7 @@ public class UsuarioTest {
 
     @Test
     public void testAlterarUsuario() {
-        UsuarioNE user = new UsuarioNE();
+        UsuarioNe user = new UsuarioNe();
 
         user.incluirUsuario("alterar", "Teste de Alteracao", AcessoEnum.CADASTRO, "alterar");
 
@@ -94,7 +94,7 @@ public class UsuarioTest {
 
     @Test
     public void testExcluirUsuario() {
-        UsuarioNE user = new UsuarioNE();
+        UsuarioNe user = new UsuarioNe();
 
         user.incluirUsuario("excluir", "Teste de Exclusao", AcessoEnum.CADASTRO, "excluir");
 

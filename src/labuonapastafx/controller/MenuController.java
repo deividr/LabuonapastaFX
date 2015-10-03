@@ -33,6 +33,8 @@ public class MenuController extends VBox implements Initializable {
     @FXML
     private MenuItem mntmCadUsuario;
     @FXML
+    private MenuItem mntmCadProduto;
+    @FXML
     private MenuItem mntmAltSenha;
     @FXML
     private StackPane pnCentral;
@@ -75,16 +77,29 @@ public class MenuController extends VBox implements Initializable {
     }
     
     /**
-     * Mostrar a tela de cadastro de usuário.
+     * Mostrar a tela de cadastro de {@code Usuario}.
      * 
      * @param event 
      */
-    public void mntmUsuarioListener(ActionEvent event) {
+    public void mntmCadUsuarioListener(ActionEvent event) {
         UsuarioController userControl;
         
         userControl = (UsuarioController) loadView(LabuonapastaFX.VIEW_USUARIO);
         
         userControl.setApp(this);
+    }
+    
+    /**
+     * Mostrar a tela de cadastro de {@code Produto}.
+     * 
+     * @param event 
+     */
+    public void mntmCadProdutoListener(ActionEvent event) {
+        ProdutoController prodtControl;
+        
+        prodtControl = (ProdutoController) loadView(LabuonapastaFX.VIEW_PRODUTO);
+        
+        prodtControl.setApp(this);
     }
     
     /**
