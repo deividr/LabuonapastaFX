@@ -17,16 +17,47 @@ public class ClienteDao {
 	 *            do {@code Cliente} que se deseja obter.
 	 * @return retorna o {@code Cliente} correspondente ao nome informado.
 	 */
-	public Cliente ler(String nome) {
+	public Cliente lerNome(String nome) {
 
 		Cliente cliente = null;
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, "
-				+ "ds_endereco, dt_criacao FROM cliente WHERE nm_cliente = ?";
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
+				+ "dt_criacao FROM cliente WHERE nm_cliente = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome);
+			ResultSet rs = stm.executeQuery();
+
+			if (rs.next()) {
+				cliente = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getDate(5));
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
+		}
+
+		return cliente;
+	}
+
+	/**
+	 * Obter o {@code Cliente} referente ao telefone informado.
+	 *
+	 * @param nome
+	 *            do {@code Cliente} que se deseja obter.
+	 * @return retorna o {@code Cliente} correspondente ao nome informado.
+	 */
+	public Cliente lerTelefone(String telefone) {
+
+		Cliente cliente = null;
+
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
+				+ "dt_criacao FROM cliente WHERE nr_telefone = ?";
+
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setString(1, telefone);
 			ResultSet rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -85,12 +116,12 @@ public class ClienteDao {
 	}
 
 	/**
-	 * Excluir o {@code Cliente} que foi passado como parametro. A exclusão do
-	 * cliente deve ser usada com cautela, pois está amarrada a outras
-	 * informações do sistema como histórico, então o mais indicado seria usar a
-	 * exclusão lógica através do método {@code exclusaoLogica}.
+	 * Excluir o {@code Cliente} que foi passado como parametro. A exclusão do cliente deve ser
+	 * usada com cautela, pois está amarrada a outras informações do sistema como histórico, então o
+	 * mais indicado seria usar a exclusão lógica através do método {@code exclusaoLogica}.
 	 *
-	 * @param nome do {@code Cliente} que se deseja excluir.
+	 * @param nome
+	 *            do {@code Cliente} que se deseja excluir.
 	 */
 	public void excluir(String nome) {
 
@@ -109,8 +140,8 @@ public class ClienteDao {
 	/**
 	 * Listar todos os {@code Cliente} que estão incluídos na base de dados.
 	 *
-	 * @return ArrayList de {@code Cliente} que estão incluídos na base de
-	 *         dados. Caso não exista nenhum será retornado um ArrayList vazio.
+	 * @return ArrayList de {@code Cliente} que estão incluídos na base de dados. Caso não exista
+	 *         nenhum será retornado um ArrayList vazio.
 	 */
 	public ArrayList<Cliente> listar() {
 
@@ -125,8 +156,8 @@ public class ClienteDao {
 
 			while (rs.next()) {
 				// Carregar o cliente da base de dados
-				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5)));
+				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs
+						.getString(4), rs.getDate(5)));
 			}
 
 		} catch (SQLException e) {
@@ -156,8 +187,8 @@ public class ClienteDao {
 
 			while (rs.next()) {
 				// Carregar o cliente da base de dados
-				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5)));
+				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs
+						.getString(4), rs.getDate(5)));
 			}
 
 		} catch (SQLException e) {
