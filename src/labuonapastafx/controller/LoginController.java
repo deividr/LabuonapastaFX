@@ -16,85 +16,80 @@ import labuonapastafx.LabuonapastaFX;
 
 /**
  * Classe para controlar o objeto FXML da tela de Login.
+ * 
  * @author Deivid
  */
 public class LoginController extends AnchorPane implements Initializable {
 
-    @FXML
-    private TextField txtLogin;
-    @FXML
-    private PasswordField txtSenha;
-    @FXML
-    private Label lblMensagem;
-    @FXML
-    private Hyperlink lnkSair;
+	@FXML
+	private TextField txtLogin;
+	@FXML
+	private PasswordField txtSenha;
+	@FXML
+	private Label lblMensagem;
+	@FXML
+	private Hyperlink lnkSair;
 
-    private UsuarioNe usuarioNe;
+	private UsuarioNe usuarioNe;
 
-    private LabuonapastaFX app;
+	private LabuonapastaFX app;
 
-    /**
-     * Procedimento a serem tomados quando pressionado o botao {@code Ok}
-     * 
-     * @param event
-     */
-    @FXML
-    public void botaoOKListener(ActionEvent event) {
-        
-        if (txtLogin.getText().equals("")) {
-            sendMessage("Informe o nome do usuario");
-        } else if (String.valueOf(txtSenha.getText()).equals("")) {
-            sendMessage("Informe a senha do usuario");
-        } else {
+	/**
+	 * Procedimento a serem tomados quando pressionado o botao {@code Ok}
+	 * 
+	 * @param event
+	 */
+	@FXML
+	public void botaoOKListener(ActionEvent event) {
 
-            //Verificar se a senha digitada e valida
-            boolean usuarioSenhaValida
-                    = obterUsuarioNE().validarSenha(txtLogin.getText(), String.valueOf(txtSenha.getText()));
+		if (txtLogin.getText().equals("")) {
+			sendMessage("Informe o nome do usuario");
+		} else if (String.valueOf(txtSenha.getText()).equals("")) {
+			sendMessage("Informe a senha do usuario");
+		} else {
 
-            if (usuarioSenhaValida) {
-                app.goToMenu(obterUsuarioNE().obterUsuario(txtLogin.getText()));
-            } else {
-                sendMessage("Usuario ou senha invalida");
-            }
+			// Verificar se a senha digitada e valida
+			boolean usuarioSenhaValida = usuarioNe.validarSenha(txtLogin.getText(),
+					String.valueOf(txtSenha.getText()));
 
-        }
-    }
+			if (usuarioSenhaValida) {
+				app.goToMenu(usuarioNe.obterUsuario(txtLogin.getText()));
+			} else {
+				sendMessage("Usuario ou senha invalida");
+			}
 
-    /**
-     * Procedimentos efetuados quando o usuario clickar no link Sair
-     *
-     * @param event
-     */
-    @FXML
-    public void linkSairListener(ActionEvent event) {
-        app.exit();
-    }
+		}
+	}
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-    }
+	/**
+	 * Procedimentos efetuados quando o usuario clickar no link Sair
+	 *
+	 * @param event
+	 */
+	@FXML
+	public void linkSairListener(ActionEvent event) {
+		app.exit();
+	}
 
-    public void sendMessage(String mensagem) {
-        lblMensagem.setText(mensagem);
-        animateMessage();
-    }
+	@Override
+	public void initialize(URL url, ResourceBundle rb) {
+		usuarioNe = new UsuarioNe();
+	}
 
-    public void animateMessage() {
-        FadeTransition ft = new FadeTransition(Duration.millis(1000), lblMensagem);
-        ft.setFromValue(0.0);
-        ft.setToValue(1);
-        ft.play();
-    }
+	public void sendMessage(String mensagem) {
+		lblMensagem.setText(mensagem);
+		animateMessage();
+	}
 
-    public void setApp(LabuonapastaFX app) {
-        this.app = app;
-    }
-    
-    private UsuarioNe obterUsuarioNE() {
-        if (usuarioNe == null)
-            usuarioNe = new UsuarioNe();
-        
-        return usuarioNe;
-    }
+	public void animateMessage() {
+		FadeTransition ft = new FadeTransition(Duration.millis(1000), lblMensagem);
+		ft.setFromValue(0.0);
+		ft.setToValue(1);
+		ft.play();
+	}
+
+	public void setApp(LabuonapastaFX app) {
+		this.app = app;
+	}
 
 }

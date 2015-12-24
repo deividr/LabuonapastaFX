@@ -9,6 +9,10 @@ import labuonapastafx.persistencia.UsuarioDao;
 public class UsuarioNe {
 
     private UsuarioDao usuarioDao;
+    
+    public UsuarioNe() {
+    	usuarioDao = new UsuarioDao();
+    }
 
     /**
      * Metodo para verificar se existe usuario informado cadastrado na base de
@@ -16,7 +20,7 @@ public class UsuarioNe {
      */
     public Usuario obterUsuario(String login) {
 
-        return getUsuarioDAO().ler(login);
+        return usuarioDao.ler(login);
 
     }
 
@@ -58,7 +62,7 @@ public class UsuarioNe {
 
             Usuario usuario = new Usuario(0, login, nomeCompleto, tipoAcesso, senha, (byte) 1);
 
-            getUsuarioDAO().incluir(usuario);
+            usuarioDao.incluir(usuario);
 
             return true;
         } else {
@@ -88,7 +92,7 @@ public class UsuarioNe {
             usuario.setSenha(senha);
             usuario.setAtivo((byte) 1);
 
-            getUsuarioDAO().atualizar(usuario);
+            usuarioDao.atualizar(usuario);
 
             return true; //retorna que a atualizacao foi ok
         } else {
@@ -107,7 +111,7 @@ public class UsuarioNe {
     public boolean exclusaoLogica(String login) {
 
         if (obterUsuario(login) != null) {
-            getUsuarioDAO().exclusaoLogica(login);
+            usuarioDao.exclusaoLogica(login);
             return true;
         } else {
             //usuario nao existe
@@ -126,7 +130,7 @@ public class UsuarioNe {
     public boolean excluirUsuario(String login) {
 
         if (obterUsuario(login) != null) {
-            getUsuarioDAO().excluir(login);
+            usuarioDao.excluir(login);
             return true;
         } else {
             //usuario nao existe
@@ -142,7 +146,7 @@ public class UsuarioNe {
      */
     public ArrayList<Usuario> listarUsuarios() {
 
-        return getUsuarioDAO().listar();
+        return usuarioDao.listar();
 
     }
 
@@ -155,22 +159,8 @@ public class UsuarioNe {
      */
     public ArrayList<Usuario> listarUsuarios(String login) {
 
-        return getUsuarioDAO().listar(login);
+        return usuarioDao.listar(login);
 
     }
-
-    /**
-     * Irá retornar um objeto da classe de persistência UsuarioDao.
-     * Esse método tem por objetivo evitar a criação de diversas instâncias dessa
-     * classe que pode ocorrer durante o uso do sistema.
-     * 
-     * @return
-     */
-    private UsuarioDao getUsuarioDAO() {
-        if (this.usuarioDao == null) {
-            this.usuarioDao = new UsuarioDao();
-        }
-
-        return this.usuarioDao;
-    }
+    
 }

@@ -53,7 +53,7 @@ public class SenhaController extends StackPane implements Initializable {
 		if (validarInformacoes()) {
 			// Se o retorno da alteracao do usuario for true significa que a
 			// alteracao foi ok
-			if (getUsuarioNE().alterarUsuario(menuControl.user.getLogin(), menuControl.user.getNomeCompleto(),
+			if (usuarioNe.alterarUsuario(menuControl.user.getLogin(), menuControl.user.getNomeCompleto(),
 					menuControl.user.getTipoAcesso(), novaSenha)) {
 				showAlert("Alteracao de senha efetuada com sucesso");
 				limparCampos();
@@ -142,19 +142,6 @@ public class SenhaController extends StackPane implements Initializable {
 	}
 
 	/**
-	 * Retorna o objeto instaciado da classe UsuarioNe
-	 *
-	 * @return usuarioNe Eh uma instancia da clase UsuarioNe
-	 */
-	private UsuarioNe getUsuarioNE() {
-		if (usuarioNe == null) {
-			usuarioNe = new UsuarioNe();
-		}
-
-		return this.usuarioNe;
-	}
-
-	/**
 	 * Initializes the controller class.
 	 *
 	 * @param url
@@ -162,6 +149,8 @@ public class SenhaController extends StackPane implements Initializable {
 	 */
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
+		usuarioNe = new UsuarioNe();
+		
 		txtSenha.textProperty().addListener(new LimitedTextListener<String>(txtSenha, 20));
 		txtNovaSenha.textProperty().addListener(new LimitedTextListener<String>(txtNovaSenha, 20));
 		txtConfirmSenha.textProperty().addListener(new LimitedTextListener<String>(txtConfirmSenha, 20));

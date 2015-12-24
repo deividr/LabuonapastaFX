@@ -10,6 +10,10 @@ import labuonapastafx.persistencia.ProdutoDao;
 public class ProdutoNe {
 
     private ProdutoDao produtoDao;
+    
+    public ProdutoNe() {
+    	produtoDao = new ProdutoDao();
+    }
 
     /**
      * Obter o {@code Produto} que corresponde ao nome informado.
@@ -19,7 +23,7 @@ public class ProdutoNe {
      */
     public Produto obterProduto(String nome) {
 
-        return getProdutoDAO().ler(nome);
+        return produtoDao.ler(nome);
 
     }
 
@@ -38,7 +42,7 @@ public class ProdutoNe {
         //Se o produto nao existir faca a inclusao
         if (obterProduto(nome) == null) {
             Produto produto = new Produto(0, nome, unidade, valor, tipo, (byte) 1);
-            getProdutoDAO().incluir(produto);
+            produtoDao.incluir(produto);
             return true;
         } else {
             //Se o produto jah existir o retorno serah false
@@ -69,7 +73,7 @@ public class ProdutoNe {
             prod.setValor(valor);
             prod.setTipo(tipo);
 
-            getProdutoDAO().atualizar(prod);
+            produtoDao.atualizar(prod);
 
             return true; //retorna que a atualizacao foi ok
         } else {
@@ -88,7 +92,7 @@ public class ProdutoNe {
     public boolean exclusaoLogica(String nome) {
 
         if (obterProduto(nome) != null) {
-            getProdutoDAO().exclusaoLogica(nome);
+            produtoDao.exclusaoLogica(nome);
             return true;
         } else {
             //Produto não existe
@@ -107,7 +111,7 @@ public class ProdutoNe {
     public boolean excluirProduto(String nome) {
 
         if (obterProduto(nome) != null) {
-            getProdutoDAO().excluir(nome);
+            produtoDao.excluir(nome);
             return true;
         } else {
             return false;
@@ -122,7 +126,7 @@ public class ProdutoNe {
      */
     public ArrayList<Produto> listarProdutos() {
 
-        return getProdutoDAO().listar();
+        return produtoDao.listar();
 
     }
 
@@ -135,24 +139,7 @@ public class ProdutoNe {
      */
     public ArrayList<Produto> listarProdutos(String nome) {
 
-        return getProdutoDAO().listar(nome);
-
-    }
-
-    /**
-     * Irá retornar um objeto da classe de persistência {@code ProdutoDao}. Esse
-     * método tem por objetivo evitar a criação de diversas instâncias dessa
-     * classe que pode ocorrer durante o uso do sistema.
-     *
-     * @return
-     */
-    private ProdutoDao getProdutoDAO() {
-
-        if (produtoDao == null) {
-            produtoDao = new ProdutoDao();
-        }
-
-        return produtoDao;
+        return produtoDao.listar(nome);
 
     }
 

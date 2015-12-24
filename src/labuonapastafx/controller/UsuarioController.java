@@ -91,7 +91,7 @@ public class UsuarioController extends StackPane implements Initializable {
         if (validarInformacoes()) {
 			// Se o retorno da inclusão do usuário for true significa que a
             // inclusão foi ok
-            if (getUsuarioNE().incluirUsuario(login, nome, acesso, senha)) {
+            if (usuarioNe.incluirUsuario(login, nome, acesso, senha)) {
                 showAlert("Inclusão de usuário efetuada com sucesso");
                 txtLogin.requestFocus();
                 limparCampos();
@@ -118,12 +118,12 @@ public class UsuarioController extends StackPane implements Initializable {
         // corretas
         if (validarInformacoes()) {
 
-            Usuario usuario = getUsuarioNE().obterUsuario(this.login);
+            Usuario usuario = usuarioNe.obterUsuario(this.login);
 
             if (usuario != null) {
 				// Se o retorno da inclusao do usuario for true significa que a
                 // inclusao foi ok
-                if (getUsuarioNE().alterarUsuario(login, nome, acesso, senha)) {
+                if (usuarioNe.alterarUsuario(login, nome, acesso, senha)) {
                     showAlert("Alteracao de usuario efetuada com sucesso");
                     limparCampos();
                     reiniciarListaUsuario();
@@ -154,7 +154,7 @@ public class UsuarioController extends StackPane implements Initializable {
         } else {
             new Alert(AlertType.CONFIRMATION, "Confirma a exclusao do usuário").showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    if (getUsuarioNE().exclusaoLogica(this.login)) {
+                    if (usuarioNe.exclusaoLogica(this.login)) {
                         showAlert("Exclusao efetuada com sucesso");
                         limparCampos();
                         reiniciarListaUsuario();
@@ -176,7 +176,7 @@ public class UsuarioController extends StackPane implements Initializable {
     public void botaoConsultarListener(ActionEvent event) {
         getValueFields();
 
-        Usuario usuario = getUsuarioNE().obterUsuario(this.login);
+        Usuario usuario = usuarioNe.obterUsuario(this.login);
 
         if (usuario == null) {
             showAlert("Usuario não encontrado");
@@ -240,7 +240,7 @@ public class UsuarioController extends StackPane implements Initializable {
      * que possuam os caracteres informados
      */
     private void reiniciarListaUsuario() {
-        users.setAll(getUsuarioNE().listarUsuarios(txtLogin.getText()));
+        users.setAll(usuarioNe.listarUsuarios(txtLogin.getText()));
     }
 
     /**
@@ -314,19 +314,6 @@ public class UsuarioController extends StackPane implements Initializable {
     }
 
     /**
-     * Retorna o objeto instaciado da classe UsuarioNe
-     *
-     * @return usuarioNe Eh uma instancia da clase UsuarioNe
-     */
-    private UsuarioNe getUsuarioNE() {
-        if (usuarioNe == null) {
-            usuarioNe = new UsuarioNe();
-        }
-
-        return this.usuarioNe;
-    }
-
-    /**
      * Initializes the controller class.
      *
      * @param url
@@ -334,6 +321,8 @@ public class UsuarioController extends StackPane implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+    	
+    	usuarioNe = new UsuarioNe();
 
         txtLogin.textProperty().addListener(new LimitedTextListener<>(txtLogin, 15));
         txtNome.textProperty().addListener(new LimitedTextListener<>(txtNome, 50));
@@ -344,7 +333,7 @@ public class UsuarioController extends StackPane implements Initializable {
         cbxAcesso.setValue(AcessoEnum.CADASTRO);
 
         // Obter a lista inicial dos usuários cadastrados na base de dados.
-        users = FXCollections.observableArrayList(getUsuarioNE().listarUsuarios());
+        users = FXCollections.observableArrayList(usuarioNe.listarUsuarios());
 
         // Formatar a TableView com as informações dos usuários obtidos.
         tblcolLogin.setCellValueFactory(cellData -> cellData.getValue().loginProperty());
