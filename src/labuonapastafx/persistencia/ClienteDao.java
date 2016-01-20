@@ -27,7 +27,7 @@ public class ClienteDao {
 	public Cliente lerId(int clieId) {
 		Cliente cliente;
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
 				+ "dt_criacao FROM cliente WHERE cd_cliente = ?";
 
 		try (Connection con = Conexao.getConexao();
@@ -82,8 +82,8 @@ public class ClienteDao {
      */
 	private Cliente readNextCliente(ResultSet rs) throws SQLException {
 		if (rs.next()) {
-			return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-					rs.getString(4), rs.getDate(5));
+			return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+					rs.getString(6), rs.getDate(7));
 		} else {
 			return null;
 		}
@@ -229,8 +229,8 @@ public class ClienteDao {
 	 */
 	public ArrayList<Cliente> listar() {
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, dt_criacao "
-				+ "FROM cliente";
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco," +
+				" dt_criacao FROM cliente";
 
 		ArrayList<Cliente> clientes = new ArrayList<>();
 
@@ -240,8 +240,8 @@ public class ClienteDao {
 
 			while (rs.next()) {
 				// Carregar o cliente da base de dados
-				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5)));
+				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5), rs.getString(6), rs.getDate(7)));
 			}
 
 		} catch (SQLException e) {
@@ -259,8 +259,8 @@ public class ClienteDao {
 	 */
 	public ArrayList<Cliente> listar(String nome) {
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, dt_criacao "
-				+ "FROM cliente WHERE nm_cliente LIKE ?";
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco," +
+				" dt_criacao FROM cliente WHERE nm_cliente LIKE ?";
 
 		ArrayList<Cliente> clientes = new ArrayList<>();
 
@@ -271,8 +271,8 @@ public class ClienteDao {
 
 			while (rs.next()) {
 				// Carregar o cliente da base de dados
-				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5)));
+				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5), rs.getString(6), rs.getDate(7)));
 			}
 
 		} catch (SQLException e) {

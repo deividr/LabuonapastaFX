@@ -2,8 +2,8 @@ package labuonapastafx.model;
 
 public enum ProdutoEnum {
 
-    MASSA("Massa", 01), MOLHO("Molho", 02), BEBIDA("Bebida", 03), SALADA("Salada", 04),
-    CARNE("Carne", 05), DIVERSOS("Diversos", 99);
+    MASSA("Massa", 1), MOLHO("Molho", 2), BEBIDA("Bebida", 3), SALADA("Salada", 4),
+    CARNE("Carne", 5), DIVERSOS("Diversos", 99);
 
     private final String descricao;
     private final int codigo;
