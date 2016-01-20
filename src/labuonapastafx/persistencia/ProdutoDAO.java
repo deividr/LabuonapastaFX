@@ -12,11 +12,11 @@ import labuonapastafx.model.UnidadeEnum;
 public class ProdutoDao {
 
 	/**
-	 * Obter o produto referente ao nome informado
+	 * Obter o produto referente ao nome informado.
 	 *
 	 * @param nome
-	 *            do produto que se deseja obter
-	 * @return retorna o produto nome correspondente ao nome informado
+	 *            do produto que se deseja obter.
+	 * @return retorna o produto nome correspondente ao nome informado.
 	 */
 	public Produto ler(String nome) {
 
@@ -25,15 +25,16 @@ public class ProdutoDao {
 		String sql = "SELECT cd_produto, nm_produto, st_unidade, "
 				+ "vl_produto, cd_tipo_produto, cd_ativo FROM produto " + "WHERE nm_produto = ?";
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome);
 			ResultSet rs = stm.executeQuery();
 
 			if (rs.next()) {
 				ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt(5));
 				UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
-				produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getDouble(4), produtoEnum,
-						rs.getByte(6));
+				produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
+						produtoEnum, rs.getByte(6));
 			}
 
 		} catch (SQLException e) {
@@ -54,10 +55,11 @@ public class ProdutoDao {
 		String sql = "INSERT INTO produto (nm_produto, st_unidade, vl_produto, "
 				+ "cd_tipo_produto, cd_ativo) VALUES (?, ?, ?, ?, 1)";
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, produto.getNome());
 			stm.setString(2, produto.getUnidade().getCodigo());
-			stm.setDouble(3, produto.getValor());
+			stm.setBigDecimal(3, produto.getValor());
 			stm.setInt(4, produto.getTipo().getCodigo());
 			stm.executeUpdate();
 		} catch (SQLException e) {
@@ -76,10 +78,11 @@ public class ProdutoDao {
 		String sql = "UPDATE produto SET nm_produto = ?, st_unidade = ?,"
 				+ "vl_produto = ?, cd_tipo_produto = ?, cd_ativo = 1 WHERE cd_produto = ?";
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, produto.getNome());
 			stm.setString(2, produto.getUnidade().getCodigo());
-			stm.setDouble(3, produto.getValor());
+			stm.setBigDecimal(3, produto.getValor());
 			stm.setInt(4, produto.getTipo().getCodigo());
 			stm.setInt(5, produto.getProdId());
 			stm.executeUpdate();
@@ -101,7 +104,8 @@ public class ProdutoDao {
 
 		String sql = "DELETE FROM produto WHERE nm_produto = ?";
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome);
 			stm.executeUpdate();
 		} catch (SQLException e) {
@@ -123,7 +127,8 @@ public class ProdutoDao {
 
 		String sql = "UPDATE produto SET cd_ativo = 0 WHERE nm_produto = ?";
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome);
 			stm.executeUpdate();
 		} catch (SQLException e) {
@@ -145,7 +150,8 @@ public class ProdutoDao {
 
 		ArrayList<Produto> produtos = new ArrayList<>();
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			ResultSet rs = stm.executeQuery();
 
 			while (rs.next()) {
@@ -155,7 +161,8 @@ public class ProdutoDao {
 				ProdutoEnum tipo = ProdutoEnum.valueOf(Integer.parseInt(rs.getString(5)));
 
 				// Carregar o usuario da base de dados
-				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getDouble(4), tipo, rs.getByte(6)));
+				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
+						tipo, rs.getByte(6)));
 			}
 
 		} catch (SQLException e) {
@@ -168,8 +175,8 @@ public class ProdutoDao {
 	/**
 	 * Listar todos os {@code Produto} que estão cadastrados.
 	 *
-	 * @param nome
-	 * @return
+	 * @param nome Nome que deseja usar para limitar a lista de consulta.
+	 * @return ArrayList com todas as ocorrências encontradas.
 	 */
 	public ArrayList<Produto> listar(String nome) {
 
@@ -178,7 +185,8 @@ public class ProdutoDao {
 
 		ArrayList<Produto> produtos = new ArrayList<>();
 
-		try (Connection con = Conexao.getConexao(); PreparedStatement stm = con.prepareStatement(sql)) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome + "%");
 			ResultSet rs = stm.executeQuery();
 
@@ -189,7 +197,8 @@ public class ProdutoDao {
 				ProdutoEnum tipo = ProdutoEnum.valueOf(Integer.parseInt(rs.getString(5)));
 
 				// Carregar o usuario da base de dados
-				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getDouble(4), tipo, rs.getByte(6)));
+				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
+						tipo, rs.getByte(6)));
 			}
 
 		} catch (SQLException e) {

@@ -324,10 +324,10 @@ public class UsuarioController extends StackPane implements Initializable {
     	
     	usuarioNe = new UsuarioNe();
 
-        txtLogin.textProperty().addListener(new LimitedTextListener<>(txtLogin, 15));
-        txtNome.textProperty().addListener(new LimitedTextListener<>(txtNome, 50));
-        txtSenha.textProperty().addListener(new LimitedTextListener<>(txtSenha, 20));
-        txtConfirmSenha.textProperty().addListener(new LimitedTextListener<>(txtConfirmSenha, 20));
+        txtLogin.textProperty().addListener(new LimitedTextListener(txtLogin, 15));
+        txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 50));
+        txtSenha.textProperty().addListener(new LimitedTextListener(txtSenha, 20));
+        txtConfirmSenha.textProperty().addListener(new LimitedTextListener(txtConfirmSenha, 20));
 
         cbxAcesso.getItems().addAll(AcessoEnum.values());
         cbxAcesso.setValue(AcessoEnum.CADASTRO);

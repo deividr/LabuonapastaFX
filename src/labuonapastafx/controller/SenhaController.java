@@ -151,9 +151,9 @@ public class SenhaController extends StackPane implements Initializable {
 	public void initialize(URL url, ResourceBundle rb) {
 		usuarioNe = new UsuarioNe();
 		
-		txtSenha.textProperty().addListener(new LimitedTextListener<String>(txtSenha, 20));
-		txtNovaSenha.textProperty().addListener(new LimitedTextListener<String>(txtNovaSenha, 20));
-		txtConfirmSenha.textProperty().addListener(new LimitedTextListener<String>(txtConfirmSenha, 20));
+		txtSenha.textProperty().addListener(new LimitedTextListener(txtSenha, 20));
+		txtNovaSenha.textProperty().addListener(new LimitedTextListener(txtNovaSenha, 20));
+		txtConfirmSenha.textProperty().addListener(new LimitedTextListener(txtConfirmSenha, 20));
 	}
 
 	/**

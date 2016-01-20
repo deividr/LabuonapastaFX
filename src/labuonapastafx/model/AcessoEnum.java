@@ -29,16 +29,16 @@ public enum AcessoEnum {
 		}
 		return null;
 	}
-        
-        public static ArrayList<String> valuesDescricoes() {
 
-            ArrayList<String> acessos = new ArrayList<>();
-            
-            for (AcessoEnum acesso : AcessoEnum.values()) {
-                acessos.add(acesso.obterDescricao());
-            }
-            
-            return acessos;
-        }
-     
+	public static ArrayList<String> obterDescricoes() {
+
+		ArrayList<String> acessos = new ArrayList<>();
+
+		for (AcessoEnum acesso : AcessoEnum.values()) {
+			acessos.add(acesso.obterDescricao());
+		}
+
+		return acessos;
+	}
+
 }

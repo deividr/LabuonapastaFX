@@ -1,11 +1,9 @@
 package labuonapastafx.model;
 
 import java.io.Serializable;
-
-import javafx.beans.property.DoubleProperty;
+import java.math.BigDecimal;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,19 +16,19 @@ public class Produto implements Serializable {
     private IntegerProperty prodId;
     private StringProperty nome;
     private ObjectProperty<UnidadeEnum> unidade;
-    private DoubleProperty valor;
+    private ObjectProperty<BigDecimal> valor;
     private ObjectProperty<ProdutoEnum> tipo;
     private ObjectProperty<Byte> ativo;
 
     public Produto() {
-        this(0, "", UnidadeEnum.UNIDADE, 0.0, ProdutoEnum.DIVERSOS, (byte) 1);
+        this(0, "", UnidadeEnum.UNIDADE, BigDecimal.valueOf(0.00), ProdutoEnum.DIVERSOS, (byte) 1);
     }
 
-    public Produto(int prodId, String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo, Byte ativo) {
+    public Produto(int prodId, String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo, Byte ativo) {
         this.prodId = new SimpleIntegerProperty(prodId);
         this.nome = new SimpleStringProperty(nome);
         this.unidade = new SimpleObjectProperty<>(unidade);
-        this.valor = new SimpleDoubleProperty(valor);
+        this.valor = new SimpleObjectProperty<BigDecimal>(valor);
         this.tipo = new SimpleObjectProperty<>(tipo);
         this.ativo = new SimpleObjectProperty<>(ativo);
     }
@@ -83,15 +81,15 @@ public class Produto implements Serializable {
         this.unidadeProperty().set(unidade);
     }
 
-    public final DoubleProperty valorProperty() {
+    public final ObjectProperty<BigDecimal> valorProperty() {
         return this.valor;
     }
 
-    public final double getValor() {
+    public final BigDecimal getValor() {
         return this.valorProperty().get();
     }
 
-    public final void setValor(final double valor) {
+    public final void setValor(final BigDecimal valor) {
         this.valorProperty().set(valor);
     }
 

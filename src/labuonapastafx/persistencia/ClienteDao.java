@@ -5,9 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import labuonapastafx.model.Cliente;
 
+/**
+ * Responsável por todo o procedimento de persistência na base de dados Cliente
+ *
+ * @author   Deivid Assumpcao Rodrigues
+ * @version  %I%, %G%
+ * @since    1.0
+ */
 public class ClienteDao {
 
 	/**
@@ -19,7 +25,7 @@ public class ClienteDao {
 	 * @return Objeto {@code Cliente} referente ao Id informado.
 	 */
 	public Cliente lerId(int clieId) {
-		Cliente cliente = null;
+		Cliente cliente;
 
 		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
 				+ "dt_criacao FROM cliente WHERE cd_cliente = ?";
@@ -29,10 +35,7 @@ public class ClienteDao {
 			stm.setInt(1, clieId);
 			ResultSet rs = stm.executeQuery();
 
-			if (rs.next()) {
-				cliente = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5));
-			}
+			cliente = readNextCliente(rs);
 
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
@@ -50,7 +53,7 @@ public class ClienteDao {
 	 */
 	public Cliente lerNome(String nome) {
 
-		Cliente cliente = null;
+		Cliente cliente;
 
 		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
 				+ "dt_criacao FROM cliente WHERE nm_cliente = ?";
@@ -60,16 +63,30 @@ public class ClienteDao {
 			stm.setString(1, nome);
 			ResultSet rs = stm.executeQuery();
 
-			if (rs.next()) {
-				cliente = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5));
-			}
+			cliente = readNextCliente(rs);
 
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
 		}
 
 		return cliente;
+	}
+
+
+	/**
+	 * Efetuar a leitura do {@code Cliente} conforme ResultSet informado.
+	 *
+	 * @param rs ResultSet que se deseja efetuar a leitura para obtenção de um {@code Cliente}
+	 * @return Um cliente se encontrado ou um objeto nullo caso não tenho encontrado.
+	 * @throws SQLException Caso ocorra um erro na consulta será lançada essa exception.
+     */
+	private Cliente readNextCliente(ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
+					rs.getString(4), rs.getDate(5));
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -81,7 +98,7 @@ public class ClienteDao {
 	 */
 	public Cliente lerTelefone(String telefone) {
 
-		Cliente cliente = null;
+		Cliente cliente;
 
 		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
 				+ "dt_criacao FROM cliente WHERE nr_telefone = ?";
@@ -91,10 +108,7 @@ public class ClienteDao {
 			stm.setString(1, telefone);
 			ResultSet rs = stm.executeQuery();
 
-			if (rs.next()) {
-				cliente = new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
-						rs.getString(4), rs.getDate(5));
-			}
+			cliente = readNextCliente(rs);
 
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
@@ -106,7 +120,7 @@ public class ClienteDao {
 	/**
 	 * Incluir o novo {@code Cliente}.
 	 *
-	 * @param {@code Cliente} que deseja ser incluido.
+	 * @param cliente que deseja ser incluido.
 	 */
 	public void incluir(Cliente cliente) {
 
@@ -116,7 +130,7 @@ public class ClienteDao {
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, cliente.getNome());
-			stm.setString(2, cliente.getTelefone());
+			stm.setString(2, cliente.getTelefone1());
 			stm.setString(3, cliente.getEndereco());
 			stm.executeUpdate();
 		} catch (SQLException e) {
@@ -129,7 +143,7 @@ public class ClienteDao {
 	 * Atualizar as informacões do {@code Cliente} que foi passado como
 	 * parametro.
 	 *
-	 * @param {@code Cliente} com as informacoes para serem atualizadas na base.
+	 * @param cliente com as informacoes para serem atualizadas na base.
 	 */
 	public void atualizar(Cliente cliente) {
 		String sql = "UPDATE cliente SET nm_cliente = ?, nr_telefone = ?,"
@@ -138,7 +152,7 @@ public class ClienteDao {
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, cliente.getNome());
-			stm.setString(2, cliente.getTelefone());
+			stm.setString(2, cliente.getTelefone1());
 			stm.setString(3, cliente.getEndereco());
 			stm.setInt(4, cliente.getClieId());
 			stm.executeUpdate();
@@ -190,7 +204,7 @@ public class ClienteDao {
 	/**
 	 * Excluir o {@code Cliente} pelo telefone informado.
 	 *
-	 * @param nome
+	 * @param telefone
 	 *            do {@code Cliente} que se deseja excluir.
 	 */
 	public void excluirTelefone(String telefone) {
@@ -238,10 +252,10 @@ public class ClienteDao {
 	}
 
 	/**
-	 * Listar todos os {@code Cliente} que estão cadastrados.
+	 * Listar todos os {@code Cliente} que estão cadastrados conforme nome informado.
 	 *
-	 * @param nome
-	 * @return
+	 * @param nome do Cliente que deve ser pesquisado para montagem da lista
+	 * @return ArrayList de todos os clientes que se assemelham com o nome informado.
 	 */
 	public ArrayList<Cliente> listar(String nome) {
 

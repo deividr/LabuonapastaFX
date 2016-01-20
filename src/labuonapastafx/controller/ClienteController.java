@@ -3,12 +3,12 @@ package labuonapastafx.controller;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -22,9 +22,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import labuonapastafx.model.FoneFieldListener;
 import labuonapastafx.model.LimitedTextListener;
 import labuonapastafx.model.Cliente;
-
 
 /**
  * Classe controladora do panel de manutenção dos Clientes do sistema.
@@ -42,9 +42,13 @@ public class ClienteController extends StackPane implements Initializable {
     @FXML
     private TextField txtNome;
     @FXML
-    private TextField txtTelefone;
-    @FXML
     private TextField txtEndereco;
+    @FXML
+    private TextField txtTelefone1;
+    @FXML
+    private TextField txtTelefone2;
+    @FXML
+    private TextField txtEmail;
     @FXML
     private TableView<Cliente> tblCliente;
     @FXML
@@ -60,7 +64,7 @@ public class ClienteController extends StackPane implements Initializable {
     private ObservableList<Cliente> clies;
 
     // Variáveis de controle do formulário da tela
-    private String nome, telefone, endereco;
+    private String nome, endereco, telefone1, telefone2, email;
     private int clieId;
 
     /**
@@ -74,7 +78,7 @@ public class ClienteController extends StackPane implements Initializable {
         // Efetuar a inclusão somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
             // Se o retorno da inclusão do cliente for true significa que a inclusão foi ok
-            if (clienteNe.incluirCliente(nome, telefone, endereco, new Date())) {
+            if (clienteNe.incluirCliente(nome, telefone1, endereco)) {
                 showAlert("Inclusão de cliente efetuada com sucesso");
                 txtNome.requestFocus();
                 limparCampos();
@@ -99,11 +103,11 @@ public class ClienteController extends StackPane implements Initializable {
         // Efetuar a alteração somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
 
-            Cliente Cliente = clienteNe.obterCliente(this.nome);
+            Cliente Cliente = clienteNe.obterClienteNome(this.nome);
 
             if (Cliente != null) {
                 // Se o retorno da inclusão do Cliente for true significa que a inclusão foi ok.
-                if (clienteNe.alterarCliente(clieId, nome, telefone, endereco)) {
+                if (clienteNe.alterarCliente(clieId, nome, telefone1, endereco)) {
                     showAlert("Alteração de Cliente efetuada com sucesso");
                     limparCampos();
                     reiniciarListaCliente();
@@ -156,7 +160,7 @@ public class ClienteController extends StackPane implements Initializable {
     public void botaoConsultarListener(ActionEvent event) {
         getValueFields();
 
-        Cliente Cliente = clienteNe.obterCliente(this.nome);
+        Cliente Cliente = clienteNe.obterClienteNome(this.nome);
 
         if (Cliente == null) {
             showAlert("Cliente não encontrado");
@@ -226,9 +230,12 @@ public class ClienteController extends StackPane implements Initializable {
      * Obter os valores dos componentes do formulário de {@code Cliente}.
      */
     private void getValueFields() {
-    	this.clieId = Integer.parseInt(txtClieId.getText());
+
+        if (!txtClieId.getText().equals(""))
+    	    this.clieId = Integer.parseInt(txtClieId.getText());
+
         this.nome = txtNome.getText();
-        this.telefone = txtTelefone.getText();
+        this.telefone1 = txtTelefone1.getText().replaceAll("[^0-9]", "");
         this.endereco = txtEndereco.getText();
     }
 
@@ -239,7 +246,7 @@ public class ClienteController extends StackPane implements Initializable {
     private void setValueFields(Cliente clie) {
         txtClieId.setText(Integer.toString(clie.getClieId()));
         txtNome.setText(clie.getNome());
-        txtTelefone.setText(clie.getTelefone());
+        txtTelefone1.setText(clie.getTelefone1());
         txtEndereco.setText(clie.getEndereco());
     }
 
@@ -254,9 +261,9 @@ public class ClienteController extends StackPane implements Initializable {
             showAlert("Informar o nome do Cliente");
             txtNome.requestFocus();
             return false;
-        } else if (telefone.equals("")) {
-        	showAlert("Informar o telefone do Cliente");
-        	txtTelefone.requestFocus();
+        } else if (telefone1 == "") {
+        	showAlert("Informar o telefone1 do Cliente");
+        	txtTelefone1.requestFocus();
         	return false;
         } else if (endereco.equals("")) {
         	showAlert("Informar o endereço do Cliente");
@@ -292,17 +299,26 @@ public class ClienteController extends StackPane implements Initializable {
     	
     	clienteNe = new ClienteNe();
 
-        txtNome.textProperty().addListener(new LimitedTextListener<>(txtNome, 40));
-        txtTelefone.textProperty().addListener(new LimitedTextListener<>(txtTelefone, 11));
-        txtTelefone.setAlignment(Pos.BASELINE_RIGHT);
-        txtEndereco.textProperty().addListener(new LimitedTextListener<>(txtEndereco, 50));
+        txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
+        txtTelefone1.textProperty().addListener(new FoneFieldListener(txtTelefone1));
+        //txtTelefone1.setAlignment(Pos.BASELINE_RIGHT);
+        txtEndereco.textProperty().addListener(new LimitedTextListener(txtEndereco, 50));
+
+        txtTelefone1.lengthProperty().addListener((observable, oldValue, newValue) -> {
+
+        });
 
         // Obter a lista inicial dos clientes cadastrados na base de dados.
         clies = FXCollections.observableArrayList(clienteNe.listarClientes());
 
         // Formatar a TableView com as informações dos clientes obtidos.
         tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-        tblcolTelefone.setCellValueFactory(cellData -> cellData.getValue().telefoneProperty());
+        tblcolTelefone.setCellValueFactory(cellData -> {
+            String value = cellData.getValue().getTelefone1();
+            value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+            value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
+            return new SimpleStringProperty(value);
+        });
         tblcolData.setCellValueFactory(cellData -> cellData.getValue().dataCriacaoProperty());
 
         tblCliente.setItems(clies);

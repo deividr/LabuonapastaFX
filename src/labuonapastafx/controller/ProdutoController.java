@@ -1,15 +1,13 @@
 package labuonapastafx.controller;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import labuonapastafx.model.LimitedTextListener;
+import labuonapastafx.model.MoneyFieldListener;
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
 import labuonapastafx.model.UnidadeEnum;
@@ -79,7 +78,7 @@ public class ProdutoController extends StackPane implements Initializable {
 	private String nome;
 	private ProdutoEnum tipo;
 	private UnidadeEnum unidade;
-	private Double valor;
+	private BigDecimal valor;
 
 	/**
 	 * Procedimento a serem tomados quando pressionado o botao {@code Incluir}.
@@ -264,9 +263,9 @@ public class ProdutoController extends StackPane implements Initializable {
 
 		try {
 			NumberFormat nf = NumberFormat.getInstance();
-			this.valor = nf.parse(txtValor.getText()).doubleValue();
+			this.valor = BigDecimal.valueOf(nf.parse(txtValor.getText()).doubleValue());
 		} catch (ParseException e) {
-			this.valor = 0.0;
+			this.valor = BigDecimal.valueOf(0.0);
 		}
 
 	}
@@ -294,8 +293,8 @@ public class ProdutoController extends StackPane implements Initializable {
 			showAlert("Informar o nome do Produto.");
 			txtProduto.requestFocus();
 			return false;
-		} else if (valor == 0.0) {
-			showAlert("Valor inválido, favor informar corretamente.");
+		} else if (valor.doubleValue() == 0.0) {
+			showAlert("Valor não pode ser zerado.");
 			txtValor.clear();
 			txtValor.requestFocus();
 			return false;
@@ -331,53 +330,8 @@ public class ProdutoController extends StackPane implements Initializable {
 
 		produtoNe = new ProdutoNe();
 
-		txtProduto.textProperty().addListener(new LimitedTextListener<>(txtProduto, 50));
-		//*txtValor.textProperty().addListener(new LimitedTextListener<>(txtValor, 13));
-
-		txtValor.lengthProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue,
-					Number newValue) {
-				String value = txtValor.getText();
-				value = value.replaceAll("[^0-9]", "");
-				value = value.replaceAll("([0-9]{1})([0-9]{14})$", "$1.$2");
-				value = value.replaceAll("([0-9]{1})([0-9]{11})$", "$1.$2");
-				value = value.replaceAll("([0-9]{1})([0-9]{8})$", "$1.$2");
-				value = value.replaceAll("([0-9]{1})([0-9]{5})$", "$1.$2");
-				value = value.replaceAll("([0-9]{1})([0-9]{2})$", "$1,$2");
-				txtValor.setText(value);
-				positionCaret(txtValor);
-
-				txtValor.textProperty().addListener(new ChangeListener<String>() {
-					@Override
-					public void changed(ObservableValue<? extends String> observableValue,
-							String oldValue, String newValue) {
-						if (newValue.length() > 17)
-							txtValor.setText(oldValue);
-					}
-				});
-				
-			}
-
-			/**
-			 * Devido ao incremento dos caracteres das mascaras eh necessario
-			 * que o cursor sempre se posicione no final da string.
-			 *
-			 * @param textField
-			 *            TextField
-			 */
-			private void positionCaret(final TextField textField) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						// Posiciona o cursor sempre a direita.
-						textField.positionCaret(textField.getText().length());
-					}
-				});
-			}
-
-		});
-
+		txtProduto.textProperty().addListener(new LimitedTextListener(txtProduto, 50));
+		txtValor.textProperty().addListener(new MoneyFieldListener(txtValor));
 		cbxTipo.getItems().addAll(ProdutoEnum.values());
 		cbxTipo.setValue(ProdutoEnum.DIVERSOS);
 
@@ -391,9 +345,10 @@ public class ProdutoController extends StackPane implements Initializable {
 		tblcolProduto.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
 		tblcolTipo.setCellValueFactory(cellData -> cellData.getValue().tipoProperty());
 		tblcolUnidade.setCellValueFactory(cellData -> cellData.getValue().unidadeProperty());
+
 		tblcolValor.setCellValueFactory(cellData -> {
-			DecimalFormat decimal = new DecimalFormat("0.00");
-			return new SimpleStringProperty(decimal.format(cellData.getValue().getValor()));
+			return new SimpleStringProperty(
+					new DecimalFormat("##,###,##0.00").format(cellData.getValue().getValor()));
 		});
 
 		// Alinhando a direita o conteúdo da coluna valor.

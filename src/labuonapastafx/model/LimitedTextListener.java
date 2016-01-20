@@ -4,7 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 
-public class LimitedTextListener<T> implements ChangeListener<String> {
+public class LimitedTextListener implements ChangeListener<String> {
 
 	private final TextField field;
 	private final int maxLength;

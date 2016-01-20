@@ -9,6 +9,8 @@ import labuonapastafx.model.UnidadeEnum;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 public class ProdutoTest {
 
     private ProdutoNe prodt;
@@ -29,16 +31,16 @@ public class ProdutoTest {
     @Test
     public void testIncluirProduto() {
 
-        assertTrue(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, 123.45, ProdutoEnum.MASSA));
+        assertTrue(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA));
 
         Produto produto = prodt.obterProduto("Incluir Produto Tal");
 
         assertEquals("Incluir Produto Tal", produto.getNome());
         assertEquals(UnidadeEnum.UNIDADE, produto.getUnidade());
-        assertEquals(123.45, produto.getValor(), 0);
+        assertEquals(123.45, produto.getValor().doubleValue(), 0);
         assertEquals(ProdutoEnum.MASSA, produto.getTipo());
 
-        assertFalse(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, 123.45, ProdutoEnum.MOLHO));
+        assertFalse(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MOLHO));
 
         prodt.excluirProduto("Incluir Produto Tal");
 
@@ -47,14 +49,14 @@ public class ProdutoTest {
     @Test
     public void testAlterarProduto() {
 
-        prodt.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, 123.45, ProdutoEnum.MASSA);
+        prodt.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA);
 
-        assertTrue(prodt.alterarProduto("Alterar Produto Tal", UnidadeEnum.LITROS, 678.90, ProdutoEnum.MOLHO));
+        assertTrue(prodt.alterarProduto("Alterar Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(678.90), ProdutoEnum.MOLHO));
 
         Produto produto = prodt.obterProduto("Alterar Produto Tal");
 
         assertEquals(UnidadeEnum.LITROS, produto.getUnidade());
-        assertEquals(678.90, produto.getValor(), 0);
+        assertEquals(678.90, produto.getValor().doubleValue(), 0);
         assertEquals(ProdutoEnum.MOLHO, produto.getTipo());
 
         prodt.excluirProduto("Alterar Produto Tal");
@@ -65,7 +67,7 @@ public class ProdutoTest {
     public void testExcluirLogicamente() {
         ProdutoNe prod = new ProdutoNe();
 
-        prod.incluirProduto("exclusaoLogica", UnidadeEnum.KILOGRAMA, 0.0, ProdutoEnum.DIVERSOS);
+        prod.incluirProduto("exclusaoLogica", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(0.0), ProdutoEnum.DIVERSOS);
 
         //verificar se o Produto foi incluido como ativo
         assertTrue(prod.obterProduto("exclusaoLogica").isAtivo());
@@ -86,7 +88,7 @@ public class ProdutoTest {
     @Test
     public void testExcluirProduto() {
 
-        prodt.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, 106.26, ProdutoEnum.SALADA);
+        prodt.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(106.26), ProdutoEnum.SALADA);
 
         assertTrue(prodt.excluirProduto("Excluir Produto Tal"));
 

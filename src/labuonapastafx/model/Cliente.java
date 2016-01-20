@@ -14,17 +14,19 @@ public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private IntegerProperty clieId;
-    private StringProperty nome, telefone, endereco;
+    private StringProperty nome, endereco, telefone1, telefone2, email;
     private ObjectProperty<Date> dataCriacao;
 
     public Cliente() {
-        this(0, "", "", "", new Date());
+        this(0, "", "", "", "", "", new Date());
     }
 
-    public Cliente(int clieId, String nome, String telefone, String endereco, Date dataCriacao) {
+    public Cliente(int clieId, String nome, String telefone1, String telefone2, String email, String endereco, Date dataCriacao) {
         this.clieId = new SimpleIntegerProperty(clieId);
         this.nome = new SimpleStringProperty(nome);
-        this.telefone = new SimpleStringProperty(telefone);
+        this.telefone1 = new SimpleStringProperty(telefone1);
+		this.telefone2 = new SimpleStringProperty(telefone2);
+		this.email = new SimpleStringProperty(email);
         this.endereco = new SimpleStringProperty(endereco);
         this.dataCriacao = new SimpleObjectProperty<>(dataCriacao);
     }
@@ -56,57 +58,70 @@ public class Cliente implements Serializable {
 	public final IntegerProperty clieIdProperty() {
 		return this.clieId;
 	}
-	
 
 	public final int getClieId() {
 		return this.clieIdProperty().get();
 	}
-	
 
 	public final void setClieId(final int clieId) {
 		this.clieIdProperty().set(clieId);
 	}
-	
 
 	public final StringProperty nomeProperty() {
 		return this.nome;
 	}
-	
 
 	public final String getNome() {
 		return this.nomeProperty().get();
 	}
-	
 
 	public final void setNome(final java.lang.String nome) {
 		this.nomeProperty().set(nome);
 	}
-	
 
-	public final StringProperty telefoneProperty() {
-		return this.telefone;
+	public final StringProperty telefone1Property() {
+		return this.telefone1;
 	}
-	
 
-	public final String getTelefone() {
-		return this.telefoneProperty().get();
+	public final String getTelefone1() {
+		return this.telefone1Property().get();
 	}
-	
 
-	public final void setTelefone(final String telefone) {
-		this.telefoneProperty().set(telefone);
+	public final void setTelefone1(final String telefone1) {
+		this.telefone1Property().set(telefone1);
 	}
-	
+
+	public final StringProperty telefone2Property() {
+		return this.telefone2;
+	}
+
+	public final String getTelefone2() {
+		return this.telefone2Property().get();
+	}
+
+	public final void setTelefone2(final String telefone2) {
+		this.telefone2Property().set(telefone2);
+	}
+
+	public final StringProperty emailProperty() {
+		return this.email;
+	}
+
+	public final String getEmail() {
+		return this.emailProperty().get();
+	}
+
+	public final void setEmail(final String email) {
+		this.emailProperty().set(email);
+	}
 
 	public final StringProperty enderecoProperty() {
 		return this.endereco;
 	}
-	
 
 	public final String getEndereco() {
 		return this.enderecoProperty().get();
 	}
-	
 
 	public final void setEndereco(final String endereco) {
 		this.enderecoProperty().set(endereco);
@@ -115,12 +130,10 @@ public class Cliente implements Serializable {
 	public final ObjectProperty<Date> dataCriacaoProperty() {
 		return this.dataCriacao;
 	}
-	
 
 	public final Date getDataCriacao() {
 		return this.dataCriacaoProperty().get();
 	}
-	
 
 	public final void setDataCriacao(final Date dataCriacao) {
 		this.dataCriacaoProperty().set(dataCriacao);

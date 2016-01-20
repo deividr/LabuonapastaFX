@@ -1,5 +1,6 @@
 package labuonapastafx.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import labuonapastafx.model.Produto;
@@ -37,7 +38,7 @@ public class ProdutoNe {
      * @return true se a inclusão ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto já existe).
      */
-    public boolean incluirProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
+    public boolean incluirProduto(String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo) {
 
         //Se o produto nao existir faca a inclusao
         if (obterProduto(nome) == null) {
@@ -62,7 +63,7 @@ public class ProdutoNe {
      * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto não existe).
      */
-    public boolean alterarProduto(String nome, UnidadeEnum unidade, double valor, ProdutoEnum tipo) {
+    public boolean alterarProduto(String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo) {
 
         Produto prod = obterProduto(nome);
 

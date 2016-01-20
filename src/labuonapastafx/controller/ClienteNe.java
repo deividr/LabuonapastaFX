@@ -1,23 +1,21 @@
 package labuonapastafx.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
-
 import labuonapastafx.model.Cliente;
 import labuonapastafx.persistencia.ClienteDao;
 
 public class ClienteNe {
 
 	private ClienteDao clienteDao;
-	
+
 	public ClienteNe() {
 		clienteDao = new ClienteDao();
 	}
 
 	/**
-	 * Obter o {@code Cliente} que corresponde ao nome informado.
+	 * Obter o {@code Cliente} que corresponde ao código do cliente informado.
 	 *
-	 * @param nome
+	 * @param clieId
 	 *            a qual se deseja pesquisar
 	 * @return retorna objeto {@code Cliente} correspondente ao nome informado
 	 */
@@ -34,22 +32,9 @@ public class ClienteNe {
 	 *            a qual se deseja pesquisar
 	 * @return retorna objeto {@code Cliente} correspondente ao nome informado
 	 */
-	public Cliente obterCliente(String nome) {
+	public Cliente obterClienteNome(String nome) {
 
 		return clienteDao.lerNome(nome);
-
-	}
-
-	/**
-	 * Obter o {@code Cliente} que corresponde ao telefone informado.
-	 *
-	 * @param nome
-	 *            a qual se deseja pesquisar
-	 * @return retorna objeto {@code Cliente} correspondente ao nome informado
-	 */
-	public Cliente obterTelefone(String telefone) {
-
-		return clienteDao.lerTelefone(telefone);
 
 	}
 
@@ -70,17 +55,20 @@ public class ClienteNe {
 	 * Incluir um {@code Cliente}.
 	 *
 	 * @param nome
+	 *            Nome do cliente.
 	 * @param telefone
+	 *            Telefone do cliente.
 	 * @param endereco
-	 * @param dataCriacao
+	 *            Endereço do cliente.
 	 * @return True se a inclusão ocorreu com sucesso, False se ocorreu algum
 	 *         erro.
 	 */
-	public boolean incluirCliente(String nome, String telefone, String endereco, Date dataCriacao) {
+	public boolean incluirCliente(String nome, String telefone1, String telefone2, String email,
+			String endereco) {
 
 		// Se o cliente nao existir faca a inclusao
-		if (obterCliente(nome) == null) {
-			Cliente cliente = new Cliente(0, nome, telefone, endereco, dataCriacao);
+		if (obterClienteNome(nome) == null) {
+			Cliente cliente = new Cliente(0, nome, telefone1, telefone2, email, endereco, null);
 			clienteDao.incluir(cliente);
 			return true;
 		} else {
@@ -91,25 +79,34 @@ public class ClienteNe {
 	}
 
 	/**
-	 * Atualizar as informações do {@code Cliente} que foi passado como parâmetro.
-	 * 
-	 * @param nomeAntigo
+	 * Atualizar as informações do {@code Cliente} que foi passado como
+	 * parâmetro.
+	 *
+	 * @param clieId
+	 *            Código do cliente
+	 * @param nomeNovo
+	 *            Nome do cliente
+	 * @param telefone
+	 *            Telefone do cliente
+	 * @param endereco
+	 *            Endereco do cliente
+	 *
+	 * @return True se atualizado com sucesso, False se houve erro.
 	 */
-	public boolean alterarCliente(int clieId, String nomeNovo, String telefone,
-			String endereco) {
+	public boolean alterarCliente(int clieId, String nomeNovo, String telefone, String endereco) {
 
 		Cliente clie = obterClienteId(clieId);
 
 		// se o cliente existir atualiza, senão retorna false para o chamador
 		if (clie != null) {
 			clie.setNome(nomeNovo);
-			clie.setTelefone(telefone);
+			clie.setTelefone1(telefone);
 			clie.setEndereco(endereco);
 
 			clienteDao.atualizar(clie);
 
 			// retorna que a atualização foi ok
-			return true; 
+			return true;
 		} else {
 			return false;
 		}
@@ -118,7 +115,7 @@ public class ClienteNe {
 	/**
 	 * Excluir o {@code Cliente} pelo ID do cliente.
 	 *
-	 * @param nome
+	 * @param clieId
 	 *            do {@code Cliente} que se deseja excluir
 	 * @return True se exclusão foi ok, ou False se ocorreu algum erro
 	 */
@@ -136,14 +133,14 @@ public class ClienteNe {
 	/**
 	 * Excluir o {@code Cliente} pelo telefone do cliente.
 	 *
-	 * @param nome
-	 *            do {@code Cliente} que se deseja excluir
+	 * @param telefone
+	 *            Telefone do {@code Cliente} que se deseja excluir
 	 * @return True se exclusão foi ok, ou False se ocorreu algum erro
 	 */
 	public boolean excluirTelefone(String telefone) {
 
-		if (obterTelefone(telefone) != null) {
-			clienteDao.excluirNome(telefone);
+		if (obterClienteTelefone(telefone) != null) {
+			clienteDao.excluirTelefone(telefone);
 			return true;
 		} else {
 			return false;
@@ -160,7 +157,7 @@ public class ClienteNe {
 	 */
 	public boolean excluirNome(String nome) {
 
-		if (obterCliente(nome) != null) {
+		if (obterClienteNome(nome) != null) {
 			clienteDao.excluirNome(nome);
 			return true;
 		} else {
@@ -172,7 +169,7 @@ public class ClienteNe {
 	/**
 	 * Retorna uma lista dos clientes cadastrados na base de dados.
 	 *
-	 * @return
+	 * @return Lista de clientes.
 	 */
 	public ArrayList<Cliente> listarClientes() {
 
@@ -185,7 +182,8 @@ public class ClienteNe {
 	 * parâmetro.
 	 *
 	 * @param nome
-	 * @return
+	 *            do cliente que se deseja usar como filtro.
+	 * @return Lista de clientes.
 	 */
 	public ArrayList<Cliente> listarClientes(String nome) {
 
