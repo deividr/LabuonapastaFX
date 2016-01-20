@@ -78,7 +78,7 @@ public class ClienteController extends StackPane implements Initializable {
         // Efetuar a inclusão somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
             // Se o retorno da inclusão do cliente for true significa que a inclusão foi ok
-            if (clienteNe.incluirCliente(nome, telefone1, endereco)) {
+            if (clienteNe.incluirCliente(nome, telefone1, telefone2, email, endereco)) {
                 showAlert("Inclusão de cliente efetuada com sucesso");
                 txtNome.requestFocus();
                 limparCampos();
@@ -261,7 +261,7 @@ public class ClienteController extends StackPane implements Initializable {
             showAlert("Informar o nome do Cliente");
             txtNome.requestFocus();
             return false;
-        } else if (telefone1 == "") {
+        } else if (telefone1.equals("")) {
         	showAlert("Informar o telefone1 do Cliente");
         	txtTelefone1.requestFocus();
         	return false;
