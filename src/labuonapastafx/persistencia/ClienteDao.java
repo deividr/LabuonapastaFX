@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import labuonapastafx.model.Cliente;
 
 /**
- * Responsável por todo o procedimento de persistência na base de dados Cliente
+ * Responsável por todo o procedimento de persistência na base de dados {@code Cliente}.
  *
  * @author   Deivid Assumpcao Rodrigues
  * @version  %I%, %G%
@@ -55,7 +55,7 @@ public class ClienteDao {
 
 		Cliente cliente;
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
 				+ "dt_criacao FROM cliente WHERE nm_cliente = ?";
 
 		try (Connection con = Conexao.getConexao();
@@ -93,19 +93,20 @@ public class ClienteDao {
 	 * Obter o {@code Cliente} referente ao telefone informado.
 	 *
 	 * @param telefone
-	 *            do {@code Cliente} que se deseja obter.
+	 *            Telefone principal do {@code Cliente} que se deseja obter.
 	 * @return retorna o {@code Cliente} correspondente ao nome informado.
 	 */
 	public Cliente lerTelefone(String telefone) {
 
 		Cliente cliente;
 
-		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone, ds_endereco, "
-				+ "dt_criacao FROM cliente WHERE nr_telefone = ?";
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
+				+ "dt_criacao FROM cliente WHERE nr_telefone1 = ? or nr_telefone2 = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, telefone);
+			stm.setString(2, telefone);
 			ResultSet rs = stm.executeQuery();
 
 			cliente = readNextCliente(rs);
@@ -124,14 +125,16 @@ public class ClienteDao {
 	 */
 	public void incluir(Cliente cliente) {
 
-		String sql = "INSERT INTO cliente (nm_cliente, nr_telefone, ds_endereco, "
-				+ "dt_criacao) VALUES (?, ?, ?, current_timestamp())";
+		String sql = "INSERT INTO cliente (nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
+				+ "dt_criacao) VALUES (?, ?, ?, ?, ?, current_timestamp())";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, cliente.getNome());
 			stm.setString(2, cliente.getTelefone1());
-			stm.setString(3, cliente.getEndereco());
+			stm.setString(3, cliente.getTelefone2());
+			stm.setString(4, cliente.getEmail());
+			stm.setString(5, cliente.getEndereco());
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
@@ -146,15 +149,17 @@ public class ClienteDao {
 	 * @param cliente com as informacoes para serem atualizadas na base.
 	 */
 	public void atualizar(Cliente cliente) {
-		String sql = "UPDATE cliente SET nm_cliente = ?, nr_telefone = ?,"
+		String sql = "UPDATE cliente SET nm_cliente = ?, nr_telefone1 = ?, nr_telefone2 = ?, ds_email = ?, "
 				+ "ds_endereco = ? WHERE cd_cliente = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, cliente.getNome());
 			stm.setString(2, cliente.getTelefone1());
-			stm.setString(3, cliente.getEndereco());
-			stm.setInt(4, cliente.getClieId());
+			stm.setString(3, cliente.getTelefone2());
+			stm.setString(4, cliente.getEmail());
+			stm.setString(5, cliente.getEndereco());
+			stm.setInt(6, cliente.getClieId());
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
@@ -209,11 +214,12 @@ public class ClienteDao {
 	 */
 	public void excluirTelefone(String telefone) {
 
-		String sql = "DELETE FROM cliente WHERE nr_telefone = ?";
+		String sql = "DELETE FROM cliente WHERE nr_telefone1 = ? or nr_telefone2 = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, telefone);
+			stm.setString(2, telefone);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());

@@ -42,7 +42,7 @@ public class ClienteNe {
 	 * Obter o {@code Cliente} que corresponde ao nome informado.
 	 *
 	 * @param telefone
-	 *            a qual se deseja pesquisar
+	 *            Telefone principal que se deseja consultar.
 	 * @return retorna objeto {@code Cliente} correspondente ao nome informado
 	 */
 	public Cliente obterClienteTelefone(String telefone) {
@@ -56,8 +56,12 @@ public class ClienteNe {
 	 *
 	 * @param nome
 	 *            Nome do cliente.
-	 * @param telefone
-	 *            Telefone do cliente.
+	 * @param telefone1
+	 *            Telefone principal do cliente.
+	 * @param telefone2
+	 * 			  Telefone secundário do cliente.
+     * @param email
+     *            Email do cliente.
 	 * @param endereco
 	 *            Endereço do cliente.
 	 * @return True se a inclusão ocorreu com sucesso, False se ocorreu algum
@@ -66,7 +70,7 @@ public class ClienteNe {
 	public boolean incluirCliente(String nome, String telefone1, String telefone2, String email,
 			String endereco) {
 
-		// Se o cliente nao existir faca a inclusao
+		// Se o cliente não existir faça a inclusão
 		if (obterClienteNome(nome) == null) {
 			Cliente cliente = new Cliente(0, nome, telefone1, telefone2, email, endereco, null);
 			clienteDao.incluir(cliente);
@@ -79,28 +83,34 @@ public class ClienteNe {
 	}
 
 	/**
-	 * Atualizar as informações do {@code Cliente} que foi passado como
-	 * parâmetro.
+	 * Atualizar as informações do {@code Cliente} que foi passado como parâmetro.
 	 *
 	 * @param clieId
 	 *            Código do cliente
-	 * @param nomeNovo
+	 * @param nome
 	 *            Nome do cliente
-	 * @param telefone
-	 *            Telefone do cliente
+	 * @param telefone1
+	 *            Telefone princial do cliente.
+     * @param telefone2
+     *            Telefone secundário do cliente.
+     * @param email
+     *            Email do cliente.
 	 * @param endereco
 	 *            Endereco do cliente
 	 *
 	 * @return True se atualizado com sucesso, False se houve erro.
 	 */
-	public boolean alterarCliente(int clieId, String nomeNovo, String telefone, String endereco) {
+	public boolean alterarCliente(int clieId, String nome, String telefone1, String telefone2, String email,
+                                  String endereco) {
 
 		Cliente clie = obterClienteId(clieId);
 
 		// se o cliente existir atualiza, senão retorna false para o chamador
 		if (clie != null) {
-			clie.setNome(nomeNovo);
-			clie.setTelefone1(telefone);
+			clie.setNome(nome);
+			clie.setTelefone1(telefone1);
+            clie.setTelefone2(telefone2);
+            clie.setEmail(email);
 			clie.setEndereco(endereco);
 
 			clienteDao.atualizar(clie);

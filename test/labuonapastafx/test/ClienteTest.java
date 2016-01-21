@@ -26,7 +26,7 @@ public class ClienteTest {
     @Test
     public void testIncluirCliente() {
 
-        assertTrue(clie.incluirCliente("Incluir Cliente Tal", "12345678912",
+        assertTrue(clie.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
                 "Rua Irlanda Creusa, 1754"));
 
         Cliente cliente = clie.obterClienteNome("Incluir Cliente Tal");
@@ -35,7 +35,7 @@ public class ClienteTest {
         assertEquals("12345678912", cliente.getTelefone1());
         assertEquals("Rua Irlanda Creusa, 1754", cliente.getEndereco());
 
-        assertFalse(clie.incluirCliente("Incluir Cliente Tal", "12345678912",
+        assertFalse(clie.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
                 "Rua Irlanda Creusa, 1754"));
 
         assertTrue(clie.excluirNome("Incluir Cliente Tal"));
@@ -45,16 +45,19 @@ public class ClienteTest {
     @Test
     public void testAlterarCliente() {
 
-        assertTrue(clie.incluirCliente("Alterar Cliente Tal", "12345678912",
+        assertTrue(clie.incluirCliente("Alterar Cliente Tal", "12345678912", "", "",
                 "Rua Irlanda Creusa, 1754"));
 
         assertTrue(clie.alterarCliente(clie.obterClienteNome("Alterar Cliente Tal").getClieId(),
-                "Alterar Cliente Tal para Isso", "87654987654", "Rua Irlanda Creusa, 8498"));
+                "Alterar Cliente Tal para Isso", "87654987654", "123456789", "alterar@alterar.com",
+                "Rua Irlanda Creusa, 8498"));
 
         Cliente cliente = clie.obterClienteNome("Alterar Cliente Tal para Isso");
 
         assertEquals("Alterar Cliente Tal para Isso", cliente.getNome());
         assertEquals("87654987654", cliente.getTelefone1());
+        assertEquals("123456789", cliente.getTelefone2());
+        assertEquals("alterar@alterar.com", cliente.getEmail());
         assertEquals("Rua Irlanda Creusa, 8498", cliente.getEndereco());
 
         assertTrue(clie.excluirNome("Alterar Cliente Tal para Isso"));
@@ -64,7 +67,7 @@ public class ClienteTest {
     @Test
     public void testExcluirId() {
 
-        clie.incluirCliente("Excluir Cliente Teste", "21654987789", "Rua Irlanda Creusa, 1754");
+        clie.incluirCliente("Excluir Cliente Teste", "21654987789", "", "", "Rua Irlanda Creusa, 1754");
 
         assertTrue(clie.excluirNome("Excluir Cliente Teste"));
 

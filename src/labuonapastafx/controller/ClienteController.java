@@ -107,7 +107,7 @@ public class ClienteController extends StackPane implements Initializable {
 
             if (Cliente != null) {
                 // Se o retorno da inclusão do Cliente for true significa que a inclusão foi ok.
-                if (clienteNe.alterarCliente(clieId, nome, telefone1, endereco)) {
+                if (clienteNe.alterarCliente(clieId, nome, telefone1, telefone2, email, endereco)) {
                     showAlert("Alteração de Cliente efetuada com sucesso");
                     limparCampos();
                     reiniciarListaCliente();
@@ -236,6 +236,8 @@ public class ClienteController extends StackPane implements Initializable {
 
         this.nome = txtNome.getText();
         this.telefone1 = txtTelefone1.getText().replaceAll("[^0-9]", "");
+        this.telefone2 = txtTelefone2.getText().replaceAll("[^0-9]", "");
+        this.email = txtEmail.getText();
         this.endereco = txtEndereco.getText();
     }
 
@@ -247,6 +249,8 @@ public class ClienteController extends StackPane implements Initializable {
         txtClieId.setText(Integer.toString(clie.getClieId()));
         txtNome.setText(clie.getNome());
         txtTelefone1.setText(clie.getTelefone1());
+        txtTelefone2.setText(clie.getTelefone2());
+        txtEmail.setText(clie.getEmail());
         txtEndereco.setText(clie.getEndereco());
     }
 
@@ -264,10 +268,6 @@ public class ClienteController extends StackPane implements Initializable {
         } else if (telefone1.equals("")) {
         	showAlert("Informar o telefone1 do Cliente");
         	txtTelefone1.requestFocus();
-        	return false;
-        } else if (endereco.equals("")) {
-        	showAlert("Informar o endereço do Cliente");
-        	txtEndereco.requestFocus();
         	return false;
         }
 
