@@ -15,8 +15,8 @@ public class ProdutoDao {
 	 * Obter o produto referente ao nome informado.
 	 *
 	 * @param nome
-	 *            do produto que se deseja obter.
-	 * @return retorna o produto nome correspondente ao nome informado.
+	 *            Nome do produto que se deseja obter.
+	 * @return Produto correspondente ao nome informado.
 	 */
 	public Produto ler(String nome) {
 
@@ -28,6 +28,39 @@ public class ProdutoDao {
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome);
+			ResultSet rs = stm.executeQuery();
+
+			if (rs.next()) {
+				ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt(5));
+				UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
+				produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
+						produtoEnum, rs.getByte(6));
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao consultar produto: " + e.getMessage());
+		}
+
+		return produto;
+	}
+
+	/**
+	 * Obter o produto referente ao código informado.
+	 *
+	 * @param cdProduto
+	 *            Código do produto que se deseja obter.
+	 * @return Produto correspondente ao código informado.
+	 */
+	public Produto lerCodProduto(int cdProduto) {
+
+		Produto produto = null;
+
+		String sql = "SELECT cd_produto, nm_produto, st_unidade, "
+				+ "vl_produto, cd_tipo_produto, cd_ativo FROM produto WHERE cd_produto = ?";
+
+		try (Connection con = Conexao.getConexao();
+			 PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setInt(1, cdProduto);
 			ResultSet rs = stm.executeQuery();
 
 			if (rs.next()) {
@@ -97,16 +130,16 @@ public class ProdutoDao {
 	 * informações do sistema como histórico, então o mais indicado seria usar a
 	 * exclusão lógica através do método exclusaoLogica.
 	 *
-	 * @param nome
+	 * @param cdProduto
 	 *            do {@code Produto} que se deseja excluir
 	 */
-	public void excluir(String nome) {
+	public void excluir(int cdProduto) {
 
-		String sql = "DELETE FROM produto WHERE nm_produto = ?";
+		String sql = "DELETE FROM produto WHERE cd_produto = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setString(1, nome);
+			stm.setInt(1, cdProduto);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao incluir produto: " + e.getMessage());
@@ -120,16 +153,16 @@ public class ProdutoDao {
 	 * Essa exclusão irá marcar o Produto como excluído através de um flag na
 	 * base, não será excluido o registro físico.
 	 *
-	 * @param nome
+	 * @param cdProduto
 	 *            do {@code Produto} que se deseja excluir.
 	 */
-	public void exclusaoLogica(String nome) {
+	public void exclusaoLogica(int cdProduto) {
 
-		String sql = "UPDATE produto SET cd_ativo = 0 WHERE nm_produto = ?";
+		String sql = "UPDATE produto SET cd_ativo = 0 WHERE cd_produto = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setString(1, nome);
+			stm.setInt(1, cdProduto);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao excluir logicamente usuario: " + e.getMessage());

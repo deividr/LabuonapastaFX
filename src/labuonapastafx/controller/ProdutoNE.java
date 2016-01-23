@@ -11,9 +11,9 @@ import labuonapastafx.persistencia.ProdutoDao;
 public class ProdutoNe {
 
     private ProdutoDao produtoDao;
-    
+
     public ProdutoNe() {
-    	produtoDao = new ProdutoDao();
+        produtoDao = new ProdutoDao();
     }
 
     /**
@@ -25,6 +25,18 @@ public class ProdutoNe {
     public Produto obterProduto(String nome) {
 
         return produtoDao.ler(nome);
+
+    }
+
+    /**
+     * Obter o {@code Produto} que corresponde ao código informado.
+     *
+     * @param cdProduto Código do produto a qual se deseja pesquisar
+     * @return retorna objeto {@code Produto} correspondente ao código informado.
+     */
+    public Produto obterCodProduto(int cdProduto) {
+
+        return produtoDao.lerCodProduto(cdProduto);
 
     }
 
@@ -53,8 +65,7 @@ public class ProdutoNe {
     }
 
     /**
-     * Atualizar as informações do {@code Produto} que foi passado como
-     * parâmetro.
+     * Atualizar as informações do {@code Produto} que foi passado como parâmetro.
      *
      * @param nome
      * @param unidade
@@ -63,9 +74,9 @@ public class ProdutoNe {
      * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto não existe).
      */
-    public boolean alterarProduto(String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo) {
+    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo) {
 
-        Produto prod = obterProduto(nome);
+        Produto prod = obterCodProduto(cdProduto);
 
         // se o usuario existir atualiza, senão retorna false para o chamador
         if (prod != null) {
@@ -87,13 +98,13 @@ public class ProdutoNe {
      * {@code Produto} da tabela, apenas torna-lo inativo. Isso é útil para o
      * histórico do sistema.
      *
-     * @param nome
+     * @param cdProduto
      * @return
      */
-    public boolean exclusaoLogica(String nome) {
+    public boolean exclusaoLogica(int cdProduto) {
 
-        if (obterProduto(nome) != null) {
-            produtoDao.exclusaoLogica(nome);
+        if (obterCodProduto(cdProduto) != null) {
+            produtoDao.exclusaoLogica(cdProduto);
             return true;
         } else {
             //Produto não existe
@@ -106,13 +117,13 @@ public class ProdutoNe {
      * Excluir o {@code Produto} fisicamente das bases de dados. CUIDADO:Essa exclusão pode
      * compromenter as informações de históricos do sistema
      *
-     * @param nome do {@code Produto} que se deseja excluir
+     * @param cdProduto Código do {@code Produto} que se deseja excluir
      * @return True se exclusão foi ok, ou False se ocorreu algum erro
      */
-    public boolean excluirProduto(String nome) {
+    public boolean excluirProduto(int cdProduto) {
 
-        if (obterProduto(nome) != null) {
-            produtoDao.excluir(nome);
+        if (obterCodProduto(cdProduto) != null) {
+            produtoDao.excluir(cdProduto);
             return true;
         } else {
             return false;

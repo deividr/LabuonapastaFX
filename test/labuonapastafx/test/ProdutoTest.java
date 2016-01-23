@@ -1,6 +1,7 @@
 package labuonapastafx.test;
 
 import static org.junit.Assert.*;
+
 import labuonapastafx.controller.ProdutoNe;
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
@@ -22,10 +23,14 @@ public class ProdutoTest {
 
         // Excluir das bases todos os produtos usados nos testes, para o caso de
         // algum existir ainda de testes anteriores.
-        prodt.excluirProduto("Incluir Produto Tal");
-        prodt.excluirProduto("Alterar Produto Tal");
-        prodt.excluirProduto("Excluir Produto Tal");
-        prodt.excluirProduto("exclusaoLogica");
+        try {
+            prodt.excluirProduto(prodt.obterProduto("Incluir Produto Tal").getProdId());
+            prodt.excluirProduto(prodt.obterProduto("Alterar Produto Tal").getProdId());
+            prodt.excluirProduto(prodt.obterProduto("Excluir Produto Tal").getProdId());
+            prodt.excluirProduto(prodt.obterProduto("exclusaoLogica").getProdId());
+        } catch (NullPointerException ne) {
+
+        }
     }
 
     @Test
@@ -42,7 +47,7 @@ public class ProdutoTest {
 
         assertFalse(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MOLHO));
 
-        prodt.excluirProduto("Incluir Produto Tal");
+        prodt.excluirProduto(produto.getProdId());
 
     }
 
@@ -51,15 +56,18 @@ public class ProdutoTest {
 
         prodt.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA);
 
-        assertTrue(prodt.alterarProduto("Alterar Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(678.90), ProdutoEnum.MOLHO));
-
         Produto produto = prodt.obterProduto("Alterar Produto Tal");
+
+        assertTrue(prodt.alterarProduto(produto.getProdId(), "Alterar Produto Tal",
+                UnidadeEnum.LITROS, BigDecimal.valueOf(678.90), ProdutoEnum.MOLHO));
+
+        produto = prodt.obterProduto("Alterar Produto Tal");
 
         assertEquals(UnidadeEnum.LITROS, produto.getUnidade());
         assertEquals(678.90, produto.getValor().doubleValue(), 0);
         assertEquals(ProdutoEnum.MOLHO, produto.getTipo());
 
-        prodt.excluirProduto("Alterar Produto Tal");
+        prodt.excluirProduto(produto.getProdId());
 
     }
 
@@ -69,19 +77,21 @@ public class ProdutoTest {
 
         prod.incluirProduto("exclusaoLogica", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(0.0), ProdutoEnum.DIVERSOS);
 
+        Produto produto = prod.obterProduto("exclusaoLogica");
+
         //verificar se o Produto foi incluido como ativo
-        assertTrue(prod.obterProduto("exclusaoLogica").isAtivo());
+        assertTrue(produto.isAtivo());
 
         //efetuar a exclusao logica, atualizando o Produto para inativo
-        assertTrue(prod.exclusaoLogica("exclusaoLogica"));
+        assertTrue(prod.exclusaoLogica(produto.getProdId()));
+
+        produto = prod.obterProduto("exclusaoLogica");
 
         //verificar se o Produto estah inativo
-        assertFalse(prod.obterProduto("exclusaoLogica").isAtivo());
+        assertFalse(produto.isAtivo());
 
-        //tentar excluir logicamente um Produto que nao existe
-        assertFalse(prod.excluirProduto("exclusaoIlogica"));
-
-        prod.excluirProduto("exclusaoLogica");
+        //tentar excluir logicamente um Produto que já está excluído.
+        assertTrue(prod.excluirProduto(produto.getProdId()));
 
     }
 
@@ -90,7 +100,7 @@ public class ProdutoTest {
 
         prodt.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(106.26), ProdutoEnum.SALADA);
 
-        assertTrue(prodt.excluirProduto("Excluir Produto Tal"));
+        assertTrue(prodt.excluirProduto(prodt.obterProduto("Excluir Produto Tal").getProdId()));
 
         assertEquals(null, prodt.obterProduto("Excluir Produto Tal"));
     }

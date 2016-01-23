@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.geometry.*?>
 <?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -33,7 +27,7 @@
 										<Insets bottom="10.0" top="10.0" />
 									</VBox.margin>
 								</HBox>
-								<GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="134.0" prefWidth="644.0">
+								<GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="140.0" prefWidth="644.0">
 									<columnConstraints>
 										<ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="-Infinity" prefWidth="79.0" />
 										<ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="-Infinity" prefWidth="86.0" />
@@ -41,22 +35,22 @@
 										<ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="-Infinity" prefWidth="275.0" />
 									</columnConstraints>
 									<rowConstraints>
-										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-										<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+										<RowConstraints vgrow="SOMETIMES" />
+										<RowConstraints vgrow="SOMETIMES" />
+										<RowConstraints vgrow="SOMETIMES" />
+										<RowConstraints vgrow="SOMETIMES" />
 									</rowConstraints>
 									<children>
 										<Label styleClass="label-opcao" text="ID:" />
 										<Label text="Produto:" GridPane.columnIndex="1" />
-                                        <TextField fx:id="txtProdId" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" />
-                                        <TextField fx:id="txtProduto" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyReleased="#txtProdutoListener" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtProdId" editable="false" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtProduto" onKeyReleased="#txtProdutoListener" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                                         <Label text="Tipo:" GridPane.rowIndex="2" />
 										<Label text="Unidade:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                         <Label prefHeight="21.0" prefWidth="351.0" text="Valor Unidade:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                        <ChoiceBox fx:id="cbxTipo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="164.0" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-										<ChoiceBox fx:id="cbxUnidade" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="172.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-										<TextField fx:id="txtValor" alignment="BASELINE_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                        <ChoiceBox fx:id="cbxTipo" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+										<ChoiceBox fx:id="cbxUnidade" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+										<TextField fx:id="txtValor" alignment="BASELINE_RIGHT" GridPane.columnIndex="3" GridPane.rowIndex="3" />
 									</children>
 									<VBox.margin>
 										<Insets />
@@ -64,7 +58,7 @@
 								</GridPane>
 								<HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity">
 									<children>
-										<Button mnemonicParsing="false" onAction="#botaoIncluirListener" prefHeight="34.0" prefWidth="111.0" text="Incluir">
+										<Button fx:id="btnIncluir" mnemonicParsing="false" onAction="#botaoIncluirListener" prefHeight="34.0" prefWidth="111.0" text="Incluir">
 											<HBox.margin>
 												<Insets bottom="10.0" right="10.0" top="10.0" />
 											</HBox.margin>
@@ -76,7 +70,7 @@
 												</ImageView>
 											</graphic>
 										</Button>
-										<Button mnemonicParsing="false" onAction="#botaoAlterarListener" prefHeight="34.0" prefWidth="111.0" text="Alterar">
+										<Button fx:id="btnAlterar" disable="true" mnemonicParsing="false" onAction="#botaoAlterarListener" prefHeight="34.0" prefWidth="111.0" text="Alterar">
 											<HBox.margin>
 												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
 											</HBox.margin>
@@ -88,21 +82,33 @@
 												</ImageView>
 											</graphic>
 										</Button>
-										<Button mnemonicParsing="false" onAction="#botaoExcluirListener" prefHeight="34.0" prefWidth="111.0" text="Excluir">
+										<Button fx:id="btnExcluir" disable="true" mnemonicParsing="false" onAction="#botaoExcluirListener" prefHeight="34.0" prefWidth="111.0" text="Excluir">
 											<HBox.margin>
 												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
 											</HBox.margin>
 											<graphic>
 												<ImageView pickOnBounds="true" preserveRatio="true">
 													<image>
-														<Image url="@imagens/excluir.png" />
+														<Image url="@imagens/lixeira.png" />
 													</image>
 												</ImageView>
 											</graphic>
 										</Button>
+                              <Button mnemonicParsing="false" onAction="#limparCampos" prefHeight="34.0" prefWidth="111.0" text="Limpar">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
+                                 </HBox.margin>
+                                 <graphic>
+                                    <ImageView pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagens/atualizar.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
 										<Button mnemonicParsing="false" onAction="#botaoSairListener" prefHeight="34.0" prefWidth="111.0" text="Sair">
 											<HBox.margin>
-												<Insets bottom="10.0" left="145.0" top="10.0" />
+												<Insets bottom="10.0" left="10.0" top="10.0" />
 											</HBox.margin>
 											<graphic>
 												<ImageView pickOnBounds="true" preserveRatio="true">

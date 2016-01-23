@@ -33,3 +33,13 @@
 .item-inativo {
     -fx-background-color: rgba(4, 4, 4, 0.42);
 }
+
+.text-field {
+    -fx-min-height: 35px;
+    -fx-pref-height: 35px;
+}
+
+.choice-box {
+    -fx-min-height: 35px;
+    -fx-pref-height: 35px;
+}
