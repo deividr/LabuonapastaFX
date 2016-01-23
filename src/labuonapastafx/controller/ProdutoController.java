@@ -75,6 +75,7 @@ public class ProdutoController extends StackPane implements Initializable {
 	private ObservableList<Produto> prodts;
 
 	// Variáveis de controle do formulário da tela
+	private int cdProduto;
 	private String nome;
 	private ProdutoEnum tipo;
 	private UnidadeEnum unidade;
@@ -118,26 +119,29 @@ public class ProdutoController extends StackPane implements Initializable {
 	@FXML
 	public void botaoAlterarListener(ActionEvent event) {
 
-		// Efetuar a alteração somente se as informações passadas estiverem
-		// corretas
+		// Efetuar a alteração somente se as informações passadas estiverem corretas.
 		if (validarInformacoes()) {
 
-			Produto Produto = produtoNe.obterProduto(this.nome);
-
-			if (Produto != null) {
-				// Se o retorno da inclusao do Produto for true significa que a
-				// inclusao foi ok
-				if (produtoNe.alterarProduto(nome, unidade, valor, tipo)) {
-					showAlert("Alteracao de Produto efetuada com sucesso");
-					limparCampos();
-					reiniciarListaProduto();
-				} else {
-					// inclusao nao foi efetuada porque o Produto já existe na
-					// base de dados
-					showAlert("Produto nao existe");
-				}
+			if (cdProduto == 0) {
+				showAlert("Selecionar produto para alteração.");
 			} else {
-				showAlert("Produto nao existe");
+				Produto Produto = produtoNe.obterCodProduto(this.cdProduto);
+
+				if (Produto != null) {
+					// Se o retorno da inclusao do Produto for true significa que a
+					// inclusao foi ok
+					if (produtoNe.alterarProduto(cdProduto, nome, unidade, valor, tipo)) {
+						showAlert("Alteração de Produto efetuada com sucesso.");
+						limparCampos();
+						reiniciarListaProduto();
+					} else {
+						// inclusao nao foi efetuada porque o Produto já existe na
+						// base de dados
+						showAlert("Produto não existe.");
+					}
+				} else {
+					showAlert("Produto não existe.");
+				}
 			}
 
 		}
@@ -154,13 +158,13 @@ public class ProdutoController extends StackPane implements Initializable {
 	public void botaoExcluirListener(ActionEvent event) {
 		getValueFields();
 
-		if (nome.equals("")) {
-			showAlert("Informar o produto");
+		if (cdProduto == 0) {
+			showAlert("Selecionar o produto que se deseja excluir.");
 		} else {
 			new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Produto").showAndWait()
 					.ifPresent(response -> {
 						if (response == ButtonType.OK) {
-							if (produtoNe.exclusaoLogica(this.nome)) {
+							if (produtoNe.exclusaoLogica(this.cdProduto)) {
 								showAlert("Exclusão efetuada com sucesso");
 								limparCampos();
 								reiniciarListaProduto();
@@ -257,6 +261,13 @@ public class ProdutoController extends StackPane implements Initializable {
 	 * Obter os valores dos componentes do formulário de {@code Produto}.
 	 */
 	private void getValueFields() {
+
+		if (!txtProdId.getText().equals("")) {
+			this.cdProduto = Integer.parseInt(txtProdId.getText());
+		} else {
+			this.cdProduto = 0;
+		}
+
 		this.nome = txtProduto.getText();
 		this.tipo = cbxTipo.getValue();
 		this.unidade = cbxUnidade.getValue();

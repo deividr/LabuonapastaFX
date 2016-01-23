@@ -67,16 +67,15 @@ public class ClienteNe {
 	 * @return True se a inclusão ocorreu com sucesso, False se ocorreu algum
 	 *         erro.
 	 */
-	public boolean incluirCliente(String nome, String telefone1, String telefone2, String email,
-			String endereco) {
-
+	public boolean incluirCliente(String nome, String telefone1, String telefone2, String email, String endereco) {
 		// Se o cliente não existir faça a inclusão
-		if (obterClienteNome(nome) == null) {
+		if (obterClienteNome(nome) == null && obterClienteTelefone(telefone1) == null
+				&& obterClienteTelefone(telefone2) == null) {
 			Cliente cliente = new Cliente(0, nome, telefone1, telefone2, email, endereco, null);
 			clienteDao.incluir(cliente);
 			return true;
 		} else {
-			// Se o cliente jah existir o retorno serah false
+			// Se o cliente já existir o retorno será false
 			return false;
 		}
 

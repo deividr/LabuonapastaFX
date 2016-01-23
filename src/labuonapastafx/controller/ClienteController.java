@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -85,7 +86,7 @@ public class ClienteController extends StackPane implements Initializable {
                 reiniciarListaCliente();
             } else {
                 // Inclusão nao foi efetuada porque o cliente ja existe na base de dados
-                showAlert("Cliente já existe na base de dados");
+                showAlert("Cliente já existe na base de dados ou o telefone está cadastrado para outro Cliente");
                 txtNome.requestFocus();
             }
 
@@ -266,9 +267,15 @@ public class ClienteController extends StackPane implements Initializable {
             txtNome.requestFocus();
             return false;
         } else if (telefone1.equals("")) {
-        	showAlert("Informar o telefone1 do Cliente");
+        	showAlert("Informar o telefone principal do Cliente");
         	txtTelefone1.requestFocus();
         	return false;
+        } else if (!email.equals("") &&
+                !email.matches("[a-zA-Z0-9]{4,}+([-_.][a-zA-Z0-9]{1,}@|@)+" +
+                        "[a-zA-Z0-9]{2,}\\.([a-zA-Z]{2,}|[a-zA-Z]{2,}\\.[a-zA-Z]{2,})")) {
+            showAlert("Endereço de email inválido");
+            txtEmail.requestFocus();
+            return false;
         }
 
         return true;
@@ -300,13 +307,14 @@ public class ClienteController extends StackPane implements Initializable {
     	clienteNe = new ClienteNe();
 
         txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
+
         txtTelefone1.textProperty().addListener(new FoneFieldListener(txtTelefone1));
-        //txtTelefone1.setAlignment(Pos.BASELINE_RIGHT);
+        txtTelefone1.setAlignment(Pos.BASELINE_RIGHT);
+
+        txtTelefone2.textProperty().addListener(new FoneFieldListener(txtTelefone2));
+        txtTelefone2.setAlignment(Pos.BASELINE_RIGHT);
+
         txtEndereco.textProperty().addListener(new LimitedTextListener(txtEndereco, 50));
-
-        txtTelefone1.lengthProperty().addListener((observable, oldValue, newValue) -> {
-
-        });
 
         // Obter a lista inicial dos clientes cadastrados na base de dados.
         clies = FXCollections.observableArrayList(clienteNe.listarClientes());
