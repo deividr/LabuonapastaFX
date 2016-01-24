@@ -14,20 +14,20 @@ import java.math.BigDecimal;
 
 public class ProdutoTest {
 
-    private ProdutoNe prodt;
+    private ProdutoNe prodtNe;
 
     @Before
     public void setUp() throws Exception {
         // Criar o objeto do Negócio.
-        prodt = new ProdutoNe();
+        prodtNe = new ProdutoNe();
 
         // Excluir das bases todos os produtos usados nos testes, para o caso de
         // algum existir ainda de testes anteriores.
         try {
-            prodt.excluirProduto(prodt.obterProduto("Incluir Produto Tal").getProdId());
-            prodt.excluirProduto(prodt.obterProduto("Alterar Produto Tal").getProdId());
-            prodt.excluirProduto(prodt.obterProduto("Excluir Produto Tal").getProdId());
-            prodt.excluirProduto(prodt.obterProduto("exclusaoLogica").getProdId());
+            prodtNe.excluirProduto(prodtNe.obterProduto("Incluir Produto Tal").getProdId());
+            prodtNe.excluirProduto(prodtNe.obterProduto("Alterar Produto Tal").getProdId());
+            prodtNe.excluirProduto(prodtNe.obterProduto("Excluir Produto Tal").getProdId());
+            prodtNe.excluirProduto(prodtNe.obterProduto("exclusaoLogica").getProdId());
         } catch (NullPointerException ne) {
 
         }
@@ -36,38 +36,38 @@ public class ProdutoTest {
     @Test
     public void testIncluirProduto() {
 
-        assertTrue(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA));
+        assertTrue(prodtNe.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA));
 
-        Produto produto = prodt.obterProduto("Incluir Produto Tal");
+        Produto produto = prodtNe.obterProduto("Incluir Produto Tal");
 
         assertEquals("Incluir Produto Tal", produto.getNome());
         assertEquals(UnidadeEnum.UNIDADE, produto.getUnidade());
         assertEquals(123.45, produto.getValor().doubleValue(), 0);
         assertEquals(ProdutoEnum.MASSA, produto.getTipo());
 
-        assertFalse(prodt.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MOLHO));
+        assertFalse(prodtNe.incluirProduto("Incluir Produto Tal", UnidadeEnum.UNIDADE, BigDecimal.valueOf(123.45), ProdutoEnum.MOLHO));
 
-        prodt.excluirProduto(produto.getProdId());
+        prodtNe.excluirProduto(produto.getProdId());
 
     }
 
     @Test
     public void testAlterarProduto() {
 
-        prodt.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA);
+        prodtNe.incluirProduto("Alterar Produto Tal", UnidadeEnum.KILOGRAMA, BigDecimal.valueOf(123.45), ProdutoEnum.MASSA);
 
-        Produto produto = prodt.obterProduto("Alterar Produto Tal");
+        Produto produto = prodtNe.obterProduto("Alterar Produto Tal");
 
-        assertTrue(prodt.alterarProduto(produto.getProdId(), "Alterar Produto Tal",
+        assertTrue(prodtNe.alterarProduto(produto.getProdId(), "Alterar Produto Tal",
                 UnidadeEnum.LITROS, BigDecimal.valueOf(678.90), ProdutoEnum.MOLHO));
 
-        produto = prodt.obterProduto("Alterar Produto Tal");
+        produto = prodtNe.obterProduto("Alterar Produto Tal");
 
         assertEquals(UnidadeEnum.LITROS, produto.getUnidade());
         assertEquals(678.90, produto.getValor().doubleValue(), 0);
         assertEquals(ProdutoEnum.MOLHO, produto.getTipo());
 
-        prodt.excluirProduto(produto.getProdId());
+        prodtNe.excluirProduto(produto.getProdId());
 
     }
 
@@ -98,11 +98,11 @@ public class ProdutoTest {
     @Test
     public void testExcluirProduto() {
 
-        prodt.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(106.26), ProdutoEnum.SALADA);
+        prodtNe.incluirProduto("Excluir Produto Tal", UnidadeEnum.LITROS, BigDecimal.valueOf(106.26), ProdutoEnum.SALADA);
 
-        assertTrue(prodt.excluirProduto(prodt.obterProduto("Excluir Produto Tal").getProdId()));
+        assertTrue(prodtNe.excluirProduto(prodtNe.obterProduto("Excluir Produto Tal").getProdId()));
 
-        assertEquals(null, prodt.obterProduto("Excluir Produto Tal"));
+        assertEquals(null, prodtNe.obterProduto("Excluir Produto Tal"));
     }
 
 }

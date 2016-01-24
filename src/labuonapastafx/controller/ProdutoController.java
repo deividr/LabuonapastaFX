@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -121,25 +122,16 @@ public class ProdutoController extends StackPane implements Initializable {
         // Efetuar a alteração somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
 
-            Produto Produto = produtoNe.obterCodProduto(this.cdProduto);
-
-            if (Produto != null) {
-                // Se o retorno da inclusao do Produto for true significa que a
-                // inclusao foi ok
-                if (produtoNe.alterarProduto(cdProduto, nome, unidade, valor, tipo)) {
-                    showAlert("Alteração de Produto efetuada com sucesso.");
-                    limparCampos();
-                    reiniciarListaProduto();
-                } else {
-                    // inclusao nao foi efetuada porque o Produto já existe na
-                    // base de dados
-                    showAlert("Produto não existe.");
-                }
+            // Se o retorno da alteração do Produto for true significa que a alteração foi ok.
+            if (produtoNe.alterarProduto(cdProduto, nome, unidade, valor, tipo)) {
+                showAlert("Alteração de Produto efetuada com sucesso.");
+                limparCampos();
+                reiniciarListaProduto();
             } else {
-                showAlert("Produto não existe.");
+                // Alteração nao foi efetuada porque o Produto não existe na base de dados.
+                showAlert("Produto não existe, ou o nome alterado já pertence a outro Produto.");
             }
         }
-
     }
 
     /**
@@ -151,23 +143,19 @@ public class ProdutoController extends StackPane implements Initializable {
     public void botaoExcluirListener(ActionEvent event) {
         getValueFields();
 
-        if (cdProduto == 0) {
-            showAlert("Selecionar o produto que se deseja excluir.");
-        } else {
-            new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Produto").showAndWait()
-                    .ifPresent(response -> {
-                        if (response == ButtonType.OK) {
-                            if (produtoNe.exclusaoLogica(this.cdProduto)) {
-                                showAlert("Exclusão efetuada com sucesso");
-                                limparCampos();
-                                reiniciarListaProduto();
-                            } else {
-                                showAlert("Produto não encontrado na base");
-                            }
+        new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Produto").showAndWait()
+                .ifPresent(response -> {
+                    if (response == ButtonType.OK) {
+                        if (produtoNe.exclusaoLogica(this.cdProduto)) {
+                            showAlert("Exclusão efetuada com sucesso");
+                            limparCampos();
+                            reiniciarListaProduto();
+                        } else {
+                            showAlert("Produto não encontrado na base");
                         }
-                        txtProduto.requestFocus();
-                    });
-        }
+                    }
+                    txtProduto.requestFocus();
+                });
     }
 
     /**
@@ -398,6 +386,11 @@ public class ProdutoController extends StackPane implements Initializable {
         });
 
         tblProduto.setItems(prodts);
+
+        Platform.runLater(() -> {
+            txtProduto.requestFocus();
+        });
+
     }
 
     /**

@@ -10,97 +10,112 @@ import org.junit.Test;
 
 public class UsuarioTest {
 
+    private UsuarioNe userNe;
+
     @Before
     public void setUp() throws Exception {
+
+        userNe = new UsuarioNe();
+
+        try {
+            userNe.excluirUsuario(userNe.obterUsuario("incluir").getUserId());
+            userNe.excluirUsuario(userNe.obterUsuario("validarSenha").getUserId());
+            userNe.excluirUsuario(userNe.obterUsuario("alterar").getUserId());
+            userNe.excluirUsuario(userNe.obterUsuario("excluir").getUserId());
+            userNe.excluirUsuario(userNe.obterUsuario("exclusaoLogica").getUserId());
+        } catch (NullPointerException ne) {
+
+        }
+
     }
 
     @Test
     public void testIncluirUsuario() {
 
-        UsuarioNe user = new UsuarioNe();
+        assertTrue(userNe.incluirUsuario("incluir", "Teste de Inclusao", AcessoEnum.CADASTRO, "incluir"));
 
-        assertTrue(user.incluirUsuario("incluir", "Teste de Inclusao", AcessoEnum.CADASTRO, "incluir"));
-
-        Usuario usuario = user.obterUsuario("incluir");
-
-        System.out.println(usuario.toString());
+        Usuario usuario = userNe.obterUsuario("incluir");
 
         assertEquals("incluir", usuario.getLogin());
+        assertEquals("Teste de Inclusao", usuario.getNomeCompleto());
+        assertEquals(AcessoEnum.CADASTRO, usuario.getTipoAcesso());
         assertEquals("incluir", usuario.getSenha());
         assertTrue(usuario.isAtivo());
 
-        assertFalse(user.incluirUsuario("incluir", "Teste de Inclusao", AcessoEnum.CADASTRO, "incluir"));
+        assertFalse(userNe.incluirUsuario("incluir", "Teste de Inclusao", AcessoEnum.CADASTRO, "incluir"));
 
-        user.excluirUsuario("incluir");
+        userNe.excluirUsuario(usuario.getUserId());
 
     }
 
     @Test
     public void testValidarSenha() {
 
-        UsuarioNe user = new UsuarioNe();
+        userNe.incluirUsuario("validarSenha", "Teste de Validar Senha", AcessoEnum.CADASTRO, "validarSenha");
 
-        user.incluirUsuario("validarSenha", "Teste de Validar Senha", AcessoEnum.CADASTRO, "validarSenha");
-
-        assertTrue(user.validarSenha("validarSenha", "validarSenha"));
-        assertFalse(user.validarSenha("validarSenha", "naovalidousenha"));
+        assertTrue(userNe.validarSenha("validarSenha", "validarSenha"));
+        assertFalse(userNe.validarSenha("validarSenha", "naovalidousenha"));
 
         //excluir o usuario incluido para testes futuros
-        user.excluirUsuario("validarSenha");
+        userNe.excluirUsuario(userNe.obterUsuario("validarSenha").getUserId());
 
     }
 
     @Test
     public void testExcluirLogicamente() {
-        UsuarioNe user = new UsuarioNe();
 
-        user.incluirUsuario("exclusaoLogica", "Teste de Exclusao Logica", AcessoEnum.CADASTRO, "exclusaoLogica");
+        userNe.incluirUsuario("exclusaoLogica", "Teste de Exclusao Logica", AcessoEnum.CADASTRO, "exclusaoLogica");
+
+        Usuario usuar = userNe.obterUsuario("exclusaoLogica");
 
         //verificar se o usuario foi incluido como ativo
-        assertTrue(user.obterUsuario("exclusaoLogica").isAtivo());
+        assertTrue(usuar.isAtivo());
 
         //efetuar a exclusao logica, atualizando o usuario para inativo
-        assertTrue(user.exclusaoLogica("exclusaoLogica"));
+        assertTrue(userNe.exclusaoLogica(usuar.getUserId()));
+
+        usuar = userNe.obterUsuario("exclusaoLogica");
 
         //verificar se o usuario estah inativo
-        assertFalse(user.obterUsuario("exclusaoLogica").isAtivo());
+        assertFalse(usuar.isAtivo());
 
-        //tentar excluir logicamente um usuario que nao existe
-        assertFalse(user.excluirUsuario("exclusaoIlogica"));
-
-        user.excluirUsuario("exclusaoLogica");
+        userNe.excluirUsuario(usuar.getUserId());
 
     }
 
     @Test
     public void testAlterarUsuario() {
-        UsuarioNe user = new UsuarioNe();
 
-        user.incluirUsuario("alterar", "Teste de Alteracao", AcessoEnum.CADASTRO, "alterar");
+        userNe.incluirUsuario("alterar", "Teste de Alteracao", AcessoEnum.CADASTRO, "alterar");
 
-        assertTrue(user.alterarUsuario("alterar", "Teste de Alteracao com Sucesso", AcessoEnum.PEDIDO, "alterado"));
+        Usuario user = userNe.obterUsuario("alterar");
 
-        Usuario usuario = user.obterUsuario("alterar");
+        assertTrue(userNe.alterarUsuario(user.getUserId(), "alterar", "Teste de Alteracao com Sucesso",
+                AcessoEnum.PEDIDO, "alterado"));
 
-        assertEquals("alterado", usuario.getSenha());
-        assertEquals("alterar", usuario.getLogin());
-        assertEquals("Teste de Alteracao com Sucesso", usuario.getNomeCompleto());
-        assertEquals(AcessoEnum.PEDIDO, usuario.getTipoAcesso());
-        assertTrue(usuario.isAtivo());
+        Usuario usuar = userNe.obterUsuario("alterar");
 
-        user.excluirUsuario("alterar");
+        assertEquals("alterar", usuar.getLogin());
+        assertEquals("Teste de Alteracao com Sucesso", usuar.getNomeCompleto());
+        assertEquals(AcessoEnum.PEDIDO, usuar.getTipoAcesso());
+        assertEquals("alterado", usuar.getSenha());
+        assertTrue(usuar.isAtivo());
+
+        userNe.excluirUsuario(usuar.getUserId());
 
     }
 
     @Test
     public void testExcluirUsuario() {
-        UsuarioNe user = new UsuarioNe();
 
-        user.incluirUsuario("excluir", "Teste de Exclusao", AcessoEnum.CADASTRO, "excluir");
+        userNe.incluirUsuario("excluir", "Teste de Exclusao", AcessoEnum.CADASTRO, "excluir");
 
-        assertTrue(user.excluirUsuario("excluir"));
+        Usuario usuar = userNe.obterUsuario("excluir");
 
-        assertEquals(null, user.obterUsuario("excluir"));
+        assertTrue(userNe.excluirUsuario(usuar.getUserId()));
+
+        assertEquals(null, userNe.obterUsuario("excluir"));
+
     }
 
 }

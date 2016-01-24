@@ -27,15 +27,15 @@ public class Usuario implements Serializable {
     /**
      * Construtor com dados iniciais
      *
-     * @param userID        Número único que identifica o usuario dentro do sistema
+     * @param userId        Número único que identifica o usuario dentro do sistema
      * @param login         Login do usuário dentro do sistema
      * @param nomeCompleto  Nome completo do usuário
      * @param tipoAcesso    Perfil de acesso para esse usuário
      * @param senha         Senha cadastrada para ele
      * @param ativo         Informa se o usuário está ativo ou não no sistema
      */
-    public Usuario(int userID, String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha, byte ativo) {
-        this.userId = new SimpleIntegerProperty(userID);
+    public Usuario(int userId, String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha, byte ativo) {
+        this.userId = new SimpleIntegerProperty(userId);
         this.login = new SimpleStringProperty(login);
         this.nomeCompleto = new SimpleStringProperty(nomeCompleto);
         this.tipoAcesso = new SimpleObjectProperty<>(tipoAcesso);
@@ -79,16 +79,16 @@ public class Usuario implements Serializable {
 		this.senhaProperty().set(senha);
 	}
 	
-	public final IntegerProperty userIDProperty() {
+	public final IntegerProperty userIdProperty() {
 		return this.userId;
 	}
 	
-	public final int getUserID() {
-		return this.userIDProperty().get();
+	public final int getUserId() {
+		return this.userIdProperty().get();
 	}
 	
-	public final void setUserID(final int userID) {
-		this.userIDProperty().set(userID);
+	public final void setUserId(final int userId) {
+		this.userIdProperty().set(userId);
 	}
 
 	public final ObjectProperty<Byte> ativoProperty() {
@@ -134,7 +134,7 @@ public class Usuario implements Serializable {
         //igualdade no codigo do usuario.
         if (o != null && o.getClass() == this.getClass()) {
             Usuario user = (Usuario) o;
-            if (this.getUserID() == user.getUserID()) {
+            if (this.getUserId() == user.getUserId()) {
                 return true;
             }
         }

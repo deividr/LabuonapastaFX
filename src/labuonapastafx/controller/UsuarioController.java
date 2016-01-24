@@ -3,21 +3,16 @@ package labuonapastafx.controller;
 import java.net.URL;
 import java.util.Collections;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -44,7 +39,7 @@ public class UsuarioController extends StackPane implements Initializable {
     @FXML
     private GridPane gridForm;
     @FXML
-    private TextField txtID;
+    private TextField txtCodUsuario;
     @FXML
     private TextField txtLogin;
     @FXML
@@ -65,6 +60,8 @@ public class UsuarioController extends StackPane implements Initializable {
     private TableColumn<Usuario, AcessoEnum> tblcolAcesso;
     @FXML
     private TableColumn<Usuario, String> tblcolAtivo;
+    @FXML
+    private Button btnIncluir, btnAlterar, btnExcluir;
 
     // Variaveis de controle geral
     private MenuController menuControl;
@@ -72,6 +69,7 @@ public class UsuarioController extends StackPane implements Initializable {
     private ObservableList<Usuario> users;
 
     // Variaveis de controle do formulário da tela
+    private int cdUsuario;
     private String login;
     private String nome;
     private String senha;
@@ -117,27 +115,17 @@ public class UsuarioController extends StackPane implements Initializable {
 		// Efetuar a alteração somente se as informações passadas estiverem
         // corretas
         if (validarInformacoes()) {
-
-            Usuario usuario = usuarioNe.obterUsuario(this.login);
-
-            if (usuario != null) {
-				// Se o retorno da inclusao do usuario for true significa que a
-                // inclusao foi ok
-                if (usuarioNe.alterarUsuario(login, nome, acesso, senha)) {
-                    showAlert("Alteracao de usuario efetuada com sucesso");
-                    limparCampos();
-                    reiniciarListaUsuario();
-                } else {
-					// inclusao nao foi efetuada porque o usario ja existe na
-                    // base de dados
-                    showAlert("Usuario nao existe");
-                }
+            // Se o retorno da inclusao do usuario for true significa que a
+            // inclusao foi ok
+            if (usuarioNe.alterarUsuario(cdUsuario, login, nome, acesso, senha)) {
+                showAlert("Alteracao de usuario efetuada com sucesso");
+                limparCampos();
+                reiniciarListaUsuario();
             } else {
-                showAlert("Usuario nao existe");
+                // Inclusão não foi efetuada porque o usario ja existe na base de dados
+                showAlert("Usuário não existe, ou o nome alterado já pertence a outro Usuário.");
             }
-
         }
-
     }
 
     /**
@@ -149,22 +137,18 @@ public class UsuarioController extends StackPane implements Initializable {
     public void botaoExcluirListener(ActionEvent event) {
         getValueFields();
 
-        if (login.equals("")) {
-            showAlert("Informar o login");
-        } else {
-            new Alert(AlertType.CONFIRMATION, "Confirma a exclusao do usuário").showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    if (usuarioNe.exclusaoLogica(this.login)) {
-                        showAlert("Exclusao efetuada com sucesso");
-                        limparCampos();
-                        reiniciarListaUsuario();
-                    } else {
-                        showAlert("Usuario nao encontrado na base");
-                    }
+        new Alert(AlertType.CONFIRMATION, "Confirma a exclusao do usuário").showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                if (usuarioNe.exclusaoLogica(this.cdUsuario)) {
+                    showAlert("Exclusão efetuada com sucesso");
+                    limparCampos();
+                    reiniciarListaUsuario();
+                } else {
+                    showAlert("Usuário não encontrado na base");
                 }
-                txtLogin.requestFocus();
-            });
-        }
+            }
+            txtLogin.requestFocus();
+        });
     }
 
     /**
@@ -213,6 +197,7 @@ public class UsuarioController extends StackPane implements Initializable {
     /**
      * Limpar os campos do fomulario de usuarios
      */
+    @FXML
     private void limparCampos() {
 
         gridForm.getChildren().stream().forEach((c) -> {
@@ -247,6 +232,7 @@ public class UsuarioController extends StackPane implements Initializable {
      * Obter os valores dos componentes do formulario de usuarios
      */
     private void getValueFields() {
+        this.cdUsuario = Integer.parseInt(txtCodUsuario.getText());
         this.login = txtLogin.getText();
         this.nome = txtNome.getText();
         this.acesso = cbxAcesso.getValue();
@@ -259,7 +245,7 @@ public class UsuarioController extends StackPane implements Initializable {
      * classe UsuarioGUI
      */
     private void setValueFields(Usuario user) {
-        txtID.setText(Integer.toString(user.getUserID()));
+        txtCodUsuario.setText(Integer.toString(user.getUserId()));
         txtLogin.setText(user.getLogin());
         txtNome.setText(user.getNomeCompleto());
         cbxAcesso.setValue(user.getTipoAcesso());
@@ -309,7 +295,8 @@ public class UsuarioController extends StackPane implements Initializable {
         alert.setTitle("Informação Inválida");
         alert.setHeaderText(null);
         alert.setContentText(msg);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
+                .add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
         alert.showAndWait();
     }
 
@@ -323,6 +310,19 @@ public class UsuarioController extends StackPane implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     	
     	usuarioNe = new UsuarioNe();
+
+        txtCodUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
+            //Só vai permitir alterar ou excluir quando o usuário selecionar um Usuário.
+            if (newValue.equals("")) {
+                btnAlterar.setDisable(true);
+                btnExcluir.setDisable(true);
+                btnIncluir.setDisable(false);
+            } else {
+                btnAlterar.setDisable(false);
+                btnExcluir.setDisable(false);
+                btnIncluir.setDisable(true);
+            }
+        });
 
         txtLogin.textProperty().addListener(new LimitedTextListener(txtLogin, 15));
         txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 50));
@@ -369,6 +369,10 @@ public class UsuarioController extends StackPane implements Initializable {
         });
 
         tblUsuario.setItems(users);
+
+        Platform.runLater(() -> {
+            txtLogin.requestFocus();
+        });
 
     }
 

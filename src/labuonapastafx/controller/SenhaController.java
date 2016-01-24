@@ -53,8 +53,8 @@ public class SenhaController extends StackPane implements Initializable {
 		if (validarInformacoes()) {
 			// Se o retorno da alteracao do usuario for true significa que a
 			// alteracao foi ok
-			if (usuarioNe.alterarUsuario(menuControl.user.getLogin(), menuControl.user.getNomeCompleto(),
-					menuControl.user.getTipoAcesso(), novaSenha)) {
+			if (usuarioNe.alterarUsuario(menuControl.user.getUserId(), menuControl.user.getLogin(),
+					menuControl.user.getNomeCompleto(), menuControl.user.getTipoAcesso(), novaSenha)) {
 				showAlert("Alteracao de senha efetuada com sucesso");
 				limparCampos();
 			} else {
