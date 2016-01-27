@@ -15,12 +15,24 @@ public class UsuarioNe {
     }
 
     /**
-     * Metodo para verificar se existe usuario informado cadastrado na base de
-     * dados
+     * Metodo para verificar se existe usuario informado cadastrado na base de dados
+     *
+     * @param login Login do Usuário que se deseja pesquisar.
      */
     public Usuario obterUsuario(String login) {
 
         return usuarioDao.ler(login);
+
+    }
+
+    /**
+     * Metodo para verificar se existe usuario informado cadastrado na base de dados
+     *
+     * @param cdUsuario Código do Usuário que se deseja pesquisar.
+     */
+    public Usuario obterCodUsuario(int cdUsuario) {
+
+        return usuarioDao.lerCodUsuario(cdUsuario);
 
     }
 
@@ -50,10 +62,10 @@ public class UsuarioNe {
     /**
      * Incluir um novo usuario no sistema
      *
-     * @param usuario
-     * @param senha
+     * @param login
      * @param nomeCompleto
      * @param tipoAcesso
+     * @param senha
      * @return true se incluido com sucesso e false se ocorreu algum erro (Ex.: Usuário já existe)
      */
     public boolean incluirUsuario(String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha) {
@@ -74,25 +86,39 @@ public class UsuarioNe {
 
     /**
      * Alterar as informações do usuário conforme passado via parâmetro.
-     * 
+     *
+     * @param cdUsuario Código do Usuário que se deseja alterar.
      * @param login
      * @param nomeCompleto
      * @param tipoAcesso
      * @param senha
      * @return true Se a alteração ocorreu com sucesso, ou false se ocorreu algum erro(Ex.: Usuário já existe)
      */
-    public boolean alterarUsuario(String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha) {
+    public boolean alterarUsuario(int cdUsuario, String login, String nomeCompleto, AcessoEnum tipoAcesso,
+                                  String senha) {
 
-        Usuario usuario = obterUsuario(login);
+        Usuario usuar = obterCodUsuario(cdUsuario);
 
-        // se o usuario existir atualiza, senao retorna false para o chamador
-        if (usuario != null) {
-            usuario.setNomeCompleto(nomeCompleto);
-            usuario.setTipoAcesso(tipoAcesso);
-            usuario.setSenha(senha);
-            usuario.setAtivo((byte) 1);
+        // Se o usuario existir atualiza, senao retorna false para o chamador
+        if (usuar != null) {
 
-            usuarioDao.atualizar(usuario);
+            // Se o login foi alterado, verificar se não pertence a outro Usuário.
+            if (!usuar.getLogin().equals(login)) {
+
+                Usuario usuar2 = obterUsuario(login);
+
+                if (usuar2 != null)
+                    // Se o login do Usuário alterado pertence a outro Usuário, invalida a alteração.
+                    if (usuar.getUserId() != usuar2.getUserId())
+                        return false;
+            }
+
+            usuar.setNomeCompleto(nomeCompleto);
+            usuar.setTipoAcesso(tipoAcesso);
+            usuar.setSenha(senha);
+            usuar.setAtivo((byte) 1);
+
+            usuarioDao.atualizar(usuar);
 
             return true; //retorna que a atualizacao foi ok
         } else {
@@ -105,13 +131,13 @@ public class UsuarioNe {
      * Excluir o usuário logicamente, essa exclusão não irá eliminar o usuário
      * da tabela, apenas torna-lo inativo. Isso é útil para o histórico do sistema.
      * 
-     * @param login
+     * @param cdUsuario
      * @return
      */
-    public boolean exclusaoLogica(String login) {
+    public boolean exclusaoLogica(int cdUsuario) {
 
-        if (obterUsuario(login) != null) {
-            usuarioDao.exclusaoLogica(login);
+        if (obterCodUsuario(cdUsuario) != null) {
+            usuarioDao.exclusaoLogica(cdUsuario);
             return true;
         } else {
             //usuario nao existe
@@ -124,13 +150,13 @@ public class UsuarioNe {
      * Excluir o usuário fisicamente das bases de dados. CUIDADO:Essa exclusão pode
      * compromenter as informações de históricos do sistema
      * 
-     * @param login
+     * @param cdUsuario
      * @return
      */
-    public boolean excluirUsuario(String login) {
+    public boolean excluirUsuario(int cdUsuario) {
 
-        if (obterUsuario(login) != null) {
-            usuarioDao.excluir(login);
+        if (obterCodUsuario(cdUsuario) != null) {
+            usuarioDao.excluir(cdUsuario);
             return true;
         } else {
             //usuario nao existe

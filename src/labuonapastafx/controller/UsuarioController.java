@@ -93,15 +93,15 @@ public class UsuarioController extends StackPane implements Initializable {
                 showAlert("Inclusão de usuário efetuada com sucesso");
                 txtLogin.requestFocus();
                 limparCampos();
-                reiniciarListaUsuario();
             } else {
-				// inclusão nao foi efetuada porque o usário ja existe na base
+				// Inclusão nao foi efetuada porque o usário ja existe na base
                 // de dados
                 showAlert("Usuário já existe na base de dados");
                 txtLogin.requestFocus();
             }
 
         }
+
     }
 
     /**
@@ -120,10 +120,9 @@ public class UsuarioController extends StackPane implements Initializable {
             if (usuarioNe.alterarUsuario(cdUsuario, login, nome, acesso, senha)) {
                 showAlert("Alteracao de usuario efetuada com sucesso");
                 limparCampos();
-                reiniciarListaUsuario();
             } else {
                 // Inclusão não foi efetuada porque o usario ja existe na base de dados
-                showAlert("Usuário não existe, ou o nome alterado já pertence a outro Usuário.");
+                showAlert("Usuário não existe, ou o login alterado já pertence a outro Usuário.");
             }
         }
     }
@@ -142,7 +141,6 @@ public class UsuarioController extends StackPane implements Initializable {
                 if (usuarioNe.exclusaoLogica(this.cdUsuario)) {
                     showAlert("Exclusão efetuada com sucesso");
                     limparCampos();
-                    reiniciarListaUsuario();
                 } else {
                     showAlert("Usuário não encontrado na base");
                 }
@@ -189,6 +187,9 @@ public class UsuarioController extends StackPane implements Initializable {
         }
     }
 
+    /**
+     * Sair da tela de cadastro de Usuário.
+     */
     @FXML
     public void botaoSairListener() {
         menuControl.unloadView();
@@ -209,6 +210,8 @@ public class UsuarioController extends StackPane implements Initializable {
         });
 
         txtLogin.requestFocus();
+
+        reiniciarListaUsuario();
     }
 
     /**

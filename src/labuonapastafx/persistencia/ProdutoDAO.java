@@ -1,5 +1,6 @@
 package labuonapastafx.persistencia;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,7 +24,7 @@ public class ProdutoDao {
 		Produto produto = null;
 
 		String sql = "SELECT cd_produto, nm_produto, st_unidade, "
-				+ "vl_produto, cd_tipo_produto, cd_ativo FROM produto " + "WHERE nm_produto = ?";
+				+ "vl_produto, cd_tipo_produto, cd_ativo FROM produto WHERE nm_produto = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
@@ -105,7 +106,7 @@ public class ProdutoDao {
 	 * Atualizar as informacões do Produto que foi passado como parametro
 	 *
 	 * @param produto
-	 *            Produto com as informacoes para serem atualizadas na base
+	 *            Produto com as informações para serem atualizadas na base.
 	 */
 	public void atualizar(Produto produto) {
 		String sql = "UPDATE produto SET nm_produto = ?, st_unidade = ?,"
@@ -120,8 +121,9 @@ public class ProdutoDao {
 			stm.setInt(5, produto.getProdId());
 			stm.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
+			throw new RuntimeException("Erro ao atualizar usuário: " + e.getMessage());
 		}
+
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class ProdutoDao {
 	 * exclusão lógica através do método exclusaoLogica.
 	 *
 	 * @param cdProduto
-	 *            do {@code Produto} que se deseja excluir
+	 *            Código do {@code Produto} que se deseja excluir.
 	 */
 	public void excluir(int cdProduto) {
 
@@ -154,7 +156,7 @@ public class ProdutoDao {
 	 * base, não será excluido o registro físico.
 	 *
 	 * @param cdProduto
-	 *            do {@code Produto} que se deseja excluir.
+	 *            Código do {@code Produto} que se deseja excluir.
 	 */
 	public void exclusaoLogica(int cdProduto) {
 
@@ -194,8 +196,8 @@ public class ProdutoDao {
 				ProdutoEnum tipo = ProdutoEnum.valueOf(Integer.parseInt(rs.getString(5)));
 
 				// Carregar o usuario da base de dados
-				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
-						tipo, rs.getByte(6)));
+				produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade,
+						rs.getBigDecimal(4), tipo, rs.getByte(6)));
 			}
 
 		} catch (SQLException e) {
@@ -219,7 +221,7 @@ public class ProdutoDao {
 		ArrayList<Produto> produtos = new ArrayList<>();
 
 		try (Connection con = Conexao.getConexao();
-				PreparedStatement stm = con.prepareStatement(sql)) {
+			 PreparedStatement stm = con.prepareStatement(sql)) {
 			stm.setString(1, nome + "%");
 			ResultSet rs = stm.executeQuery();
 
@@ -240,5 +242,4 @@ public class ProdutoDao {
 
 		return produtos;
 	}
-
 }

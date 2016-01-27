@@ -8,51 +8,51 @@ import org.junit.Test;
 
 public class ClienteTest {
 
-    private ClienteNe clie;
+    private ClienteNe clieNe;
 
     @Before
     public void setUp() throws Exception {
         // Criar o objeto do Negócio.
-        clie = new ClienteNe();
+        clieNe = new ClienteNe();
 
         // Excluir das bases todos os clientes usados nos testes, para o caso de
         // algum existir ainda de testes anteriores.
-        clie.excluirNome("Incluir Cliente Tal");
-        clie.excluirNome("Alterar Cliente Tal");
-        clie.excluirNome("Alterar Cliente Tal para Isso");
-        clie.excluirNome("Excluir Cliente Tal");
+        clieNe.excluir(clieNe.obterClienteNome("Incluir Cliente Tal").getClieId());
+        clieNe.excluir(clieNe.obterClienteNome("Alterar Cliente Tal").getClieId());
+        clieNe.excluir(clieNe.obterClienteNome("Alterar Cliente Tal para Isso").getClieId());
+        clieNe.excluir(clieNe.obterClienteNome("Excluir Cliente Tal").getClieId());
     }
 
     @Test
     public void testIncluirCliente() {
 
-        assertTrue(clie.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
+        assertTrue(clieNe.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
                 "Rua Irlanda Creusa, 1754"));
 
-        Cliente cliente = clie.obterClienteNome("Incluir Cliente Tal");
+        Cliente cliente = clieNe.obterClienteNome("Incluir Cliente Tal");
 
         assertEquals("Incluir Cliente Tal", cliente.getNome());
         assertEquals("12345678912", cliente.getTelefone1());
         assertEquals("Rua Irlanda Creusa, 1754", cliente.getEndereco());
 
-        assertFalse(clie.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
+        assertFalse(clieNe.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
                 "Rua Irlanda Creusa, 1754"));
 
-        assertTrue(clie.excluirNome("Incluir Cliente Tal"));
+        assertTrue(clieNe.excluir(cliente.getClieId()));
 
     }
 
     @Test
     public void testAlterarCliente() {
 
-        assertTrue(clie.incluirCliente("Alterar Cliente Tal", "12345678912", "", "",
+        assertTrue(clieNe.incluirCliente("Alterar Cliente Tal", "12345678912", "", "",
                 "Rua Irlanda Creusa, 1754"));
 
-        assertTrue(clie.alterarCliente(clie.obterClienteNome("Alterar Cliente Tal").getClieId(),
+        assertTrue(clieNe.alterarCliente(clieNe.obterClienteNome("Alterar Cliente Tal").getClieId(),
                 "Alterar Cliente Tal para Isso", "87654987654", "123456789", "alterar@alterar.com",
                 "Rua Irlanda Creusa, 8498"));
 
-        Cliente cliente = clie.obterClienteNome("Alterar Cliente Tal para Isso");
+        Cliente cliente = clieNe.obterClienteNome("Alterar Cliente Tal para Isso");
 
         assertEquals("Alterar Cliente Tal para Isso", cliente.getNome());
         assertEquals("87654987654", cliente.getTelefone1());
@@ -60,18 +60,20 @@ public class ClienteTest {
         assertEquals("alterar@alterar.com", cliente.getEmail());
         assertEquals("Rua Irlanda Creusa, 8498", cliente.getEndereco());
 
-        assertTrue(clie.excluirNome("Alterar Cliente Tal para Isso"));
+        assertTrue(clieNe.excluir(cliente.getClieId()));
 
     }
 
     @Test
     public void testExcluirId() {
 
-        clie.incluirCliente("Excluir Cliente Teste", "21654987789", "", "", "Rua Irlanda Creusa, 1754");
+        clieNe.incluirCliente("Excluir Cliente Teste", "21654987789", "", "", "Rua Irlanda Creusa, 1754");
 
-        assertTrue(clie.excluirNome("Excluir Cliente Teste"));
+        Cliente clie = clieNe.obterClienteNome("Excluir Cliente Teste");
 
-        assertEquals(null, clie.obterClienteNome("Excluir Cliente Teste"));
+        assertTrue(clieNe.excluir(clie.getClieId()));
+
+        assertEquals(null, clieNe.obterClienteNome("Excluir Cliente Teste"));
     }
 
 }

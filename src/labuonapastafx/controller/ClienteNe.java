@@ -15,13 +15,13 @@ public class ClienteNe {
 	/**
 	 * Obter o {@code Cliente} que corresponde ao código do cliente informado.
 	 *
-	 * @param clieId
+	 * @param cdCliente
 	 *            a qual se deseja pesquisar
 	 * @return retorna objeto {@code Cliente} correspondente ao nome informado
 	 */
-	public Cliente obterClienteId(int clieId) {
+	public Cliente obterCodCliente(int cdCliente) {
 
-		return clienteDao.lerId(clieId);
+		return clienteDao.lerCodCliente(cdCliente);
 
 	}
 
@@ -84,7 +84,7 @@ public class ClienteNe {
 	/**
 	 * Atualizar as informações do {@code Cliente} que foi passado como parâmetro.
 	 *
-	 * @param clieId
+	 * @param cdCliente
 	 *            Código do cliente
 	 * @param nome
 	 *            Nome do cliente
@@ -99,17 +99,26 @@ public class ClienteNe {
 	 *
 	 * @return True se atualizado com sucesso, False se houve erro.
 	 */
-	public boolean alterarCliente(int clieId, String nome, String telefone1, String telefone2, String email,
+	public boolean alterarCliente(int cdCliente, String nome, String telefone1, String telefone2, String email,
                                   String endereco) {
 
-		Cliente clie = obterClienteId(clieId);
+		Cliente clie = obterCodCliente(cdCliente);
+		Cliente clie2 = obterClienteTelefone(telefone1);
+		Cliente clie3 = obterClienteTelefone(telefone2);
 
-		// se o cliente existir atualiza, senão retorna false para o chamador
 		if (clie != null) {
+
+			// Se o cliente existir e o telefone alterado pertence a outro Cliente, atualiza. Senão retorna false
+			// para o chamador.
+			if ((clie2 != null && clie.getClieId() != clie2.getClieId()) ||
+					(clie3 != null && clie.getClieId() != clie2.getClieId())) {
+				return false;
+			}
+
 			clie.setNome(nome);
 			clie.setTelefone1(telefone1);
-            clie.setTelefone2(telefone2);
-            clie.setEmail(email);
+			clie.setTelefone2(telefone2);
+			clie.setEmail(email);
 			clie.setEndereco(endereco);
 
 			clienteDao.atualizar(clie);
@@ -124,50 +133,14 @@ public class ClienteNe {
 	/**
 	 * Excluir o {@code Cliente} pelo ID do cliente.
 	 *
-	 * @param clieId
+	 * @param cdCliente
 	 *            do {@code Cliente} que se deseja excluir
 	 * @return True se exclusão foi ok, ou False se ocorreu algum erro
 	 */
-	public boolean excluirId(int clieId) {
+	public boolean excluir(int cdCliente) {
 
-		if (obterClienteId(clieId) != null) {
-			clienteDao.excluirId(clieId);
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	/**
-	 * Excluir o {@code Cliente} pelo telefone do cliente.
-	 *
-	 * @param telefone
-	 *            Telefone do {@code Cliente} que se deseja excluir
-	 * @return True se exclusão foi ok, ou False se ocorreu algum erro
-	 */
-	public boolean excluirTelefone(String telefone) {
-
-		if (obterClienteTelefone(telefone) != null) {
-			clienteDao.excluirTelefone(telefone);
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	/**
-	 * Excluir o {@code Cliente} pelo nome do cliente.
-	 *
-	 * @param nome
-	 *            do {@code Cliente} que se deseja excluir
-	 * @return True se exclusão foi ok, ou False se ocorreu algum erro
-	 */
-	public boolean excluirNome(String nome) {
-
-		if (obterClienteNome(nome) != null) {
-			clienteDao.excluirNome(nome);
+		if (obterCodCliente(cdCliente) != null) {
+			clienteDao.excluir(cdCliente);
 			return true;
 		} else {
 			return false;

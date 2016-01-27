@@ -19,12 +19,12 @@ public class ClienteDao {
 	/**
 	 * Obter o {@code Cliente} referente ao Id informado.
 	 * 
-	 * @param clieId
+	 * @param cdCliente
 	 *            Código interno do cliente no cadastro.
 	 * 
 	 * @return Objeto {@code Cliente} referente ao Id informado.
 	 */
-	public Cliente lerId(int clieId) {
+	public Cliente lerCodCliente(int cdCliente) {
 		Cliente cliente;
 
 		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
@@ -32,7 +32,7 @@ public class ClienteDao {
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setInt(1, clieId);
+			stm.setInt(1, cdCliente);
 			ResultSet rs = stm.executeQuery();
 
 			cliente = readNextCliente(rs);
@@ -72,23 +72,6 @@ public class ClienteDao {
 		return cliente;
 	}
 
-
-	/**
-	 * Efetuar a leitura do {@code Cliente} conforme ResultSet informado.
-	 *
-	 * @param rs ResultSet que se deseja efetuar a leitura para obtenção de um {@code Cliente}
-	 * @return Um cliente se encontrado ou um objeto nullo caso não tenho encontrado.
-	 * @throws SQLException Caso ocorra um erro na consulta será lançada essa exception.
-     */
-	private Cliente readNextCliente(ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-					rs.getString(6), rs.getDate(7));
-		} else {
-			return null;
-		}
-	}
-
 	/**
 	 * Obter o {@code Cliente} referente ao telefone informado.
 	 *
@@ -116,6 +99,22 @@ public class ClienteDao {
 		}
 
 		return cliente;
+	}
+
+	/**
+	 * Efetuar a leitura do {@code Cliente} conforme ResultSet informado.
+	 *
+	 * @param rs ResultSet que se deseja efetuar a leitura para obtenção de um {@code Cliente}
+	 * @return Um cliente se encontrado ou um objeto nullo caso não tenho encontrado.
+	 * @throws SQLException Caso ocorra um erro na consulta será lançada essa exception.
+	 */
+	private Cliente readNextCliente(ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
+					rs.getString(6), rs.getDate(7));
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -169,57 +168,16 @@ public class ClienteDao {
 	/**
 	 * Excluir o {@code Cliente} pelo código interno informado.
 	 *
-	 * @param clieId
-	 *            do {@code Cliente} que se deseja excluir.
+	 * @param cdCliente
+	 *            Código do {@code Cliente} que se deseja excluir.
 	 */
-	public void excluirId(int clieId) {
+	public void excluir(int cdCliente) {
 
 		String sql = "DELETE FROM cliente WHERE cd_cliente = ?";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setInt(1, clieId);
-			stm.executeUpdate();
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
-		}
-
-	}
-
-	/**
-	 * Excluir o {@code Cliente} pelo nome informado.
-	 *
-	 * @param nome
-	 *            do {@code Cliente} que se deseja excluir.
-	 */
-	public void excluirNome(String nome) {
-
-		String sql = "DELETE FROM cliente WHERE nm_cliente = ?";
-
-		try (Connection con = Conexao.getConexao();
-				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setString(1, nome);
-			stm.executeUpdate();
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
-		}
-
-	}
-
-	/**
-	 * Excluir o {@code Cliente} pelo telefone informado.
-	 *
-	 * @param telefone
-	 *            do {@code Cliente} que se deseja excluir.
-	 */
-	public void excluirTelefone(String telefone) {
-
-		String sql = "DELETE FROM cliente WHERE nr_telefone1 = ? or nr_telefone2 = ?";
-
-		try (Connection con = Conexao.getConexao();
-				PreparedStatement stm = con.prepareStatement(sql)) {
-			stm.setString(1, telefone);
-			stm.setString(2, telefone);
+			stm.setInt(1, cdCliente);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());

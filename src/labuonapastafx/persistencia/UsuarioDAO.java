@@ -10,7 +10,7 @@ import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
 
 /**
- * Responsavel por todo o procedimento de persistencia na base de dados Usuario
+ * Responsável por todo o procedimento de persistência na base de dados Usuário.
  *  
  * @author   Deivid Assumpcao Rodrigues
  * @version  %I%, %G%
@@ -53,7 +53,41 @@ public class UsuarioDao {
 	}
 
 	/**
-	 * Incluir um novo usuario
+	 * Obter o Usuário relacionado ao código do Usuário passado como parâmetro.
+	 *
+	 * @param cdUsuario Código do Usuário que se deseja obter as informações.
+	 * @return Usuário que possua o login que foi informado.
+	 */
+	public Usuario lerCodUsuario(int cdUsuario) {
+
+		Usuario usuarioBase = null;
+
+		String sql = "SELECT cd_usuario, nm_login, nm_usuario, "
+				+ "st_acesso, ds_senha, cd_ativo FROM usuario WHERE cd_usuario = ?";
+
+		try (Connection con = Conexao.getConexao();
+			 PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setInt(1, cdUsuario);
+			ResultSet rs = stm.executeQuery();
+
+			if (rs.next()) {
+				// obter o AcessoEnum relativo ao dominio int armazenado na base.
+				AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt(4));
+
+				//carregar o usuario da base de dados
+				usuarioBase = new Usuario(rs.getInt(1), rs.getString(2), rs.getString(3),
+						acesso, rs.getString(5), rs.getByte(6));
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao consultar usuário: " + e.getMessage());
+		}
+
+		return usuarioBase;
+	}
+
+	/**
+	 * Incluir um novo usuário
 	 * 
 	 * @param usuario que se deja incluir nas bases de dados
 	 */
@@ -82,16 +116,17 @@ public class UsuarioDao {
 	 */
 	public void atualizar(Usuario usuario) {
 		
-		String sql = "UPDATE usuario SET nm_usuario = ?, st_acesso = ?,"
-				+ "ds_senha = ?, cd_ativo = ? WHERE nm_login = ?";
+		String sql = "UPDATE usuario SET nm_login = ?, nm_usuario = ?, st_acesso = ?,"
+				+ "ds_senha = ?, cd_ativo = ? WHERE cd_usuario = ?";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
-			stm.setString(1, usuario.getNomeCompleto());
-			stm.setInt(2, usuario.getTipoAcesso().obterTipoInt());
-			stm.setString(3, usuario.getSenha());
-			stm.setInt(4, usuario.getAtivo());
-			stm.setString(5, usuario.getLogin());
+			stm.setString(1, usuario.getLogin());
+			stm.setString(2, usuario.getNomeCompleto());
+			stm.setInt(3, usuario.getTipoAcesso().obterTipoInt());
+			stm.setString(4, usuario.getSenha());
+			stm.setInt(5, usuario.getAtivo());
+			stm.setInt(6, usuario.getUserId());
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
@@ -105,15 +140,15 @@ public class UsuarioDao {
 	 * historico, entao o mais indicado seria usar a exclusao logica atraves do metodo
 	 * exclusaoLogica.
 	 * 
-	 * @param login Texto com a informacao de login do usuario que se deseja excluir.
+	 * @param cdUsuario Código de Usuário que se deseja excluir.
 	 */
-	public void excluir(String login) {
+	public void excluir(int cdUsuario) {
 
-		String sql = "DELETE FROM usuario WHERE nm_login = ?";
+		String sql = "DELETE FROM usuario WHERE cd_usuario = ?";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
-			stm.setString(1, login);
+			stm.setInt(1, cdUsuario);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao deletar usuario: " + e.getMessage());
@@ -126,15 +161,15 @@ public class UsuarioDao {
 	 * marcar o Usuario como excluido atraves de um flag na base, nao serah excluido o
 	 * registro fisico.
 	 * 
-	 * @param login Texto com a informacao de login do usuario que se deseja excluir.
+	 * @param cdUsuario Código do Usuario que se deseja excluir.
 	 */
-	public void exclusaoLogica(String login) {
+	public void exclusaoLogica(int cdUsuario) {
 		
-		String sql = "UPDATE usuario SET cd_ativo = 0 WHERE nm_login = ?";
+		String sql = "UPDATE usuario SET cd_ativo = 0 WHERE cd_usuario = ?";
 		
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql)){
-			stm.setString(1, login);
+			stm.setInt(1, cdUsuario);
 			stm.executeUpdate();
 		} catch (SQLException e) {
 			throw new RuntimeException("Erro ao excluir logicamente usuario: " + e.getMessage());
@@ -197,7 +232,7 @@ public class UsuarioDao {
 			}
 		
 		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao listar usuario: " + e.getMessage());
+			throw new RuntimeException("Erro ao listar usuário: " + e.getMessage());
 		}
 		
 		return usuarios;

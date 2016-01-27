@@ -100,7 +100,6 @@ public class ProdutoController extends StackPane implements Initializable {
                 showAlert("Inclusão de produto efetuada com sucesso");
                 txtProduto.requestFocus();
                 limparCampos();
-                reiniciarListaProduto();
             } else {
                 // Inclusão nao foi efetuada porque o produto ja existe na base
                 // de dados
@@ -126,7 +125,6 @@ public class ProdutoController extends StackPane implements Initializable {
             if (produtoNe.alterarProduto(cdProduto, nome, unidade, valor, tipo)) {
                 showAlert("Alteração de Produto efetuada com sucesso.");
                 limparCampos();
-                reiniciarListaProduto();
             } else {
                 // Alteração nao foi efetuada porque o Produto não existe na base de dados.
                 showAlert("Produto não existe, ou o nome alterado já pertence a outro Produto.");
@@ -149,7 +147,6 @@ public class ProdutoController extends StackPane implements Initializable {
                         if (produtoNe.exclusaoLogica(this.cdProduto)) {
                             showAlert("Exclusão efetuada com sucesso");
                             limparCampos();
-                            reiniciarListaProduto();
                         } else {
                             showAlert("Produto não encontrado na base");
                         }
@@ -218,6 +215,7 @@ public class ProdutoController extends StackPane implements Initializable {
         });
 
         txtProduto.requestFocus();
+        reiniciarListaProduto();
     }
 
     /**

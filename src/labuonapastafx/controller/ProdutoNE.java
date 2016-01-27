@@ -1,5 +1,6 @@
 package labuonapastafx.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -74,12 +75,23 @@ public class ProdutoNe {
      * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto não existe).
      */
-    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, BigDecimal valor, ProdutoEnum tipo) {
+    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, BigDecimal valor,
+                                  ProdutoEnum tipo) {
 
         Produto prod = obterCodProduto(cdProduto);
-
-        // se o usuario existir atualiza, senão retorna false para o chamador
+        // Se o usuario existir atualiza, senao retorna false para o chamador
         if (prod != null) {
+
+            // Se o login foi alterado, verificar se não pertence a outro Usuário.
+            if (!prod.getNome().equals(nome)) {
+
+                Produto prod2 = obterProduto(nome);
+
+                if (prod2 != null)
+                    // Se o login do Usuário alterado pertence a outro Usuário, invalida a alteração.
+                    if (prod.getProdId() != prod2.getProdId())
+                        return false;
+            }
             prod.setNome(nome);
             prod.setUnidade(unidade);
             prod.setValor(valor);
@@ -87,7 +99,8 @@ public class ProdutoNe {
 
             produtoDao.atualizar(prod);
 
-            return true; //retorna que a atualizacao foi ok
+            //retorna que a atualização foi ok
+            return true;
         } else {
             return false;
         }

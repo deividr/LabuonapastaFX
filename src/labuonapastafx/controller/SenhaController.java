@@ -2,6 +2,8 @@ package labuonapastafx.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -154,6 +156,10 @@ public class SenhaController extends StackPane implements Initializable {
 		txtSenha.textProperty().addListener(new LimitedTextListener(txtSenha, 20));
 		txtNovaSenha.textProperty().addListener(new LimitedTextListener(txtNovaSenha, 20));
 		txtConfirmSenha.textProperty().addListener(new LimitedTextListener(txtConfirmSenha, 20));
+
+		Platform.runLater(() -> {
+			txtSenha.requestFocus();
+		});
 	}
 
 	/**

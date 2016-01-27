@@ -66,7 +66,7 @@ public class ClienteController extends StackPane implements Initializable {
 
     // Variáveis de controle do formulário da tela
     private String nome, endereco, telefone1, telefone2, email;
-    private int clieId;
+    private int cdCliente;
 
     /**
      * Procedimento a serem tomados quando pressionado o botao {@code Incluir}.
@@ -75,7 +75,6 @@ public class ClienteController extends StackPane implements Initializable {
      */
     @FXML
     public void botaoIncluirListener(ActionEvent event) {
-
         // Efetuar a inclusão somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
             // Se o retorno da inclusão do cliente for true significa que a inclusão foi ok
@@ -89,7 +88,6 @@ public class ClienteController extends StackPane implements Initializable {
                 showAlert("Cliente já existe na base de dados ou o telefone está cadastrado para outro Cliente");
                 txtNome.requestFocus();
             }
-
         }
     }
 
@@ -108,7 +106,7 @@ public class ClienteController extends StackPane implements Initializable {
 
             if (Cliente != null) {
                 // Se o retorno da inclusão do Cliente for true significa que a inclusão foi ok.
-                if (clienteNe.alterarCliente(clieId, nome, telefone1, telefone2, email, endereco)) {
+                if (clienteNe.alterarCliente(cdCliente, nome, telefone1, telefone2, email, endereco)) {
                     showAlert("Alteração de Cliente efetuada com sucesso");
                     limparCampos();
                     reiniciarListaCliente();
@@ -138,7 +136,7 @@ public class ClienteController extends StackPane implements Initializable {
         } else {
             new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Cliente").showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    if (clienteNe.excluirNome(this.nome)) {
+                    if (clienteNe.excluir(this.cdCliente)) {
                         showAlert("Exclusão efetuada com sucesso");
                         limparCampos();
                         reiniciarListaCliente();
@@ -233,7 +231,7 @@ public class ClienteController extends StackPane implements Initializable {
     private void getValueFields() {
 
         if (!txtClieId.getText().equals(""))
-    	    this.clieId = Integer.parseInt(txtClieId.getText());
+    	    this.cdCliente = Integer.parseInt(txtClieId.getText());
 
         this.nome = txtNome.getText();
         this.telefone1 = txtTelefone1.getText().replaceAll("[^0-9]", "");
