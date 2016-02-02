@@ -246,4 +246,36 @@ public class ClienteDao {
 		return clientes;
 	}
 
+	/**
+	 * Listar todos os {@code Cliente} que estão cadastrados conforme telefone informado.
+	 *
+	 * @param telefone do Cliente que deve ser pesquisado para montagem da lista
+	 * @return ArrayList de todos os clientes que se assemelham com o nome informado.
+	 */
+	public ArrayList<Cliente> listarTelefone(String telefone) {
+
+		String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco," +
+				" dt_criacao FROM cliente WHERE nr_telefone1 LIKE ? OR nr_telefone2 LIKE ?";
+
+		ArrayList<Cliente> clientes = new ArrayList<>();
+
+		try (Connection con = Conexao.getConexao();
+			 PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setString(1, telefone + "%");
+			stm.setString(2, telefone + "%");
+			ResultSet rs = stm.executeQuery();
+
+			while (rs.next()) {
+				// Carregar o cliente da base de dados
+				clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(5), rs.getString(6), rs.getDate(7)));
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
+		}
+
+		return clientes;
+	}
+
 }

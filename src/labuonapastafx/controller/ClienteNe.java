@@ -104,14 +104,18 @@ public class ClienteNe {
 
 		Cliente clie = obterCodCliente(cdCliente);
 		Cliente clie2 = obterClienteTelefone(telefone1);
-		Cliente clie3 = obterClienteTelefone(telefone2);
+		Cliente clie3 = null;
+
+		//Se o telefone secundário foi informado verificar se já existe para outro usuário.
+		if (!telefone2.equals(""))
+			clie3 = obterClienteTelefone(telefone2);
 
 		if (clie != null) {
 
 			// Se o cliente existir e o telefone alterado pertence a outro Cliente, atualiza. Senão retorna false
 			// para o chamador.
 			if ((clie2 != null && clie.getClieId() != clie2.getClieId()) ||
-					(clie3 != null && clie.getClieId() != clie2.getClieId())) {
+					(clie3 != null && clie.getClieId() != clie3.getClieId())) {
 				return false;
 			}
 
@@ -160,7 +164,7 @@ public class ClienteNe {
 	}
 
 	/**
-	 * Retorna uma lista dos clientes que começam com a informação passa por
+	 * Retorna uma lista dos clientes que começam com a informação passada por
 	 * parâmetro.
 	 *
 	 * @param nome
@@ -170,6 +174,20 @@ public class ClienteNe {
 	public ArrayList<Cliente> listarClientes(String nome) {
 
 		return clienteDao.listar(nome);
+
+	}
+
+	/**
+	 * Retorna uma lista dos clientes que começam com a informação passada por
+	 * parâmetro.
+	 *
+	 * @param telefone
+	 *            do cliente que se deseja usar como filtro.
+	 * @return Lista de clientes.
+	 */
+	public ArrayList<Cliente> listarClientesTelefone(String telefone) {
+
+		return clienteDao.listarTelefone(telefone);
 
 	}
 

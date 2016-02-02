@@ -43,10 +43,10 @@
 										<RowConstraints vgrow="SOMETIMES" />
 									</rowConstraints>
 									<children>
-										<Label styleClass="label-opcao" text="ID:" />
+										<Label styleClass="label-opcao" text="Código:" />
 										<Label text="Login:" GridPane.columnIndex="1" />
                                         <Label text="Permissão:" GridPane.columnIndex="3" />
-										<TextField fx:id="txtCodUsuario" editable="false" GridPane.rowIndex="1" />
+										<TextField fx:id="txtCodUsuario" disable="true" editable="false" focusTraversable="false" GridPane.rowIndex="1" />
 										<TextField fx:id="txtLogin" onKeyReleased="#txtLoginListener" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                                         <ChoiceBox fx:id="cbxAcesso" prefHeight="31.0" prefWidth="172.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 										<Label prefHeight="21.0" prefWidth="351.0" text="Nome Completo:" GridPane.columnSpan="2" GridPane.rowIndex="2" />

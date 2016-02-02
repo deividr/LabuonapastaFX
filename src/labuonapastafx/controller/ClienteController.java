@@ -3,20 +3,16 @@ package labuonapastafx.controller;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -55,9 +51,20 @@ public class ClienteController extends StackPane implements Initializable {
     @FXML
     private TableColumn<Cliente, String> tblcolCliente;
     @FXML
-    private TableColumn<Cliente, String> tblcolTelefone;
+    private TableColumn<Cliente, String> tblcolTelefone1;
+    @FXML
+    private TableColumn<Cliente, String> tblcolTelefone2;
+    @FXML
+    private TableColumn<Cliente, String> tblcolEmail;
     @FXML
     private TableColumn<Cliente, Date> tblcolData;
+    @FXML
+    private Button btnIncluir;
+    @FXML
+    private Button btnAlterar;
+    @FXML
+    private Button btnExcluir;
+
 
     // Variáveis de controle geral
     private MenuController menuControl;
@@ -80,9 +87,7 @@ public class ClienteController extends StackPane implements Initializable {
             // Se o retorno da inclusão do cliente for true significa que a inclusão foi ok
             if (clienteNe.incluirCliente(nome, telefone1, telefone2, email, endereco)) {
                 showAlert("Inclusão de cliente efetuada com sucesso");
-                txtNome.requestFocus();
                 limparCampos();
-                reiniciarListaCliente();
             } else {
                 // Inclusão nao foi efetuada porque o cliente ja existe na base de dados
                 showAlert("Cliente já existe na base de dados ou o telefone está cadastrado para outro Cliente");
@@ -102,20 +107,19 @@ public class ClienteController extends StackPane implements Initializable {
         // Efetuar a alteração somente se as informações passadas estiverem corretas.
         if (validarInformacoes()) {
 
-            Cliente Cliente = clienteNe.obterClienteNome(this.nome);
+            Cliente Cliente = clienteNe.obterCodCliente(this.cdCliente);
 
             if (Cliente != null) {
                 // Se o retorno da inclusão do Cliente for true significa que a inclusão foi ok.
                 if (clienteNe.alterarCliente(cdCliente, nome, telefone1, telefone2, email, endereco)) {
                     showAlert("Alteração de Cliente efetuada com sucesso");
                     limparCampos();
-                    reiniciarListaCliente();
                 } else {
                     // Inclusão nao foi efetuada porque o Cliente já existe na base de dados.
-                    showAlert("Cliente não existe");
+                    showAlert("Cliente não existe, ou número de telefone já cadastrado para outro Cliente");
                 }
             } else {
-                showAlert("Cliente não existe");
+                showAlert("Cliente não existe, ou número de telefone já cadastrado para outro Cliente");
             }
 
         }
@@ -139,7 +143,6 @@ public class ClienteController extends StackPane implements Initializable {
                     if (clienteNe.excluir(this.cdCliente)) {
                         showAlert("Exclusão efetuada com sucesso");
                         limparCampos();
-                        reiniciarListaCliente();
                     } else {
                         showAlert("Cliente não encontrado na base");
                     }
@@ -195,6 +198,7 @@ public class ClienteController extends StackPane implements Initializable {
     /**
      * Limpar os campos do fomulário de Clientes
      */
+    @FXML
     private void limparCampos() {
 
         gridForm.getChildren().stream().forEach((c) -> {
@@ -206,6 +210,7 @@ public class ClienteController extends StackPane implements Initializable {
         });
 
         txtNome.requestFocus();
+        reiniciarListaCliente();
     }
 
     /**
@@ -218,11 +223,32 @@ public class ClienteController extends StackPane implements Initializable {
     }
 
     /**
+     * Procedimento a serem tomados quando o usuário digitar algum texto no
+     * campo {@code Cliente}
+     */
+    @FXML
+    private void txtTelefoneListener(KeyEvent event) {
+        reiniciarListaTelefone();
+    }
+
+    /**
      * Obter o texto digitado no {@code Nome} e atualizar a lista de
      * {@code Cliente} que possuam os caracteres informados.
      */
     private void reiniciarListaCliente() {
         clies.setAll(clienteNe.listarClientes(txtNome.getText()));
+    }
+
+    /**
+     * Obter o texto digitado no {@code Telefone} e atualizar a lista de {@code Cliente} que possuam os caracteres
+     * informados.
+     */
+    private void reiniciarListaTelefone() {
+        if (txtTelefone1.isFocused()) {
+            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone1.getText().replaceAll("[^0-9]", "")));
+        } else {
+            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone2.getText().replaceAll("[^0-9]", "")));
+        }
     }
 
     /**
@@ -304,14 +330,22 @@ public class ClienteController extends StackPane implements Initializable {
     	
     	clienteNe = new ClienteNe();
 
+        txtClieId.textProperty().addListener((observable, oldValue, newValue) -> {
+            //Só vai permitir alterar ou excluir quando o usuário selecionar um produto.
+            if (newValue.equals("")) {
+                btnAlterar.setDisable(true);
+                btnExcluir.setDisable(true);
+                btnIncluir.setDisable(false);
+            } else {
+                btnAlterar.setDisable(false);
+                btnExcluir.setDisable(false);
+                btnIncluir.setDisable(true);
+            }
+        });
+
         txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
-
         txtTelefone1.textProperty().addListener(new FoneFieldListener(txtTelefone1));
-        txtTelefone1.setAlignment(Pos.BASELINE_RIGHT);
-
         txtTelefone2.textProperty().addListener(new FoneFieldListener(txtTelefone2));
-        txtTelefone2.setAlignment(Pos.BASELINE_RIGHT);
-
         txtEndereco.textProperty().addListener(new LimitedTextListener(txtEndereco, 50));
 
         // Obter a lista inicial dos clientes cadastrados na base de dados.
@@ -319,15 +353,34 @@ public class ClienteController extends StackPane implements Initializable {
 
         // Formatar a TableView com as informações dos clientes obtidos.
         tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-        tblcolTelefone.setCellValueFactory(cellData -> {
+
+        tblcolTelefone1.setCellValueFactory(cellData -> {
             String value = cellData.getValue().getTelefone1();
             value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
             value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
             return new SimpleStringProperty(value);
         });
+
+        tblcolTelefone2.setCellValueFactory(cellData -> {
+            String value = cellData.getValue().getTelefone2();
+            if (value !=null) {
+                value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+                value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
+                return new SimpleStringProperty(value);
+            } else {
+                return new SimpleStringProperty("");
+            }
+
+        });
+
+        tblcolEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
         tblcolData.setCellValueFactory(cellData -> cellData.getValue().dataCriacaoProperty());
 
         tblCliente.setItems(clies);
+
+        Platform.runLater(() -> {
+            txtNome.requestFocus();;
+        });
 
     }
 
