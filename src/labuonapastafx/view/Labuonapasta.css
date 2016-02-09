@@ -43,3 +43,8 @@
     -fx-min-height: 35px;
     -fx-pref-height: 35px;
 }
+
+.combo-box {
+    -fx-min-height: 35px;
+    -fx-pref-height: 35px;
+}

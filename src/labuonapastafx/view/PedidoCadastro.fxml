@@ -8,9 +8,9 @@
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="fundo-opcao" stylesheets="@Labuonapasta.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.ClienteController">
     <children>
-        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="708.0" prefWidth="928.0">
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
-                <TitledPane animated="false" collapsible="false" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="titled-opcao" text="Cadastro de Cliente" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TitledPane animated="false" collapsible="false" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="titled-opcao" text="Cadastro de Pedidos" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <content>
                         <VBox>
                             <children>
@@ -19,7 +19,7 @@
                                         <Insets bottom="10.0" top="10.0" />
                                     </VBox.margin>
                                     <children>
-                                        <Label styleClass="label-separator" text="Informações do Cliente" />
+                                        <Label styleClass="label-separator" text="Informações do Pedido" />
                                         <Separator HBox.hgrow="ALWAYS">
                                             <HBox.margin>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -27,38 +27,52 @@
                                         </Separator>
                                     </children>
                                 </HBox>
-                                <GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="204.0" prefWidth="645.0">
+                                <GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="-Infinity" prefWidth="79.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="-Infinity" prefWidth="86.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="-Infinity" prefWidth="79.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="229.0" minWidth="-Infinity" prefWidth="86.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="-Infinity" prefWidth="275.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="76.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="-Infinity" prefWidth="70.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="232.0" minWidth="-Infinity" prefWidth="70.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="226.0" minWidth="-Infinity" prefWidth="173.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="-Infinity" prefWidth="119.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="31.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="363.0" minWidth="10.0" prefWidth="363.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="31.0" minHeight="0.0" prefHeight="21.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="87.0" minHeight="19.0" prefHeight="52.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="100.0" minHeight="17.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="116.0" minHeight="19.0" prefHeight="48.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="92.0" minHeight="7.0" prefHeight="29.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="100.0" minHeight="0.0" prefHeight="49.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="169.0" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <VBox.margin>
                                         <Insets />
                                     </VBox.margin>
                                     <children>
-                                        <Label text="Código" />
-                                        <Label text="Nome:" GridPane.columnIndex="1" />
+                                        <Label text="Número:" />
+                                        <Label text="Telefone:" GridPane.columnIndex="1" />
+                                        <Label text="Nome:" GridPane.columnIndex="3" />
                                         <TextField fx:id="txtClieId" disable="true" editable="false" focusTraversable="false" GridPane.rowIndex="1" />
-                                        <TextField fx:id="txtNome" onKeyReleased="#txtClienteListener" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
-                                        <Label prefHeight="21.0" prefWidth="351.0" text="Endereço:" GridPane.rowIndex="2" />
-                                        <TextField fx:id="txtEndereco" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
-                                        <Label prefHeight="21.0" prefWidth="351.0" text="Telefone 1:" GridPane.rowIndex="4" />
-                                        <Label prefHeight="21.0" prefWidth="351.0" text="Telefone 2:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                                        <Label text="E-mail:" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                                        <TextField fx:id="txtTelefone1" alignment="CENTER_RIGHT" onKeyReleased="#txtTelefoneListener" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                                        <TextField fx:id="txtTelefone2" alignment="CENTER_RIGHT" onKeyReleased="#txtTelefoneListener" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                                        <TextField fx:id="txtEmail" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                                        <TextField fx:id="txtTelefone1" alignment="CENTER_RIGHT" onKeyReleased="#txtTelefoneListener" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtNome" onKeyReleased="#txtClienteListener" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                              <Label text="Data de Retirada:" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                              <Label text="Hora De:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <Label text="Hora Até:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                              <DatePicker GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                              <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                              <Label text="Produto:" GridPane.rowIndex="4" />
+                              <Label text="Qtde.:" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                              <Label text="Molho:" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                              <ComboBox prefWidth="337.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
+                              <TextField GridPane.columnIndex="5" GridPane.rowIndex="5" />
+                              <ComboBox prefWidth="171.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+                              <Button mnemonicParsing="false" text="+" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+                              <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="31.0" text="-" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+                              <ListView prefHeight="168.0" prefWidth="203.0" GridPane.columnIndex="7" GridPane.rowIndex="1" GridPane.rowSpan="6" />
+                              <Label text="Itens:" GridPane.columnIndex="7" />
                                     </children>
                                 </GridPane>
                                 <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity">
@@ -133,7 +147,7 @@
                                         <Insets bottom="10.0" top="10.0" />
                                     </VBox.margin>
                                     <children>
-                                        <Label styleClass="label-separator" text="Clientes Cadastrados" />
+                                        <Label styleClass="label-separator" text="Pedidos" />
                                         <Separator HBox.hgrow="ALWAYS">
                                             <HBox.margin>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -141,13 +155,15 @@
                                         </Separator>
                                     </children>
                                 </HBox>
-                                <TableView fx:id="tblCliente" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#tabelaClienteListener" prefHeight="200.0" prefWidth="642.0" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tblCliente" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#tabelaClienteListener" prefHeight="260.0" prefWidth="732.0" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="tblcolCliente" editable="false" minWidth="160.0" prefWidth="309.0" sortable="false" text="Cliente" />
-                                        <TableColumn fx:id="tblcolTelefone1" editable="false" maxWidth="335.0" minWidth="41.0" prefWidth="130.0" resizable="false" sortable="false" text="Telefone 1" />
-                                        <TableColumn fx:id="tblcolTelefone2" prefWidth="130.0" resizable="false" text="Telefone 2" />
-                                        <TableColumn fx:id="tblcolEmail" prefWidth="200.0" text="E-mail" />
-                                        <TableColumn fx:id="tblcolData" editable="false" prefWidth="115.0" sortable="false" text="Data Criaçao" />
+                                        <TableColumn fx:id="tblcolCliente" editable="false" minWidth="48.0" prefWidth="78.0" resizable="false" sortable="false" text="Núm." />
+                                        <TableColumn fx:id="tblcolTelefone1" editable="false" maxWidth="391.0" minWidth="41.0" prefWidth="344.0" sortable="false" text="Cliente" />
+                                        <TableColumn fx:id="tblcolTelefone2" prefWidth="130.0" resizable="false" text="Telefone" />
+                                        <TableColumn fx:id="tblcolEmail" prefWidth="112.0" text="Retirada" />
+                              <TableColumn prefWidth="75.0" text="De" />
+                              <TableColumn prefWidth="75.0" text="Até" />
+                                        <TableColumn fx:id="tblcolData" editable="false" prefWidth="106.0" sortable="false" text="Solicitado" />
                                     </columns>
                                 </TableView>
                             </children>
