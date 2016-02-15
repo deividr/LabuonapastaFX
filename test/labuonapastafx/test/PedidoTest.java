@@ -3,10 +3,12 @@ package labuonapastafx.test;
 import labuonapastafx.controller.ClienteNe;
 import labuonapastafx.controller.PedidoNe;
 import labuonapastafx.model.Cliente;
+import labuonapastafx.model.ItemPedido;
 import labuonapastafx.model.Usuario;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -14,11 +16,14 @@ import static org.junit.Assert.*;
 public class PedidoTest {
 
     private PedidoNe pedNe;
+    private Usuario usuar;
+    private Cliente clie;
 
     @Before
     public void setUp() throws Exception {
         // Criar o objeto do Negócio.
         pedNe = new PedidoNe();
+        usuar = 
 
         // Excluir das bases todos os clientes usados nos testes, para o caso de
         // algum existir ainda de testes anteriores.
@@ -33,8 +38,9 @@ public class PedidoTest {
 
         Usuario user = null;
         Cliente clie = null;
-
-        assertTrue(pedNe.incluir(user, clie, Date data, String horaDe, String horaAte,));
+        ArrayList<ItemPedido> itens = new ArrayList<ItemPedido>();
+        
+        assertTrue(pedNe.incluir(user, clie, Date data, String horaDe, String horaAte, itens));
 
         Cliente cliente = pedNe.obterClienteNome("Incluir Cliente Tal");
 
