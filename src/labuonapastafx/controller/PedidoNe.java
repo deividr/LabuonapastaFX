@@ -11,25 +11,25 @@ import java.util.Date;
 
 public class PedidoNe {
 
-	private PedidoDao pedDao;
+    private PedidoDao pedDao;
 
-	public PedidoNe() {
-		pedDao = new PedidoDao();
-	}
+    public PedidoNe() {
+        pedDao = new PedidoDao();
+    }
 
-	/**
-	 * Incluir um pedido.
-	 *
-	 * @param usuar Usuário que está efetuando a inclusão do Pedido.
-	 * @param clie Cliente que está fazendo o Pedido.
-	 * @param dataRetirada Data em que o Pedido será retirado.
-	 * @param horaDe Hora inicial em que o Pedido deve ser retirado.
-	 * @param horaAte Hora final em que o Pedido deve ser retirado.
-	 * @param itens Lista dos produtos que compõe o pedido.
-	 * @return
-	 */
-	public boolean incluir(Usuario usuar, Cliente clie, Date dataRetirada, String horaDe, String horaAte,
-						   ArrayList<ItemPedido> itens) {
-
-	}
+    /**
+     * Incluir um pedido.
+     *
+     * @param usuar Usuário que está efetuando a inclusão do Pedido.
+     * @param clie Cliente que está fazendo o Pedido.
+     * @param dataRetirada Data em que o Pedido será retirado.
+     * @param horaDe Hora inicial em que o Pedido deve ser retirado.
+     * @param horaAte Hora final em que o Pedido deve ser retirado.
+     * @param itens Lista dos produtos que compõe o pedido.
+     * @return
+     */
+    public boolean incluir(Usuario usuar, Cliente clie, Date dataRetirada, String horaDe, 
+            String horaAte, ArrayList<ItemPedido> itens) {
+        return true;
+    }
 }
