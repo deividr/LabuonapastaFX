@@ -2,13 +2,16 @@ package labuonapastafx.test;
 
 import labuonapastafx.controller.ClienteNe;
 import labuonapastafx.controller.PedidoNe;
-import labuonapastafx.model.Cliente;
-import labuonapastafx.model.ItemPedido;
-import labuonapastafx.model.Usuario;
+import labuonapastafx.controller.ProdutoNe;
+import labuonapastafx.controller.UsuarioNe;
+import labuonapastafx.model.*;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -16,6 +19,9 @@ import static org.junit.Assert.*;
 public class PedidoTest {
 
     private PedidoNe pedNe;
+    private UsuarioNe usuarNe;
+    private ClienteNe clieNe;
+    private ProdutoNe prodNe;
     private Usuario usuar;
     private Cliente clie;
 
@@ -23,24 +29,69 @@ public class PedidoTest {
     public void setUp() throws Exception {
         // Criar o objeto do Negócio.
         pedNe = new PedidoNe();
-        usuar = 
+        usuarNe = new UsuarioNe();
+        clieNe = new ClienteNe();
+        prodNe = new ProdutoNe();
 
-        // Excluir das bases todos os clientes usados nos testes, para o caso de
-        // algum existir ainda de testes anteriores.
-        pedNe.excluir(pedNe.obterClienteNome("Incluir Cliente Tal").getClieId());
-        pedNe.excluir(pedNe.obterClienteNome("Alterar Cliente Tal").getClieId());
-        pedNe.excluir(pedNe.obterClienteNome("Alterar Cliente Tal para Isso").getClieId());
-        pedNe.excluir(pedNe.obterClienteNome("Excluir Cliente Tal").getClieId());
+        clieNe.incluirCliente("Teste Pedido", "11369874565", "", "", "");
+        clie = clieNe.obterClienteNome("Teste Pedido");
+
+        usuarNe.incluirUsuario("testeped", "Teste Pedido", AcessoEnum.ADMINISTRADOR, "teste");
+        usuar = usuarNe.obterUsuario("testeped");
+
+        //Incluir produtos que serão utilizados nos testes.
+        prodNe.incluirProduto("Produto Massa", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00), ProdutoEnum.MASSA);
+        prodNe.incluirProduto("Produto Molho", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00), ProdutoEnum.MOLHO);
+
+        prodNe.incluirProduto("Produto Bebida", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00),
+                ProdutoEnum.BEBIDA);
+
+        prodNe.incluirProduto("Produto Carne", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00), ProdutoEnum.CARNE);
+
+        prodNe.incluirProduto("Produto Salada", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00),
+                ProdutoEnum.SALADA);
+
+        prodNe.incluirProduto("Produto Diversos", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00),
+                ProdutoEnum.DIVERSOS);
+
+    }
+
+    @After
+    public void setEnd() throws  Exception {
+
+        //Excluir massa de testes utilizada.
+        usuarNe.excluirUsuario(usuarNe.obterUsuario("testeped").getUserId());
+
+        clieNe.excluir(clieNe.obterClienteNome("Teste Pedido").getClieId());
+
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Massa").getProdId());
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Molho").getProdId());
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Bebida").getProdId());
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Carne").getProdId());
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Salada").getProdId());
+        prodNe.excluirProduto(prodNe.obterProduto("Produto Diversos").getProdId());
+
     }
 
     @Test
     public void testIncluirPedido() {
 
-        Usuario user = null;
-        Cliente clie = null;
         ArrayList<ItemPedido> itens = new ArrayList<ItemPedido>();
-        
-        assertTrue(pedNe.incluir(user, clie, Date data, String horaDe, String horaAte, itens));
+
+        itens.add(new ItemPedido(prodNe.obterProduto("Produto Massa"), BigDecimal.valueOf(1.300),
+                prodNe.obterProduto("Produto Molho")));
+
+        itens.add(new ItemPedido(prodNe.obterProduto("Produto Massa"), BigDecimal.valueOf(2.000),
+                prodNe.obterProduto("Produto Molho")));
+
+        itens.add(new ItemPedido(prodNe.obterProduto("Produto Salada"), BigDecimal.valueOf(0.750), null));
+
+        itens.add(new ItemPedido(prodNe.obterProduto("Produto Bebida"), BigDecimal.valueOf(1.000), null));
+
+        Calendar c = Calendar.getInstance();
+        c.set(2016, 02, 22);
+
+        assertTrue(pedNe.incluir(usuar, clie, c.getTime(), "0900", "1000", itens));
 
         Cliente cliente = pedNe.obterClienteNome("Incluir Cliente Tal");
 
@@ -55,6 +106,7 @@ public class PedidoTest {
 
     }
 
+    /*
     @Test
     public void testAlterarCliente() {
 
@@ -88,5 +140,6 @@ public class PedidoTest {
 
         assertEquals(null, pedNe.obterClienteNome("Excluir Cliente Teste"));
     }
+    */
 
 }
