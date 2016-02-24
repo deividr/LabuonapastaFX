@@ -28,8 +28,14 @@ public class PedidoNe {
      * @param itens Lista dos produtos que compõe o pedido.
      * @return
      */
-    public boolean incluir(Usuario usuar, Cliente clie, Date dataRetirada, String horaDe, 
-            String horaAte, ArrayList<ItemPedido> itens) {
+    public boolean incluir(Usuario usuar, Cliente clie, Date dataRetirada, Integer horaDe, 
+            Integer horaAte, ArrayList<ItemPedido> itens) {
+       
+        Pedido ped = new Pedido(null, usuar, clie, Calendar.getInstance().getTime(), dataRetirada, 
+                horaDe, horaAte, itens);
+        
+        pedDao.incluir(ped);
+        
         return true;
     }
 }
