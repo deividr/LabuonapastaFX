@@ -1,11 +1,12 @@
 package labuonapastafx.model;
 
 import javafx.beans.property.*;
-
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.sql.Date;
-import java.util.Calendar;
+
 
 public class Pedido implements Serializable {
 
@@ -14,16 +15,15 @@ public class Pedido implements Serializable {
     private IntegerProperty pedId, horaDe, horaAte;
     private ObjectProperty<Cliente> clie;
     private ObjectProperty<Usuario> usuar;
-    private ObjectProperty<Date> dtPedido;
-    private ObjectProperty<Date> dtRetirada;
+    private ObjectProperty<LocalDate> dtPedido;
+    private ObjectProperty<LocalDate> dtRetirada;
     private ListProperty<ItemPedido> itens;
 
     public Pedido() {
-        this(0, null, null, Calendar.getInstance().getTime(), Calendar.getInstance().getTime(),
-                0, 0, null);
+		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, null);
     }
 
-    public Pedido(Integer pedId, Usuario usuar, Cliente clie, Date dtPedido, Date dtRetirada,
+    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, LocalDate dtRetirada,
             Integer horaDe, Integer horaAte, ArrayList<ItemPedido> itens) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
@@ -32,7 +32,10 @@ public class Pedido implements Serializable {
         this.dtRetirada = new SimpleObjectProperty<>(dtRetirada);
         this.horaDe = new SimpleIntegerProperty(horaDe);
         this.horaAte = new SimpleIntegerProperty(horaAte);
-        this.itens = new SimpleListProperty<>(itens, "Itens do Pedido");
+
+        ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
+
+        this.itens = new SimpleListProperty<>(itensObs);
     }
 
     public final IntegerProperty pedIdProperty() {
@@ -95,27 +98,27 @@ public class Pedido implements Serializable {
         this.usuarProperty().set(usuar);
     }
 
-    public final ObjectProperty<Date> dtPedidoProperty() {
+    public final ObjectProperty<LocalDate> dtPedidoProperty() {
         return this.dtPedido;
     }
 
-    public final java.util.Date getDtPedido() {
+    public final LocalDate getDtPedido() {
         return this.dtPedidoProperty().get();
     }
 
-    public final void setDtPedido(final java.util.Date dtPedido) {
+    public final void setDtPedido(final LocalDate dtPedido) {
         this.dtPedidoProperty().set(dtPedido);
     }
 
-    public final ObjectProperty<Date> dtRetiradaProperty() {
+    public final ObjectProperty<LocalDate> dtRetiradaProperty() {
         return this.dtRetirada;
     }
 
-    public final java.util.Date getDtRetirada() {
+    public final LocalDate getDtRetirada() {
         return this.dtRetiradaProperty().get();
     }
 
-    public final void setDtRetirada(final java.util.Date dtRetirada) {
+    public final void setDtRetirada(final LocalDate dtRetirada) {
         this.dtRetiradaProperty().set(dtRetirada);
     }
 
@@ -123,12 +126,11 @@ public class Pedido implements Serializable {
         return this.itens;
     }
 
-    public final javafx.collections.ObservableList<labuonapastafx.model.ItemPedido> getItens() {
+    public final ObservableList<ItemPedido> getItens() {
         return this.itensProperty().get();
     }
 
-    public final void setItens(
-            final javafx.collections.ObservableList<labuonapastafx.model.ItemPedido> itens) {
+    public final void setItens(final ObservableList<ItemPedido> itens) {
         this.itensProperty().set(itens);
     }
 

@@ -1,13 +1,10 @@
 package labuonapastafx.controller;
 
 import labuonapastafx.model.*;
-import labuonapastafx.persistencia.ClienteDao;
 import labuonapastafx.persistencia.PedidoDao;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class PedidoNe {
 
@@ -28,14 +25,44 @@ public class PedidoNe {
      * @param itens Lista dos produtos que compõe o pedido.
      * @return
      */
-    public boolean incluir(Usuario usuar, Cliente clie, Date dataRetirada, Integer horaDe, 
+    public boolean incluir(Usuario usuar, Cliente clie, LocalDate dataRetirada, Integer horaDe,
             Integer horaAte, ArrayList<ItemPedido> itens) {
        
-        Pedido ped = new Pedido(null, usuar, clie, Calendar.getInstance().getTime(), dataRetirada, 
-                horaDe, horaAte, itens);
+        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dataRetirada, horaDe, horaAte, itens);
         
         pedDao.incluir(ped);
         
         return true;
+    }
+
+	/**
+	 * Obter pedidos que pertence a um determinado {@code Cliente}.
+	 *
+	 * @param clieId Código do Cliente que se deseja consultar os pedidos.
+	 * @return
+     */
+	public ArrayList<Pedido> obterPedidoCliente(int clieId) {
+        return pedDao.obterPedidosCliente(clieId);
+	}
+
+    /**
+     * Excluir todos os Pedidos do Cliente informado.
+     * @param clie Cliente a qual se deseja excluir os Pedidos.
+     */
+    public void excluirPorCliente(Cliente clie) {
+
+        pedDao.excluirPorCliente(clie);
+
+    }
+
+    /**
+     * Efetuar alterações no Pedido conforme passado por parâmetro.
+     *
+     * @param pedido Pedido que se deseja alterar as informações.
+     *
+     * @return
+     */
+    public boolean alterar(Pedido pedido) {
+
     }
 }

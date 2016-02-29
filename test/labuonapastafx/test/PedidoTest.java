@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import static org.junit.Assert.*;
 
@@ -23,6 +23,8 @@ public class PedidoTest {
     private ProdutoNe prodNe;
     private Usuario usuar;
     private Cliente clie;
+    private ArrayList<Pedido> pedidos;
+    private ArrayList<ItemPedido> itens;
 
     @Before
     public void setUp() throws Exception {
@@ -53,10 +55,27 @@ public class PedidoTest {
         prodNe.incluirProduto("Produto Diversos", UnidadeEnum.UNIDADE, BigDecimal.valueOf(10.00),
                 ProdutoEnum.DIVERSOS);
 
+        //Gerar uma lista de itens para utilizar nos testes:
+        itens = new ArrayList<ItemPedido>();
+
+        itens.add(new ItemPedido(1, prodNe.obterProduto("Produto Massa"),
+                prodNe.obterProduto("Produto Molho"), BigDecimal.valueOf(1.300)));
+
+        itens.add(new ItemPedido(2, prodNe.obterProduto("Produto Massa"),
+                prodNe.obterProduto("Produto Molho"), BigDecimal.valueOf(2.000)));
+
+        itens.add(new ItemPedido(3, prodNe.obterProduto("Produto Salada"),
+                new Produto(), BigDecimal.valueOf(0.750)));
+
+        itens.add(new ItemPedido(4, prodNe.obterProduto("Produto Bebida"),
+                new Produto(), BigDecimal.valueOf(1.000)));
+
     }
 
     @After
     public void setEnd() throws Exception {
+
+        pedNe.excluirPorCliente(clie);
 
         //Excluir massa de testes utilizada.
         usuarNe.excluirUsuario(usuarNe.obterUsuario("testeped").getUserId());
@@ -75,59 +94,74 @@ public class PedidoTest {
     @Test
     public void testIncluirPedido() {
 
-        ArrayList<ItemPedido> itens = new ArrayList<ItemPedido>();
+        LocalDate dtRetirada = LocalDate.now().plusDays(2);
 
-        itens.add(new ItemPedido(prodNe.obterProduto("Produto Massa"), BigDecimal.valueOf(1.300),
-                prodNe.obterProduto("Produto Molho")));
+        assertTrue(pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, itens));
 
-        itens.add(new ItemPedido(prodNe.obterProduto("Produto Massa"), BigDecimal.valueOf(2.000),
-                prodNe.obterProduto("Produto Molho")));
+        pedidos = pedNe.obterPedidoCliente(clie.getClieId());
 
-        itens.add(new ItemPedido(prodNe.obterProduto("Produto Salada"), BigDecimal.valueOf(0.750), null));
+        assertEquals("Teste Pedido", pedidos.get(0).getUsuar().getNomeCompleto());
 
-        itens.add(new ItemPedido(prodNe.obterProduto("Produto Bebida"), BigDecimal.valueOf(1.000), null));
+        assertEquals("Teste Pedido", pedidos.get(0).getClie().getNome());
 
-        Calendar c = Calendar.getInstance();
-        c.set(2016, 02, 22);
+        assertEquals(LocalDate.now(), pedidos.get(0).getDtPedido());
 
-        assertTrue(pedNe.incluir(usuar, clie, c.getTime(), 900, 1000, itens));
+        assertEquals(dtRetirada, pedidos.get(0).getDtRetirada());
 
-        Cliente cliente = pedNe.obterClienteNome("Incluir Cliente Tal");
+        assertEquals(900, pedidos.get(0).getHoraDe());
 
-        assertEquals("Incluir Cliente Tal", cliente.getNome());
-        assertEquals("12345678912", cliente.getTelefone1());
-        assertEquals("Rua Irlanda Creusa, 1754", cliente.getEndereco());
+        assertEquals(1000, pedidos.get(0).getHoraAte());
 
-        assertFalse(pedNe.incluirCliente("Incluir Cliente Tal", "12345678912", "", "incluir@incluir.com",
-                "Rua Irlanda Creusa, 1754"));
+        assertEquals(4, pedidos.get(0).getItens().size());
 
-        assertTrue(pedNe.excluir(cliente.getClieId()));
+        assertEquals(itens.get(0).getProduto().getProdId(), pedidos.get(0).getItens().get(0).getProduto().getProdId());
+
+        assertEquals(itens.get(0).getMolho().getProdId(), pedidos.get(0).getItens().get(0).getMolho().getProdId());
+
+        assertEquals(itens.get(0).getProduto().getValor(), pedidos.get(0).getItens().get(0).getProduto().getValor());
+
+        assertEquals(itens.get(1).getProduto().getProdId(), pedidos.get(0).getItens().get(1).getProduto().getProdId());
+
+        assertEquals(itens.get(1).getMolho().getProdId(), pedidos.get(0).getItens().get(1).getMolho().getProdId());
+
+        assertEquals(itens.get(1).getProduto().getValor(), pedidos.get(0).getItens().get(1).getProduto().getValor());
+
+        assertEquals(itens.get(2).getProduto().getProdId(), pedidos.get(0).getItens().get(2).getProduto().getProdId());
+
+        assertEquals(itens.get(2).getMolho().getProdId(), pedidos.get(0).getItens().get(2).getMolho().getProdId());
+
+        assertEquals(itens.get(2).getProduto().getValor(), pedidos.get(0).getItens().get(2).getProduto().getValor());
+
+        assertEquals(itens.get(3).getProduto().getProdId(), pedidos.get(0).getItens().get(3).getProduto().getProdId());
+
+        assertEquals(itens.get(3).getMolho().getProdId(), pedidos.get(0).getItens().get(3).getMolho().getProdId());
+
+        assertEquals(itens.get(3).getProduto().getValor(), pedidos.get(0).getItens().get(3).getProduto().getValor());
 
     }
 
+    @Test
+    public void testAlterarPedido() {
+
+        testIncluirPedido();
+
+        Pedido ped = pedidos.get(0);
+
+        ped.setDtRetirada(LocalDate.now().plusDays(4));
+        ped.setHoraDe(1100);
+        ped.setHoraAte(1200);
+
+        ped.getItens().remove(0);
+        ped.getItens().remove(2);
+
+        ped.getItens().get(0).setCodigo(1);
+        ped.getItens().get(1).setCodigo(2);
+
+        assertTrue(pedNe.alterar(pedidos.get(0)));
+
+
+    }
     /*
-     @Test
-     public void testAlterarCliente() {
-
-     assertTrue(pedNe.incluirCliente("Alterar Cliente Tal", "12345678912", "", "",
-     "Rua Irlanda Creusa, 1754"));
-
-     assertTrue(pedNe.alterarCliente(pedNe.obterClienteNome("Alterar Cliente Tal").getClieId(),
-     "Alterar Cliente Tal para Isso", "87654987654", "123456789", "alterar@alterar.com",
-     "Rua Irlanda Creusa, 8498"));
-
-     Cliente cliente = pedNe.obterClienteNome("Alterar Cliente Tal para Isso");
-
-     assertEquals("Alterar Cliente Tal para Isso", cliente.getNome());
-     assertEquals("87654987654", cliente.getTelefone1());
-     assertEquals("123456789", cliente.getTelefone2());
-     assertEquals("alterar@alterar.com", cliente.getEmail());
-     assertEquals("Rua Irlanda Creusa, 8498", cliente.getEndereco());
-
-     assertTrue(pedNe.excluir(cliente.getClieId()));
-
-     }
-
      @Test
      public void testExcluirId() {
 
