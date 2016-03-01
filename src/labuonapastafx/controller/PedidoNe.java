@@ -28,7 +28,8 @@ public class PedidoNe {
     public boolean incluir(Usuario usuar, Cliente clie, LocalDate dataRetirada, Integer horaDe,
             Integer horaAte, ArrayList<ItemPedido> itens) {
        
-        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dataRetirada, horaDe, horaAte, itens);
+        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dataRetirada, horaDe, 
+        		horaAte, itens);
         
         pedDao.incluir(ped);
         
@@ -47,6 +48,7 @@ public class PedidoNe {
 
     /**
      * Excluir todos os Pedidos do Cliente informado.
+     * 
      * @param clie Cliente a qual se deseja excluir os Pedidos.
      */
     public void excluirPorCliente(Cliente clie) {
@@ -58,11 +60,21 @@ public class PedidoNe {
     /**
      * Efetuar alterações no Pedido conforme passado por parâmetro.
      *
-     * @param pedido Pedido que se deseja alterar as informações.
+     * @param pedido Pedido que se deseja alterar as informações. O código do pedido precisa ser
+     * de um pedido que realmente existe na base, por tanto não deve ser alterado.
      *
      * @return
      */
     public boolean alterar(Pedido pedido) {
-
+    	
+    	pedDao.alterar(pedido);
+    	
+    	return true;
     }
+
+	public boolean excluirPedido(Pedido ped) {
+		pedDao.excluir(ped);	
+		
+		return true;
+	}
 }

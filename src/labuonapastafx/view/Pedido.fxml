@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+	styleClass="fundo-opcao" stylesheets="@Labuonapasta.css" xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.PedidoController">
+	<children>
+		<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+			<children>
+				<TitledPane animated="false" collapsible="false"
+					contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+					styleClass="titled-opcao" text="Cadastro de Pedidos"
+					AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0"
+					AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+					<content>
+						<VBox>
+							<children>
+								<HBox alignment="CENTER_RIGHT" fillHeight="false"
+									AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+									AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+									<VBox.margin>
+										<Insets bottom="10.0" top="10.0" />
+									</VBox.margin>
+									<children>
+										<Label styleClass="label-separator" text="Informações do Pedido" />
+										<Separator HBox.hgrow="ALWAYS">
+											<HBox.margin>
+												<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+											</HBox.margin>
+										</Separator>
+									</children>
+								</HBox>
+								<GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity"
+									maxWidth="-Infinity">
+									<columnConstraints>
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="153.0" minWidth="-Infinity" prefWidth="79.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="153.0" minWidth="10.0" prefWidth="76.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="178.0" minWidth="-Infinity" prefWidth="70.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="232.0" minWidth="-Infinity" prefWidth="70.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="226.0" minWidth="-Infinity" prefWidth="173.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="273.0" minWidth="-Infinity" prefWidth="119.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="273.0" minWidth="10.0" prefWidth="31.0" />
+										<ColumnConstraints hgrow="SOMETIMES"
+											maxWidth="363.0" minWidth="10.0" prefWidth="363.0" />
+									</columnConstraints>
+									<rowConstraints>
+										<RowConstraints maxHeight="31.0" minHeight="0.0"
+											prefHeight="21.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="87.0" minHeight="19.0"
+											prefHeight="52.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="100.0" minHeight="17.0"
+											prefHeight="37.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="116.0" minHeight="19.0"
+											prefHeight="36.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="92.0" minHeight="7.0"
+											prefHeight="29.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="100.0" minHeight="0.0"
+											prefHeight="49.0" vgrow="SOMETIMES" />
+										<RowConstraints maxHeight="169.0" minHeight="10.0"
+											prefHeight="165.0" vgrow="SOMETIMES" />
+									</rowConstraints>
+									<VBox.margin>
+										<Insets />
+									</VBox.margin>
+									<children>
+										<Label text="Número:" />
+										<Label text="Telefone:" GridPane.columnIndex="1" />
+										<Label text="Nome:" GridPane.columnIndex="3" />
+										<TextField fx:id="txtNumPed" disable="true"
+											editable="false" focusTraversable="false" GridPane.rowIndex="1" />
+										<TextField fx:id="txtTelefone" alignment="CENTER_RIGHT"
+											onKeyReleased="#txtTelefoneListener" GridPane.columnIndex="1"
+											GridPane.columnSpan="2" GridPane.rowIndex="1" />
+										<TextField fx:id="txtNome" onKeyReleased="#txtClienteListener"
+											GridPane.columnIndex="3" GridPane.columnSpan="3"
+											GridPane.rowIndex="1" />
+										<Label text="Data de Retirada:" GridPane.columnSpan="2"
+											GridPane.rowIndex="2" />
+										<Label text="Hora De:" GridPane.columnIndex="2"
+											GridPane.rowIndex="2" />
+										<Label text="Hora Até:" GridPane.columnIndex="3"
+											GridPane.rowIndex="2" />
+										<DatePicker fx:id="dtpickRetirada"
+											GridPane.columnSpan="2" GridPane.rowIndex="3" />
+										<TextField fx:id="txtHoraDe" GridPane.columnIndex="2"
+											GridPane.rowIndex="3" />
+										<TextField fx:id="txtHoraAte" GridPane.columnIndex="3"
+											GridPane.rowIndex="3" />
+										<Label text="Produto:" GridPane.rowIndex="4" />
+										<Label text="Qtde.:" GridPane.columnIndex="5"
+											GridPane.rowIndex="4" />
+										<Label text="Molho:" GridPane.columnIndex="4"
+											GridPane.rowIndex="4" />
+										<ComboBox fx:id="cbxProduto" prefWidth="337.0"
+											GridPane.columnSpan="4" GridPane.rowIndex="5" />
+										<TextField fx:id="txtQtde" GridPane.columnIndex="5"
+											GridPane.rowIndex="5" />
+										<ComboBox fx:id="cbxMolho" prefWidth="171.0"
+											GridPane.columnIndex="4" GridPane.rowIndex="5" />
+										<Button fx:id="btnAdicionarItem" mnemonicParsing="false"
+											onAction="#incluirItemListener" text="+"
+											GridPane.columnIndex="6" GridPane.rowIndex="2" />
+										<Button fx:id="btnExcluirItem" mnemonicParsing="false"
+											onAction="#excluirItemListener" prefHeight="31.0" prefWidth="31.0"
+											text="-" GridPane.columnIndex="6" GridPane.rowIndex="3" />
+										<ListView fx:id="listItens" prefHeight="168.0"
+											prefWidth="203.0" GridPane.columnIndex="7" GridPane.rowIndex="1"
+											GridPane.rowSpan="6" />
+										<Label text="Itens:" GridPane.columnIndex="7" />
+									</children>
+								</GridPane>
+								<HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity"
+									maxWidth="-Infinity">
+									<children>
+										<Button fx:id="btnIncluir" mnemonicParsing="false"
+											onAction="#botaoIncluirListener" prefHeight="34.0" prefWidth="111.0"
+											text="Incluir">
+											<HBox.margin>
+												<Insets bottom="10.0" right="10.0" top="10.0" />
+											</HBox.margin>
+											<graphic>
+												<ImageView pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@imagens/adicionar.png" />
+													</image>
+												</ImageView>
+											</graphic>
+										</Button>
+										<Button fx:id="btnAlterar" disable="true"
+											mnemonicParsing="false" onAction="#botaoAlterarListener"
+											prefHeight="34.0" prefWidth="111.0" text="Alterar">
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
+											</HBox.margin>
+											<graphic>
+												<ImageView pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@imagens/editar.png" />
+													</image>
+												</ImageView>
+											</graphic>
+										</Button>
+										<Button fx:id="btnExcluir" disable="true"
+											mnemonicParsing="false" onAction="#botaoExcluirListener"
+											prefHeight="34.0" prefWidth="111.0" text="Excluir">
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
+											</HBox.margin>
+											<graphic>
+												<ImageView pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@imagens/lixeira.png" />
+													</image>
+												</ImageView>
+											</graphic>
+										</Button>
+										<Button mnemonicParsing="false" onAction="#limparCampos"
+											prefHeight="34.0" prefWidth="111.0" text="Limpar">
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
+											</HBox.margin>
+											<graphic>
+												<ImageView pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@imagens/atualizar.png" />
+													</image>
+												</ImageView>
+											</graphic>
+										</Button>
+										<Button mnemonicParsing="false" onAction="#botaoSairListener"
+											prefHeight="34.0" prefWidth="111.0" text="Sair">
+											<HBox.margin>
+												<Insets bottom="10.0" left="10.0" top="10.0" />
+											</HBox.margin>
+											<graphic>
+												<ImageView pickOnBounds="true" preserveRatio="true">
+													<image>
+														<Image url="@imagens/sair.png" />
+													</image>
+												</ImageView>
+											</graphic>
+										</Button>
+									</children>
+									<VBox.margin>
+										<Insets bottom="10.0" top="10.0" />
+									</VBox.margin>
+								</HBox>
+								<HBox alignment="CENTER_RIGHT" fillHeight="false">
+									<VBox.margin>
+										<Insets bottom="10.0" top="10.0" />
+									</VBox.margin>
+									<children>
+										<Label styleClass="label-separator" text="Pedidos" />
+										<Separator HBox.hgrow="ALWAYS">
+											<HBox.margin>
+												<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+											</HBox.margin>
+										</Separator>
+									</children>
+								</HBox>
+								<TableView fx:id="tblPedido" maxHeight="1.7976931348623157E308"
+									maxWidth="1.7976931348623157E308" onMouseClicked="#tabelaClienteListener"
+									prefHeight="260.0" prefWidth="732.0" VBox.vgrow="ALWAYS">
+									<columns>
+										<TableColumn fx:id="tblcolNumero" editable="false"
+											minWidth="48.0" prefWidth="78.0" resizable="false" sortable="false"
+											text="Núm." />
+										<TableColumn fx:id="tblcolCliente" editable="false"
+											maxWidth="391.0" minWidth="41.0" prefWidth="344.0" sortable="false"
+											text="Cliente" />
+										<TableColumn fx:id="tblcolTelefone" prefWidth="130.0"
+											resizable="false" text="Telefone" />
+										<TableColumn fx:id="tblcolRetirada" prefWidth="112.0"
+											text="Retirada" />
+										<TableColumn fx:id="tblcolDe" prefWidth="75.0"
+											text="De" />
+										<TableColumn fx:id="tblcolAte" prefWidth="75.0"
+											text="Até" />
+										<TableColumn fx:id="tblcolSolicitado" editable="false"
+											prefWidth="106.0" sortable="false" text="Solicitado" />
+									</columns>
+								</TableView>
+							</children>
+						</VBox>
+					</content>
+				</TitledPane>
+			</children>
+		</AnchorPane>
+	</children>
+</StackPane>

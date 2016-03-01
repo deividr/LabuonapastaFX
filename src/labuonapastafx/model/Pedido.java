@@ -90,7 +90,7 @@ public class Pedido implements Serializable {
         return this.usuar;
     }
 
-    public final Usuario getUsuar() {
+    public final Usuario getUsuario() {
         return this.usuarProperty().get();
     }
 

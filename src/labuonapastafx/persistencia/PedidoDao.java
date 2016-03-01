@@ -6,7 +6,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Responsável por todo o procedimento de persistência na base de dados {@code pedido} e {@code item_pedido}.
+ * Responsável por todo o procedimento de persistência na base de dados
+ * {@code pedido} e {@code item_pedido}.
  *
  * @author Deivid Assumpcao Rodrigues
  * @version %I%, %G%
@@ -14,242 +15,270 @@ import java.util.ArrayList;
  */
 public class PedidoDao {
 
-    /**
-     * Incluir um novo {@code pedido}.
-     *
-     * @param ped Pedido que se deseja incluir.
-     */
-    public Pedido incluir(Pedido ped) {
-
-        String sql = "INSERT INTO pedido (cd_cliente, cd_usuario, dt_pedido, dt_retirada, hr_de, "
-                + "hr_ate) VALUES (?,?,?,?,?,?)";
+	/**
+	 * Incluir um novo {@code pedido}.
+	 *
+	 * @param ped
+	 *            Pedido que se deseja incluir.
+	 */
+	public Pedido incluir(Pedido ped) {
+
+		String sql = "INSERT INTO pedido (cd_cliente, cd_usuario, dt_pedido, dt_retirada, hr_de, "
+				+ "hr_ate) VALUES (?,?,?,?,?,?)";
+
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql,
+						PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+			stm.setInt(1, ped.getClie().getClieId());
+			stm.setInt(2, ped.getUsuario().getUserId());
+			stm.setDate(3, java.sql.Date.valueOf(ped.getDtPedido()));
+			stm.setDate(4, java.sql.Date.valueOf(ped.getDtRetirada()));
+			stm.setInt(5, ped.getHoraDe());
+			stm.setInt(6, ped.getHoraAte());
+
+			stm.executeUpdate();
+
+			ResultSet rs = stm.getGeneratedKeys();
+
+			while (rs.next()) {
+				ped.setPedId(rs.getInt(1));
+			}
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao incluir pedido: " + e.getMessage());
+		}
+
+		incluirItens(ped);
+
+		return ped;
+
+	}
 
-        try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+	/**
+	 * Incluir os itens pertencentes ao Pedido.
+	 *
+	 * @param ped
+	 */
+	private void incluirItens(Pedido ped) {
 
-            stm.setInt(1, ped.getClie().getClieId());
-            stm.setInt(2, ped.getUsuar().getUserId());
-            stm.setDate(3, java.sql.Date.valueOf(ped.getDtPedido()));
-            stm.setDate(4, java.sql.Date.valueOf(ped.getDtRetirada()));
-            stm.setInt(5, ped.getHoraDe());
-            stm.setInt(6, ped.getHoraAte());
+		String sql = "INSERT INTO item_pedido (cd_pedido, nr_item, cd_produto,"
+				+ " cd_molho, vl_quantidade) VALUES (?,?,?,?,?)";
 
-            stm.executeUpdate();
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 
-            ResultSet rs = stm.getGeneratedKeys();
+			for (ItemPedido itemPedido : ped.getItens()) {
+				try {
+					stm.setInt(1, ped.getPedId());
+					stm.setInt(2, itemPedido.getCodigo());
+					stm.setInt(3, itemPedido.getProduto().getProdId());
 
-            while (rs.next()) {
-                ped.setPedId(rs.getInt(1));
-            }
+					stm.setNull(4, Types.INTEGER);
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir pedido: " + e.getMessage());
-        }
+					if (itemPedido.getMolho().getProdId() != 0)
+						stm.setInt(4, itemPedido.getMolho().getProdId());
 
-        incluirItens(ped);
+					stm.setBigDecimal(5, itemPedido.getQtde());
+					stm.addBatch();
+				} catch (SQLException e) {
+					throw new RuntimeException(
+							"Erro ao incluir itens do pedido: " + e.getMessage());
+				}
+			}
 
-        return ped;
+			stm.executeBatch();
 
-    }
-
-    /**
-     * Incluir os itens pertencentes ao Pedido.
-     *
-     * @param ped
-     */
-    private void incluirItens(Pedido ped) {
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao incluir itens do pedido: " + e.getMessage());
+		}
 
-        String sql = "INSERT INTO item_pedido (cd_pedido, dt_pedido, dt_retirada, nr_item, cd_produto," +
-                " cd_molho, vl_quantidade) VALUES (?,?,?,?,?,?,?)";
+	}
 
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(sql)) {
+	/**
+	 * Obter pedidos que pertence a um determinado {@code Cliente}.
+	 *
+	 * @param clieId
+	 *            Código do Cliente que se deseja consultar os pedidos.
+	 * @return
+	 */
+	public ArrayList<Pedido> obterPedidosCliente(int clieId) {
+		String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
+				+ "hr_ate FROM pedido WHERE cd_cliente = ?";
 
-            java.sql.Date dtPedido = java.sql.Date.valueOf(ped.getDtPedido());
-            java.sql.Date dtRetirada = java.sql.Date.valueOf(ped.getDtRetirada());
+		ArrayList<Pedido> pedidos = new ArrayList<>();
 
-            for (ItemPedido itemPedido : ped.getItens()) {
-                try {
-                    stm.setInt(1, ped.getPedId());
-                    stm.setDate(2, dtPedido);
-                    stm.setDate(3, dtRetirada);
-                    stm.setInt(4, itemPedido.getCodigo());
-                    stm.setInt(5, itemPedido.getProduto().getProdId());
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setInt(1, clieId);
+			ResultSet rs = stm.executeQuery();
 
-                    stm.setNull(6, Types.INTEGER);
+			while (rs.next()) {
+				// Carregar o Pedido
+				Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
+				Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
 
-                    if (itemPedido.getMolho().getProdId() != 0)
-                        stm.setInt(6, itemPedido.getMolho().getProdId());
+				LocalDate dtPedido = rs.getDate(4).toLocalDate();
+				LocalDate dtRetirada = rs.getDate(5).toLocalDate();
 
-                    stm.setBigDecimal(7, itemPedido.getQtde());
-                    stm.addBatch();
-                } catch (SQLException e) {
-                    throw new RuntimeException("Erro ao incluir itens do pedido: " + e.getMessage());
-                }
-            }
+				ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
 
-            stm.executeBatch();
+				pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
+						rs.getInt(6), rs.getInt(7), itens));
+			}
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir itens do pedido: " + e.getMessage());
-        }
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+		}
 
-    }
+		return pedidos;
+	}
 
-    /**
-     * Obter pedidos que pertence a um determinado {@code Cliente}.
-     *
-     * @param clieId Código do Cliente que se deseja consultar os pedidos.
-     * @return
-     */
-    public ArrayList<Pedido> obterPedidosCliente(int clieId) {
-        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, hr_ate " +
-                "FROM pedido WHERE cd_cliente = ?";
+	/**
+	 * Obter todos os itens do Pedido.
+	 *
+	 * @param cdPedido
+	 *            Código do pedido que se deseja obter os itens.
+	 */
+	private ArrayList<ItemPedido> obterItensPedido(int cdPedido) {
 
-        ArrayList<Pedido> pedidos = new ArrayList<>();
+		String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido "
+				+ "WHERE cd_pedido = ?";
 
-        try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
-            stm.setInt(1, clieId);
-            ResultSet rs = stm.executeQuery();
+		ArrayList<ItemPedido> itens = new ArrayList<>();
 
-            while(rs.next()) {
-                //Carregar o Pedido
-                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
-                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setInt(1, cdPedido);
 
-                LocalDate dtPedido = rs.getDate(4).toLocalDate();
-                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
+			ResultSet rs = stm.executeQuery();
 
-                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1), rs.getDate(4), rs.getDate(5));
+			Produto molho;
 
-                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada, rs.getInt(6),
-                        rs.getInt(7), itens));
-            }
+			while (rs.next()) {
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
-        }
+				ProdutoDao prodDao = new ProdutoDao();
 
-        return pedidos;
-    }
+				Produto prod = prodDao.lerCodProduto(rs.getInt(2));
 
-    /**
-     * Obter todos os itens do Pedido.
-     *
-     * @param cdPedido Código do pedido que se deseja obter os itens.
-     */
-    private ArrayList<ItemPedido> obterItensPedido(int cdPedido, java.sql.Date dtPedido, java.sql.Date dtRetirada) {
+				if (rs.getInt(3) != 0) {
+					molho = prodDao.lerCodProduto(rs.getInt(3));
+				} else {
+					molho = new Produto();
+				}
 
-        String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido " +
-                "WHERE cd_pedido = ? AND dt_pedido = ? AND dt_retirada = ?";
+				itens.add(new ItemPedido(rs.getInt(1), prod, molho, rs.getBigDecimal(4)));
+			}
 
-        ArrayList<ItemPedido> itens = new ArrayList<>();
+		} catch (SQLException e) {
+			throw new RuntimeException(
+					"Erro ao consultar itens dos pedidos do Cliente: " + e.getMessage());
+		}
 
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(sql)) {
-            stm.setInt(1, cdPedido);
-            stm.setDate(2, dtPedido);
-            stm.setDate(3, dtRetirada);
+		return itens;
 
-            ResultSet rs = stm.executeQuery();
+	}
 
-            Produto molho;
+	/**
+	 * Excluir todos os Pedidos do Cliente informado.
+	 *
+	 * @param clie
+	 *            Cliente que se deseja excluir os pedidos.
+	 */
+	public void excluirPorCliente(Cliente clie) {
 
-            while(rs.next()) {
+		String sql = "DELETE FROM pedido WHERE cd_cliente = ?";
 
-                ProdutoDao prodDao = new ProdutoDao();
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.setInt(1, clie.getClieId());
+			stm.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao excluir os pedidos do Cliente: " + e.getMessage());
+		}
 
-                Produto prod = prodDao.lerCodProduto(rs.getInt(2));
+	}
 
-                if (rs.getInt(3) != 0) {
-                    molho = prodDao.lerCodProduto(rs.getInt(3));
-                } else {
-                    molho = new Produto();
-                }
+	/**
+	 * Excluir o Pedido que foi informado.
+	 *
+	 * @param pedido
+	 *            Pedido que se deseja excluir "permanentemente".
+	 */
+	public void excluir(Pedido pedido) {
 
-                itens.add(new ItemPedido(rs.getInt(1), prod, molho, rs.getBigDecimal(4)));
-            }
+		String sql = "DELETE FROM pedido WHERE cd_pedido = ?";
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar itens dos pedidos do Cliente: " + e.getMessage());
-        }
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 
-        return itens;
+			stm.setInt(1, pedido.getPedId());
 
-    }
+			stm.executeUpdate();
 
-    /**
-     * Excluir todos os Pedidos do Cliente informado.
-     *
-     * @param clie Cliente que se deseja excluir os pedidos.
-     */
-    public void excluirPorCliente(Cliente clie) {
+		} catch (SQLException e) {
+			throw new RuntimeException("Erro ao excluir o pedido do Cliente: " + e.getMessage());
+		}
 
-        String sql = "DELETE FROM pedido WHERE cd_cliente = ?";
+	}
 
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(sql)) {
-            stm.setInt(1, clie.getClieId());
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir os pedidos do Cliente: " + e.getMessage());
-        }
+	/**
+	 * Excluir todos os itens pertecentes ao Pedido informado.
+	 *
+	 * @param pedido
+	 *            Pedido que se deseja excluir os itens que o compõe.
+	 */
+	private void excluirItensPedido(Pedido pedido) {
 
-    }
+		String sql = "DELETE FROM item_pedido WHERE cd_pedido = ?";
 
-    /**
-     *  Excluir o Pedido que foi informado.
-     *
-     * @param pedido Pedido que se deseja excluir "permanentemente".
-     */
-    public void excluirPedido(Pedido pedido) {
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 
-        String sql = "DELETE FROM pedido WHERE cd_pedido = ? AND dt_pedido = ? AND dt_retirada = ?";
+			stm.setInt(1, pedido.getPedId());
 
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(sql)) {
+			stm.executeUpdate();
 
-            java.sql.Date dtPedido = java.sql.Date.valueOf(pedido.getDtPedido());
-            java.sql.Date dtRetirada = java.sql.Date.valueOf(pedido.getDtRetirada());
+		} catch (SQLException e) {
+			throw new RuntimeException(
+					"Erro ao excluir itens dos pedidos do Cliente: " + e.getMessage());
+		}
 
-            stm.setInt(1, pedido.getPedId());
-            stm.setDate(2, dtPedido);
-            stm.setDate(3, dtRetirada);
+	}
 
-            stm.executeUpdate();
+	/**
+	 * Alterar o Pedido informado como parâmetro.
+	 * 
+	 * @param pedido
+	 *            Pedido que se deseja alterar as informações.
+	 */
+	public void alterar(Pedido pedido) {
+		
+		excluirItensPedido(pedido);
+		
+		String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ? "
+				+ "WHERE cd_pedido = ?";
+		
+		try (Connection con = Conexao.getConexao();
+				PreparedStatement stm = con.prepareStatement(sql)) {
 
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir o pedido do Cliente: " + e.getMessage());
-        }
+			java.sql.Date dtRetirada = java.sql.Date.valueOf(pedido.getDtRetirada());
 
-    }
+			stm.setInt(1, pedido.getUsuario().getUserId());
+			stm.setDate(2, dtRetirada);
+			stm.setInt(3, pedido.getHoraDe());
+			stm.setInt(4, pedido.getHoraAte());
+			stm.setInt(5, pedido.getPedId());			
 
-    /**
-     * Excluir todos os itens pertecentes ao Pedido informado.
-     *
-     * @param pedido Pedido que se deseja excluir os itens que o compõe.
-     */
-    private void excluirItensPedido(Pedido pedido) {
+			stm.executeUpdate();
+			
+			incluirItens(pedido);
 
-        String sql = "DELETE FROM item_pedido WHERE cd_pedido = ? AND dt_pedido = ? AND dt_retirada = ?";
-
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(sql)) {
-
-            java.sql.Date dtPedido = java.sql.Date.valueOf(pedido.getDtPedido());
-            java.sql.Date dtRetirada = java.sql.Date.valueOf(pedido.getDtRetirada());
-
-            stm.setInt(1, pedido.getPedId());
-            stm.setDate(2, dtPedido);
-            stm.setDate(3, dtRetirada);
-
-            stm.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir itens dos pedidos do Cliente: " + e.getMessage());
-        }
-
-    }
+		} catch (SQLException e) {
+			throw new RuntimeException(
+					"Erro ao atualizar o Pedido do Cliente: " + e.getMessage());
+		}				
+		
+	}
 
 }
