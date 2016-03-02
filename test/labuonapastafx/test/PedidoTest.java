@@ -101,7 +101,8 @@ public class PedidoTest {
 
 		LocalDate dtRetirada = LocalDate.now().plusDays(2);
 
-		assertTrue(pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, itens));
+		assertTrue(pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, itens, "Algumas observacoes quaisquer",
+				(byte)0));
 
 		pedidos = pedNe.obterPedidoCliente(clie.getClieId());
 
@@ -116,6 +117,10 @@ public class PedidoTest {
 		assertEquals(900, pedidos.get(0).getHoraDe());
 
 		assertEquals(1000, pedidos.get(0).getHoraAte());
+
+		assertEquals("Algumas observacoes quaisquer", pedidos.get(0).getObsercao());
+
+		assertFalse(pedidos.get(0).isRetirado());
 
 		assertEquals(4, pedidos.get(0).getItens().size());
 
@@ -237,7 +242,9 @@ public class PedidoTest {
 		testIncluirPedido();
 		
 		pedNe.excluirPedido(pedidos.get(0));
-		
+
+        assertEquals(0, pedNe.obterPedidoCliente(clie.getClieId()).size());
+
 	}
 	
 }

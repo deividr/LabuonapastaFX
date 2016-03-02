@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Pedido implements Serializable {
@@ -18,13 +19,15 @@ public class Pedido implements Serializable {
     private ObjectProperty<LocalDate> dtPedido;
     private ObjectProperty<LocalDate> dtRetirada;
     private ListProperty<ItemPedido> itens;
+    private StringProperty observacao;
+    private ObjectProperty<Byte> retirado;
 
     public Pedido() {
-		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, null);
+		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, null, "", (byte) 0);
     }
 
     public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, LocalDate dtRetirada,
-            Integer horaDe, Integer horaAte, ArrayList<ItemPedido> itens) {
+                  Integer horaDe, Integer horaAte, List<ItemPedido> itens, String observacao, Byte retirado) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
         this.usuar = new SimpleObjectProperty<>(usuar);
@@ -35,7 +38,9 @@ public class Pedido implements Serializable {
 
         ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
 
-        this.itens = new SimpleListProperty<>(itensObs);
+        this.itens = new SimpleListProperty<ItemPedido>(itensObs);
+        this.observacao = new SimpleStringProperty(observacao);
+        this.retirado = new SimpleObjectProperty<Byte>(retirado);
     }
 
     public final IntegerProperty pedIdProperty() {
@@ -132,6 +137,34 @@ public class Pedido implements Serializable {
 
     public final void setItens(final ObservableList<ItemPedido> itens) {
         this.itensProperty().set(itens);
+    }
+
+    public final StringProperty observacaoProperty() {
+        return this.observacao;
+    }
+
+    public final String getObsercao() {
+        return this.observacaoProperty().get();
+    }
+
+    public final void setObservacao(final String observacao) {
+        this.observacaoProperty().set(observacao);
+    }
+
+    public final ObjectProperty<Byte> retiradoProperty() {
+        return this.retirado;
+    }
+
+    public final byte getRetirado() {
+        return this.retiradoProperty().get();
+    }
+
+    public final void setRetirado(final Byte entregueAcesso) {
+        this.retiradoProperty().set(entregueAcesso);
+    }
+
+    public final boolean isRetirado() {
+        return getRetirado() == 1;
     }
 
 }

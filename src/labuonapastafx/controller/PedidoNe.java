@@ -5,6 +5,7 @@ import labuonapastafx.persistencia.PedidoDao;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoNe {
 
@@ -26,10 +27,10 @@ public class PedidoNe {
      * @return
      */
     public boolean incluir(Usuario usuar, Cliente clie, LocalDate dataRetirada, Integer horaDe,
-            Integer horaAte, ArrayList<ItemPedido> itens) {
+                           Integer horaAte, List<ItemPedido> itens, String observacao, Byte retirado) {
        
         Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dataRetirada, horaDe, 
-        		horaAte, itens);
+        		horaAte, itens, observacao, retirado);
         
         pedDao.incluir(ped);
         

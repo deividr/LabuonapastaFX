@@ -65,7 +65,6 @@ public class ClienteController extends StackPane implements Initializable {
     @FXML
     private Button btnExcluir;
 
-
     // Variáveis de controle geral
     private MenuController menuControl;
     private ClienteNe clienteNe;

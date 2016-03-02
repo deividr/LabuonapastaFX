@@ -39,6 +39,8 @@ public class MenuController extends VBox implements Initializable {
     @FXML
     private MenuItem mntmAltSenha;
     @FXML
+    private MenuItem mntmCadPedido;
+    @FXML
     private StackPane pnCentral;
     @FXML
     private Label lblUsuario;
@@ -68,7 +70,7 @@ public class MenuController extends VBox implements Initializable {
     /**
      * Mostrar a tela de alteração de senha.
      * 
-     * @param event 
+     * @param event Informações do evento que foi disparado.
      */
     public void mntmSenhaListener(ActionEvent event) {
     	SenhaController senhaControl;
@@ -81,7 +83,7 @@ public class MenuController extends VBox implements Initializable {
     /**
      * Mostrar a tela de cadastro de {@code Usuario}.
      * 
-     * @param event 
+     * @param event Informações do evento que foi disparado.
      */
     public void mntmCadUsuarioListener(ActionEvent event) {
         UsuarioController userControl;
@@ -94,7 +96,7 @@ public class MenuController extends VBox implements Initializable {
     /**
      * Mostrar a tela de cadastro de {@code Produto}.
      * 
-     * @param event 
+     * @param event Informações do evento que foi disparado.
      */
     public void mntmCadProdutoListener(ActionEvent event) {
         ProdutoController prodtControl;
@@ -107,7 +109,7 @@ public class MenuController extends VBox implements Initializable {
     /**
      * Mostrar a tela de cadastro de {@code Cliente}.
      * 
-     * @param event 
+     * @param event Informações do evento que foi disparado.
      */
     public void mntmCadClienteListener(ActionEvent event) {
         ClienteController clieControl;
@@ -116,11 +118,24 @@ public class MenuController extends VBox implements Initializable {
         
         clieControl.setApp(this);
     }
-    
+
+    /**
+     * Mostrar a tela de cadastro de {@code Pedido}.
+     *
+     * @param event Informações do evento que foi disparado.
+     */
+    public void mntmCadPedidoListener(ActionEvent event) {
+        PedidoController pedControl;
+
+        pedControl = (PedidoController) loadView(LabuonapastaFX.VIEW_PEDIDO);
+
+        pedControl.setApp(this);
+    }
+
     /**
      * Efetuar a saída do sistema.
      * 
-     * @param event 
+     * @param event Informações do evento que foi disparado.
      */
     public void mntmSairListener(ActionEvent event) {
         exit();

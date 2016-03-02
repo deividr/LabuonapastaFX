@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -16,9 +17,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="Pedido">
               <items>
-                <MenuItem mnemonicParsing="false" text="Incluir" />
-                  <MenuItem mnemonicParsing="false" text="Alterar" />
-                  <MenuItem mnemonicParsing="false" text="Consultar" />
+                <MenuItem fx:id="mntmCadPedido" mnemonicParsing="false" onAction="#mntmCadPedidoListener" text="Cadastrar" />
               </items>
             </Menu>
                 <Menu mnemonicParsing="false" text="Cadastro">
