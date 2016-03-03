@@ -27,7 +27,7 @@ public class LabuonapastaFX extends Application {
     public static final String VIEW_MENU = "view/Menu.fxml";
     public static final String VIEW_USUARIO = "view/Usuario.fxml";
     public static final String VIEW_ALTERAR_SENHA = "view/Senha.fxml";
-    public static final String VIEW_PRODUTO = "view/produto.fxml";
+    public static final String VIEW_PRODUTO = "view/Produto.fxml";
     public static final String VIEW_CLIENTE = "view/Cliente.fxml";
     public static final String VIEW_PEDIDO = "view/Pedido.fxml";
 

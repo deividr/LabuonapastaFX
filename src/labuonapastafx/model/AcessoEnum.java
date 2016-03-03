@@ -40,5 +40,15 @@ public enum AcessoEnum {
 
 		return acessos;
 	}
+        
+        public static ArrayList<String> valuesDescricoes() {
+		ArrayList<String> acessos = new ArrayList<>();
+
+		for (AcessoEnum acesso : AcessoEnum.values()) {
+			acessos.add(acesso.obterDescricao());
+		}
+
+		return acessos;            
+        }
 
 }

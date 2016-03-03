@@ -1,27 +1,24 @@
 package labuonapastafx.controller;
 
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import jdk.nashorn.internal.ir.LiteralNode;
 import labuonapastafx.model.*;
 
 /**
@@ -50,7 +47,7 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private ComboBox<Produto> cbxProduto;
     @FXML
-    private ComboBox<Produto> cbxMolho;
+    private ComboBox<String> cbxMolho;
     @FXML
     private TextField txtQtde;
     @FXML
@@ -87,6 +84,10 @@ public class PedidoController extends StackPane implements Initializable {
     // Variáveis de controle geral
     private MenuController menuControl;
 
+    /**
+     *
+     * @param event
+     */
     @FXML
     void incluirItemListener(ActionEvent event) {
 
@@ -137,7 +138,8 @@ public class PedidoController extends StackPane implements Initializable {
         alert.setTitle("Informação Inválida");
         alert.setHeaderText(null);
         alert.setContentText(msg);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
+                .add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
         alert.showAndWait();
     }
 
@@ -170,68 +172,56 @@ public class PedidoController extends StackPane implements Initializable {
         ProdutoNe prodNe = new ProdutoNe();
 
         ArrayList<Produto> produtos = prodNe.listarProdutos();
-        ArrayList<Produto> molhos = new ArrayList<>();
+        ObservableList<String> molhos = FXCollections.observableArrayList();
 
         produtos.forEach(produto -> {
             if (produto.getTipo() == ProdutoEnum.MOLHO) {
-                molhos.add(produto);
+                molhos.add(produto.getNome());
             }
         });
 
-        cbxProduto.getItems().addAll(produtos);
-        cbxMolho.getItems().addAll(molhos);
+        //cbxProduto.getItems().addAll(produtos);
+        //cbxMolho.getItems().setAll("a", "b", "c", "d", "e", "f", "g", "h" );
+        //cbxMolho.getSelectionModel().selectFirst();       
 
-        cbxProduto.setCellFactory(
-                new Callback<ListView<Produto>, ListCell<Produto>>() {
-                    @Override
-                    public ListCell<Produto> call(ListView<Produto> param) {
-                        final ListCell<Produto> cell = new ListCell<Produto>() {
-
-                            @Override
-                            public void updateItem(Produto item, boolean empty) {
-                                super.updateItem(item, empty);
-                                setText(item.getNome());
-                            }
-                        };
-                        return cell;
-                    }
-                });
+        //cbxProduto.setCellFactory(new CellComboProduto());
+        //cbxMolho.setCellFactory(new CellComboProduto());
 
         /*
-        // Obter a lista inicial dos clientes cadastrados na base de dados.
-        clies = FXCollections.observableArrayList(clienteNe.listarClientes());
+         // Obter a lista inicial dos clientes cadastrados na base de dados.
+         clies = FXCollections.observableArrayList(clienteNe.listarClientes());
 
-        // Formatar a TableView com as informações dos clientes obtidos.
-        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
+         // Formatar a TableView com as informações dos clientes obtidos.
+         tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
 
-        tblcolTelefone1.setCellValueFactory(cellData -> {
-            String value = cellData.getValue().getTelefone1();
-            value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
-            value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
-            return new SimpleStringProperty(value);
-        });
+         tblcolTelefone1.setCellValueFactory(cellData -> {
+         String value = cellData.getValue().getTelefone1();
+         value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+         value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
+         return new SimpleStringProperty(value);
+         });
 
-        tblcolTelefone2.setCellValueFactory(cellData -> {
-            String value = cellData.getValue().getTelefone2();
-            if (value !=null) {
-                value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
-                value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
-                return new SimpleStringProperty(value);
-            } else {
-                return new SimpleStringProperty("");
-            }
+         tblcolTelefone2.setCellValueFactory(cellData -> {
+         String value = cellData.getValue().getTelefone2();
+         if (value !=null) {
+         value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+         value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
+         return new SimpleStringProperty(value);
+         } else {
+         return new SimpleStringProperty("");
+         }
 
-        });
+         });
 
-        tblcolEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
-        tblcolData.setCellValueFactory(cellData -> cellData.getValue().dataCriacaoProperty());
+         tblcolEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
+         tblcolData.setCellValueFactory(cellData -> cellData.getValue().dataCriacaoProperty());
 
-        tblCliente.setItems(clies);
+         tblCliente.setItems(clies);
 
-        Platform.runLater(() -> {
-            txtNome.requestFocus();;
-        });
-        */
+         Platform.runLater(() -> {
+         txtNome.requestFocus();;
+         });
+         */
     }
 
     /**
@@ -241,6 +231,27 @@ public class PedidoController extends StackPane implements Initializable {
      */
     public void setApp(MenuController menuControl) {
         this.menuControl = menuControl;
+    }
+
+    private class CellComboProduto implements Callback<ListView<Produto>, ListCell<Produto>> {
+
+        public CellComboProduto() {
+        }
+
+        @Override
+        public ListCell<Produto> call(ListView<Produto> param) {
+            final ListCell<Produto> cell = new ListCell<Produto>() {
+                
+                @Override
+                public void updateItem(Produto item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (!empty) {
+                        setText(item.getNome());
+                    }
+                }
+            };
+            return cell;
+        }
     }
 
 }

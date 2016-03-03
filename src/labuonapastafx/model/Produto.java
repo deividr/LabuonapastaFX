@@ -111,8 +111,9 @@ public class Produto implements Serializable {
 
 	@Override
 	public String toString() {
-		return "O produto " + getNome() + "eh cobrado por " + getUnidade() + ". E o seu valor eh "
-				+ getValor() + ".";
+		return getNome();
+		//return "O produto " + getNome() + "eh cobrado por " + getUnidade() + ". E o seu valor eh "
+		//		+ getValor() + ".";
 	}
 
 	@Override
