@@ -1,5 +1,6 @@
 package labuonapastafx.controller;
 
+import java.awt.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -45,9 +49,9 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TextField txtHoraAte;
     @FXML
-    private ComboBox<Produto> cbxProduto;
+    private ChoiceBox<Produto> cbxProduto;
     @FXML
-    private ComboBox<String> cbxMolho;
+    private ChoiceBox<Produto> cbxMolho;
     @FXML
     private TextField txtQtde;
     @FXML
@@ -172,17 +176,17 @@ public class PedidoController extends StackPane implements Initializable {
         ProdutoNe prodNe = new ProdutoNe();
 
         ArrayList<Produto> produtos = prodNe.listarProdutos();
-        ObservableList<String> molhos = FXCollections.observableArrayList();
+        ObservableList<Produto> molhos = FXCollections.observableArrayList();
 
         produtos.forEach(produto -> {
             if (produto.getTipo() == ProdutoEnum.MOLHO) {
-                molhos.add(produto.getNome());
+                molhos.add(produto);
             }
         });
 
         //cbxProduto.getItems().addAll(produtos);
-        //cbxMolho.getItems().setAll("a", "b", "c", "d", "e", "f", "g", "h" );
-        //cbxMolho.getSelectionModel().selectFirst();       
+        cbxMolho.getItems().setAll(molhos);
+        cbxMolho.getSelectionModel().selectFirst();
 
         //cbxProduto.setCellFactory(new CellComboProduto());
         //cbxMolho.setCellFactory(new CellComboProduto());

@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.AcessoEnum;
+import labuonapastafx.model.Produto;
 import labuonapastafx.model.Usuario;
 
 /**
