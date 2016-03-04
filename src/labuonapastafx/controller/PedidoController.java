@@ -49,9 +49,9 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TextField txtHoraAte;
     @FXML
-    private ChoiceBox<Produto> cbxProduto;
+    private ComboBox<Produto> cbxProduto;
     @FXML
-    private ChoiceBox<Produto> cbxMolho;
+    private ComboBox<Produto> cbxMolho;
     @FXML
     private TextField txtQtde;
     @FXML
@@ -184,9 +184,9 @@ public class PedidoController extends StackPane implements Initializable {
             }
         });
 
-        //cbxProduto.getItems().addAll(produtos);
+        cbxProduto.getItems().setAll(produtos);
+        cbxProduto.set
         cbxMolho.getItems().setAll(molhos);
-        cbxMolho.getSelectionModel().selectFirst();
 
         //cbxProduto.setCellFactory(new CellComboProduto());
         //cbxMolho.setCellFactory(new CellComboProduto());
