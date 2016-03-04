@@ -185,7 +185,6 @@ public class PedidoController extends StackPane implements Initializable {
         });
 
         cbxProduto.getItems().setAll(produtos);
-        cbxProduto.set
         cbxMolho.getItems().setAll(molhos);
 
         //cbxProduto.setCellFactory(new CellComboProduto());
