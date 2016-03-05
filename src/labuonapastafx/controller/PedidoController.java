@@ -83,6 +83,8 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TableColumn<Pedido, Integer> tblcolAte;
     @FXML
+    private TableColumn<Pedido, Integer> tblcolGeladeira;
+    @FXML
     private TableColumn<Pedido, LocalDate> tblcolSolicitado;
 
     // Variáveis de controle geral
@@ -173,6 +175,9 @@ public class PedidoController extends StackPane implements Initializable {
         txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
         dtpickRetirada.setValue(LocalDate.now());
 
+        txtHoraAte.textProperty().addListener(new HoraFieldListener(txtHoraAte));
+        txtHoraDe.textProperty().addListener(new HoraFieldListener(txtHoraDe));
+
         ProdutoNe prodNe = new ProdutoNe();
 
         ArrayList<Produto> produtos = prodNe.listarProdutos();
@@ -234,27 +239,6 @@ public class PedidoController extends StackPane implements Initializable {
      */
     public void setApp(MenuController menuControl) {
         this.menuControl = menuControl;
-    }
-
-    private class CellComboProduto implements Callback<ListView<Produto>, ListCell<Produto>> {
-
-        public CellComboProduto() {
-        }
-
-        @Override
-        public ListCell<Produto> call(ListView<Produto> param) {
-            final ListCell<Produto> cell = new ListCell<Produto>() {
-                
-                @Override
-                public void updateItem(Produto item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (!empty) {
-                        setText(item.getNome());
-                    }
-                }
-            };
-            return cell;
-        }
     }
 
 }
