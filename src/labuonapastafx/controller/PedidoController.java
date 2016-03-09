@@ -1,14 +1,11 @@
 package labuonapastafx.controller;
 
-import java.awt.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,7 +19,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import labuonapastafx.model.*;
 
 /**
@@ -185,6 +181,7 @@ public class PedidoController extends StackPane implements Initializable {
         ArrayList<Produto> produtos = prodNe.listarProdutos();
         ObservableList<Produto> molhos = FXCollections.observableArrayList();
 
+        //Separa da lista da tabela todos os que são do tipo Molho.
         produtos.forEach(produto -> {
             if (produto.getTipo() == ProdutoEnum.MOLHO) {
                 molhos.add(produto);
