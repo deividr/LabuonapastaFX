@@ -1,5 +1,6 @@
 package labuonapastafx.controller;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -87,16 +89,22 @@ public class PedidoController extends StackPane implements Initializable {
 
     // Variáveis de controle geral
     private MenuController menuControl;
+    
+    private String telefone, nome;
+    private LocalDate dtRetirada;
+    private Integer horaDe, horaAte, geladeira;
+    private Produto produto, molho;
+    private BigDecimal qtde;
 
     /**
      * @param event
      */
     @FXML
     void incluirItemListener(ActionEvent event) {
-
+    	getValueFields();
     }
 
-    @FXML
+	@FXML
     void excluirItemListener(ActionEvent event) {
 
     }
@@ -123,13 +131,37 @@ public class PedidoController extends StackPane implements Initializable {
 
     @FXML
     void botaoSairListener(ActionEvent event) {
-
+        menuControl.unloadView();
     }
 
     @FXML
     void tabelaPedidoListener(ActionEvent event) {
 
     }
+    
+    /**
+     * Método chamado para tratar o evento onKeyTyped.
+     * 
+     * @param event
+     */
+    @FXML
+    void comboProdutoPesquisa(KeyEvent event) {
+    	
+    }
+
+    /**
+     * Método para obter os valores do campos que foram modificados pelo usuário.
+     */
+    private void getValueFields() {
+    	this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
+    	this.nome = txtNome.getText();
+    	this.dtRetirada = dtpickRetirada.getValue();
+    	this.horaDe = Integer.parseInt(txtHoraDe.getText());
+    	this.horaAte = Integer.parseInt(txtHoraAte.getText());
+    	this.geladeira = Integer.parseInt(txtGeladeira.getText());
+    	this.produto = cbxProduto.getValue();
+    	this.molho = cbxMolho.getValue();
+	}
 
     /**
      * Mostrar tela de mensagem para apontar erro ao usuário.
@@ -201,6 +233,8 @@ public class PedidoController extends StackPane implements Initializable {
                 cbxMolho.setDisable(false);
             }
         });
+        
+        cbxProduto.setCellFactory();
 
         Platform.runLater(() -> {
             txtTelefone.requestFocus();

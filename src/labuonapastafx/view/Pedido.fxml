@@ -85,7 +85,7 @@
                                         <Label text="Produto:" GridPane.rowIndex="4" />
                                         <Label text="Qtde.:" GridPane.columnIndex="5" GridPane.rowIndex="4" />
                                         <Label text="Molho:" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                                        <ComboBox fx:id="cbxProduto" prefWidth="353.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
+                                        <ComboBox fx:id="cbxProduto" editable="true" onKeyTyped="#comboProdutoPesquisa" prefWidth="353.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
                                         <ComboBox fx:id="cbxMolho" prefWidth="198.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                                         <TextField fx:id="txtQtde" alignment="CENTER_RIGHT" GridPane.columnIndex="5" GridPane.rowIndex="5" />
                                         <Label prefHeight="21.0" prefWidth="101.0" text="Observações:" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
