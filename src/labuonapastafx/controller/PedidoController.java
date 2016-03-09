@@ -49,6 +49,8 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TextField txtHoraAte;
     @FXML
+    private TextField txtGeladeira;
+    @FXML
     private ComboBox<Produto> cbxProduto;
     @FXML
     private ComboBox<Produto> cbxMolho;
@@ -91,7 +93,6 @@ public class PedidoController extends StackPane implements Initializable {
     private MenuController menuControl;
 
     /**
-     *
      * @param event
      */
     @FXML
@@ -177,6 +178,7 @@ public class PedidoController extends StackPane implements Initializable {
 
         txtHoraAte.textProperty().addListener(new HoraFieldListener(txtHoraAte));
         txtHoraDe.textProperty().addListener(new HoraFieldListener(txtHoraDe));
+        txtGeladeira.textProperty().addListener(new LimitedTextListener(txtGeladeira, 3));
 
         ProdutoNe prodNe = new ProdutoNe();
 
@@ -192,44 +194,20 @@ public class PedidoController extends StackPane implements Initializable {
         cbxProduto.getItems().setAll(produtos);
         cbxMolho.getItems().setAll(molhos);
 
-        //cbxProduto.setCellFactory(new CellComboProduto());
-        //cbxMolho.setCellFactory(new CellComboProduto());
+        txtQtde.textProperty().addListener(new QuantityFieldListener(txtQtde));
 
-        /*
-         // Obter a lista inicial dos clientes cadastrados na base de dados.
-         clies = FXCollections.observableArrayList(clienteNe.listarClientes());
+        cbxProduto.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.getTipo() != ProdutoEnum.MASSA) {
+                cbxMolho.setValue(null);
+                cbxMolho.setDisable(true);
+            } else {
+                cbxMolho.setDisable(false);
+            }
+        });
 
-         // Formatar a TableView com as informações dos clientes obtidos.
-         tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
-
-         tblcolTelefone1.setCellValueFactory(cellData -> {
-         String value = cellData.getValue().getTelefone1();
-         value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
-         value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
-         return new SimpleStringProperty(value);
-         });
-
-         tblcolTelefone2.setCellValueFactory(cellData -> {
-         String value = cellData.getValue().getTelefone2();
-         if (value !=null) {
-         value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
-         value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
-         return new SimpleStringProperty(value);
-         } else {
-         return new SimpleStringProperty("");
-         }
-
-         });
-
-         tblcolEmail.setCellValueFactory(cellData -> cellData.getValue().emailProperty());
-         tblcolData.setCellValueFactory(cellData -> cellData.getValue().dataCriacaoProperty());
-
-         tblCliente.setItems(clies);
-
-         Platform.runLater(() -> {
-         txtNome.requestFocus();;
-         });
-         */
+        Platform.runLater(() -> {
+            txtTelefone.requestFocus();
+        });
     }
 
     /**

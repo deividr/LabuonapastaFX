@@ -22,7 +22,7 @@ public class Conexao {
 	 */
 	public static Connection getConexao() {
 		
-		String url = "jdbc:mysql://localhost/labuonapasta";
+		String url = "jdbc:mysql://localhost/labuonapasta?useSSL=False";
 		
 		Connection con = null;
 		
