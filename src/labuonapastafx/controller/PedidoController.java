@@ -4,11 +4,14 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +24,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import labuonapastafx.model.*;
 
 /**
@@ -89,7 +93,7 @@ public class PedidoController extends StackPane implements Initializable {
 
     // Variáveis de controle geral
     private MenuController menuControl;
-    
+    private Map<String, Produto> mapProdutos;
     private String telefone, nome;
     private LocalDate dtRetirada;
     private Integer horaDe, horaAte, geladeira;
@@ -101,10 +105,12 @@ public class PedidoController extends StackPane implements Initializable {
      */
     @FXML
     void incluirItemListener(ActionEvent event) {
-    	getValueFields();
+        validateFields();
+
+
     }
 
-	@FXML
+    @FXML
     void excluirItemListener(ActionEvent event) {
 
     }
@@ -138,15 +144,33 @@ public class PedidoController extends StackPane implements Initializable {
     void tabelaPedidoListener(ActionEvent event) {
 
     }
-    
+
     /**
-     * Método chamado para tratar o evento onKeyTyped.
-     * 
-     * @param event
+     * Método para validar os campos da tela.
      */
-    @FXML
-    void comboProdutoPesquisa(KeyEvent event) {
-    	
+    private boolean validateFields() {
+        getValueFields();
+
+        if (telefone.equals("")) {
+            showAlert("Informar o telefone do Cliente");
+            txtTelefone.requestFocus();
+            return false;
+        }
+
+        if (nome.equals("")) {
+            showAlert("Informar o nome do Cliente");
+            txtNome.requestFocus();
+            return false;
+        }
+
+        if (dtRetirada.isBefore(LocalDate.now())) {
+            showAlert("Data inválida. Favor informar data de hoje ou posterior.");
+            dtpickRetirada.requestFocus();
+            return false;
+        }
+
+        return true;
+
     }
 
     /**
@@ -156,9 +180,16 @@ public class PedidoController extends StackPane implements Initializable {
     	this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
     	this.nome = txtNome.getText();
     	this.dtRetirada = dtpickRetirada.getValue();
-    	this.horaDe = Integer.parseInt(txtHoraDe.getText());
-    	this.horaAte = Integer.parseInt(txtHoraAte.getText());
-    	this.geladeira = Integer.parseInt(txtGeladeira.getText());
+
+        if (!txtHoraDe.getText().equals(""))
+    	    this.horaDe = Integer.parseInt(txtHoraDe.getText().replaceAll("[^0-9]", ""));
+
+        if (!txtHoraAte.getText().equals(""))
+    	    this.horaAte = Integer.parseInt(txtHoraAte.getText().replaceAll("[^0-9]", ""));
+
+        if (!txtGeladeira.getText().equals(""))
+    	    this.geladeira = Integer.parseInt(txtGeladeira.getText());
+
     	this.produto = cbxProduto.getValue();
     	this.molho = cbxMolho.getValue();
 	}
@@ -208,16 +239,27 @@ public class PedidoController extends StackPane implements Initializable {
         txtHoraDe.textProperty().addListener(new HoraFieldListener(txtHoraDe));
         txtGeladeira.textProperty().addListener(new LimitedTextListener(txtGeladeira, 3));
 
+        //Limitar a 200 caracteres as informações do campo Observação:
+        txtObservacoes.textProperty().addListener((observable1, oldValue1, newValue1) -> {
+            if (newValue1.length() > 200) {
+                txtObservacoes.setText(oldValue1);
+            }
+        });
+
         ProdutoNe prodNe = new ProdutoNe();
 
         ArrayList<Produto> produtos = prodNe.listarProdutos();
         ObservableList<Produto> molhos = FXCollections.observableArrayList();
+
+        mapProdutos = new HashMap<>();
 
         //Separa da lista da tabela todos os que são do tipo Molho.
         produtos.forEach(produto -> {
             if (produto.getTipo() == ProdutoEnum.MOLHO) {
                 molhos.add(produto);
             }
+            //Criar Map para consultar e sortear produtos no Combo de Produtos.
+            mapProdutos.put(produto.getNome(), produto);
         });
 
         cbxProduto.getItems().setAll(produtos);
@@ -226,15 +268,36 @@ public class PedidoController extends StackPane implements Initializable {
         txtQtde.textProperty().addListener(new QuantityFieldListener(txtQtde));
 
         cbxProduto.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.getTipo() != ProdutoEnum.MASSA) {
+            if (newValue != null &&
+                    newValue.getTipo() != ProdutoEnum.MASSA) {
                 cbxMolho.setValue(null);
                 cbxMolho.setDisable(true);
             } else {
                 cbxMolho.setDisable(false);
             }
         });
-        
-        cbxProduto.setCellFactory();
+
+        cbxProduto.setConverter(new StringConverter<Produto>() {
+
+            @Override
+            public String toString(Produto produto) {
+                if (produto == null) return "";
+                String str = produto.getNome();
+                return str;
+            }
+
+            @Override
+            public Produto fromString(String string) {
+                if (!mapProdutos.containsKey(string)) {
+                    cbxProduto.setValue(null);
+                    return null;
+                }
+
+                return mapProdutos.get(string);
+            }
+        });
+
+        FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
 
         Platform.runLater(() -> {
             txtTelefone.requestFocus();

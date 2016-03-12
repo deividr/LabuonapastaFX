@@ -17,16 +17,17 @@ public class Pedido implements Serializable {
     private ObjectProperty<Usuario> usuar;
     private ObjectProperty<LocalDate> dtPedido;
     private ObjectProperty<LocalDate> dtRetirada;
+    private StringProperty geladeira;
     private ListProperty<ItemPedido> itens;
     private StringProperty observacao;
     private ObjectProperty<Byte> retirado;
 
     public Pedido() {
-		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, null, "", (byte) 0);
+		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, "", null, "", (byte) 0);
     }
 
     public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, LocalDate dtRetirada,
-                  Integer horaDe, Integer horaAte, List<ItemPedido> itens, String observacao, Byte retirado) {
+                  Integer horaDe, Integer horaAte, String geladeira, List<ItemPedido> itens, String observacao, Byte retirado) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
         this.usuar = new SimpleObjectProperty<>(usuar);
@@ -34,6 +35,7 @@ public class Pedido implements Serializable {
         this.dtRetirada = new SimpleObjectProperty<>(dtRetirada);
         this.horaDe = new SimpleIntegerProperty(horaDe);
         this.horaAte = new SimpleIntegerProperty(horaAte);
+        this.geladeira = new SimpleStringProperty(geladeira);
 
         ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
 
@@ -166,4 +168,15 @@ public class Pedido implements Serializable {
         return getRetirado() == 1;
     }
 
+    public final StringProperty geladeiraProperty() {
+        return this.geladeira;
+    }
+
+    public final String getGeladeira() {
+        return this.geladeiraProperty().get();
+    }
+
+    public final void setGeladeira(final String geladeira) {
+        this.geladeiraProperty().set(geladeira);
+    }
 }

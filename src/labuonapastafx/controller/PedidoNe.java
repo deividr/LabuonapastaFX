@@ -20,17 +20,18 @@ public class PedidoNe {
      *
      * @param usuar Usuário que está efetuando a inclusão do Pedido.
      * @param clie Cliente que está fazendo o Pedido.
-     * @param dataRetirada Data em que o Pedido será retirado.
+     * @param dtRetirada Data em que o Pedido será retirado.
      * @param horaDe Hora inicial em que o Pedido deve ser retirado.
      * @param horaAte Hora final em que o Pedido deve ser retirado.
      * @param itens Lista dos produtos que compõe o pedido.
      * @return
      */
-    public boolean incluir(Usuario usuar, Cliente clie, LocalDate dataRetirada, Integer horaDe,
-                           Integer horaAte, List<ItemPedido> itens, String observacao, Byte retirado) {
+    public boolean incluir(Usuario usuar, Cliente clie, LocalDate dtRetirada, Integer horaDe,
+                           Integer horaAte, String geladeira, List<ItemPedido> itens, String observacao,
+                           Byte retirado) {
        
-        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dataRetirada, horaDe, 
-        		horaAte, itens, observacao, retirado);
+        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dtRetirada, horaDe,
+        		horaAte, geladeira, itens, observacao, retirado);
         
         pedDao.incluir(ped);
         

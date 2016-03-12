@@ -293,7 +293,17 @@ public class ClienteController extends StackPane implements Initializable {
         	showAlert("Informar o telefone principal do Cliente");
         	txtTelefone1.requestFocus();
         	return false;
-        } else if (!email.equals("") &&
+        } else if (!telefone1.equals("") &&
+                !telefone1.matches("([0-9]{10,11})")) {
+            showAlert("Telefone principal inválido.");
+            txtTelefone1.requestFocus();
+            return false;
+        } else if (!telefone2.equals("") &&
+                !telefone2.matches("([0-9]{10,11})")) {
+            showAlert("Telefone secundário inválido");
+            txtTelefone2.requestFocus();
+            return false;
+        }else if (!email.equals("") &&
                 !email.matches("[a-zA-Z0-9]{4,}+([-_.][a-zA-Z0-9]{1,}@|@)+" +
                         "[a-zA-Z0-9]{2,}\\.([a-zA-Z]{2,}|[a-zA-Z]{2,}\\.[a-zA-Z]{2,})")) {
             showAlert("Endereço de email inválido");

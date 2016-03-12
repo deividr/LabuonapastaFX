@@ -24,7 +24,7 @@ public class PedidoDao {
 	public Pedido incluir(Pedido ped) {
 
 		String sql = "INSERT INTO pedido (cd_cliente, cd_usuario, dt_pedido, dt_retirada, hr_de, "
-				+ "hr_ate, ds_observacao, st_retirado) VALUES (?,?,?,?,?,?,?,0)";
+				+ "hr_ate, nr_geladeira, ds_observacao, st_retirado) VALUES (?,?,?,?,?,?,?,?,0)";
 
 		try (Connection con = Conexao.getConexao();
 				PreparedStatement stm = con.prepareStatement(sql,
@@ -36,7 +36,8 @@ public class PedidoDao {
 			stm.setDate(4, java.sql.Date.valueOf(ped.getDtRetirada()));
 			stm.setInt(5, ped.getHoraDe());
 			stm.setInt(6, ped.getHoraAte());
-			stm.setString(7, ped.getObsercao());
+			stm.setString(7, ped.getGeladeira());
+			stm.setString(8, ped.getObsercao());
 
 			stm.executeUpdate();
 
@@ -105,7 +106,7 @@ public class PedidoDao {
 	 */
 	public ArrayList<Pedido> obterPedidosCliente(int clieId) {
 		String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
-				+ "hr_ate, ds_observacao, st_retirado FROM pedido WHERE cd_cliente = ?";
+				+ "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido WHERE cd_cliente = ?";
 
 		ArrayList<Pedido> pedidos = new ArrayList<>();
 
@@ -125,7 +126,7 @@ public class PedidoDao {
 				ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
 
 				pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
-						rs.getInt(6), rs.getInt(7), itens, rs.getString(8), rs.getByte(9)));
+						rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9), rs.getByte(10)));
 			}
 
 		} catch (SQLException e) {
@@ -257,7 +258,7 @@ public class PedidoDao {
 		
 		excluirItensPedido(pedido);
 		
-		String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ?, " +
+		String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ?, nr_geladeira = ?, " +
 				"ds_observacao = ?, st_retirado = ? WHERE cd_pedido = ?";
 		
 		try (Connection con = Conexao.getConexao();
@@ -269,9 +270,10 @@ public class PedidoDao {
 			stm.setDate(2, dtRetirada);
 			stm.setInt(3, pedido.getHoraDe());
 			stm.setInt(4, pedido.getHoraAte());
-			stm.setString(5, pedido.getObsercao());
-			stm.setByte(6, pedido.getRetirado());
-			stm.setInt(7, pedido.getPedId());
+			stm.setString(5, pedido.getGeladeira());
+			stm.setString(6, pedido.getObsercao());
+			stm.setByte(7, pedido.getRetirado());
+			stm.setInt(8, pedido.getPedId());
 
 			stm.executeUpdate();
 

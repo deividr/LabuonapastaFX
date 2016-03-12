@@ -1,10 +1,10 @@
 package labuonapastafx.test;
 
 import static org.junit.Assert.*;
-import labuonapastafx.controller.ClienteNe;
-import labuonapastafx.model.Cliente;
 import org.junit.Before;
 import org.junit.Test;
+import labuonapastafx.controller.ClienteNe;
+import labuonapastafx.model.Cliente;
 
 public class ClienteTest {
 

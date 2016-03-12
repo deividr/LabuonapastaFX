@@ -21,6 +21,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="fundo-opcao" stylesheets="@Labuonapasta.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.PedidoController">
     <children>
@@ -85,11 +86,14 @@
                                         <Label text="Produto:" GridPane.rowIndex="4" />
                                         <Label text="Qtde.:" GridPane.columnIndex="5" GridPane.rowIndex="4" />
                                         <Label text="Molho:" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                                        <ComboBox fx:id="cbxProduto" editable="true" onKeyTyped="#comboProdutoPesquisa" prefWidth="353.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
+                                        <ComboBox fx:id="cbxProduto" editable="true" prefWidth="353.0" GridPane.columnSpan="4" GridPane.rowIndex="5" />
                                         <ComboBox fx:id="cbxMolho" prefWidth="198.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                                         <TextField fx:id="txtQtde" alignment="CENTER_RIGHT" GridPane.columnIndex="5" GridPane.rowIndex="5" />
                                         <Label prefHeight="21.0" prefWidth="101.0" text="Observações:" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
-                                        <TextArea fx:id="txtObservacoes" prefHeight="168.0" prefWidth="637.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="7" />
+                                        <TextArea fx:id="txtObservacoes" prefHeight="168.0" prefWidth="637.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="7">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font></TextArea>
                                         <Button fx:id="btnAdicionarItem" mnemonicParsing="false" onAction="#incluirItemListener" prefHeight="31.0" prefWidth="31.0" text="+" GridPane.columnIndex="6" GridPane.rowIndex="2" />
                                         <Button fx:id="btnExcluirItem" mnemonicParsing="false" onAction="#excluirItemListener" prefHeight="31.0" prefWidth="31.0" text="-" GridPane.columnIndex="6" GridPane.rowIndex="3" />
                                         <Label text="Itens:" GridPane.columnIndex="7" />
