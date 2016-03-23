@@ -10,10 +10,10 @@ import javafx.scene.input.KeyEvent;
 public class FxUtil {
 
     public enum AutoCompleteMode {
-        STARTS_WITH,CONTAINING,;
+        STARTS_WITH, CONTAINING,;
     }
 
-    public static<T> void autoCompleteComboBox(ComboBox<T> comboBox, AutoCompleteMode mode) {
+    public static <T> void autoCompleteComboBox(ComboBox<T> comboBox, AutoCompleteMode mode) {
         ObservableList<T> data = comboBox.getItems();
 
         comboBox.setEditable(true);
@@ -49,7 +49,8 @@ public class FxUtil {
                     caretPos = comboBox.getEditor().getCaretPosition();
                 }
 
-                if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT || event.getCode().equals(KeyCode.SHIFT) || event.getCode().equals(KeyCode.CONTROL)
+                if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT || event.getCode()
+                        .equals(KeyCode.SHIFT) || event.getCode().equals(KeyCode.CONTROL)
                         || event.isControlDown() || event.getCode() == KeyCode.HOME
                         || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB) {
                     return;
@@ -57,9 +58,11 @@ public class FxUtil {
 
                 ObservableList<T> list = FXCollections.observableArrayList();
                 for (T aData : data) {
-                    if (mode.equals(AutoCompleteMode.STARTS_WITH) && aData.toString().toLowerCase().startsWith(comboBox.getEditor().getText().toLowerCase())) {
+                    if (mode.equals(AutoCompleteMode.STARTS_WITH) && aData.toString().toLowerCase()
+                            .startsWith(comboBox.getEditor().getText().toLowerCase())) {
                         list.add(aData);
-                    } else if (mode.equals(AutoCompleteMode.CONTAINING) && aData.toString().toLowerCase().contains(comboBox.getEditor().getText().toLowerCase())) {
+                    } else if (mode.equals(AutoCompleteMode.CONTAINING) && aData.toString().toLowerCase()
+                            .contains(comboBox.getEditor().getText().toLowerCase())) {
                         list.add(aData);
                     }
                 }
@@ -87,7 +90,7 @@ public class FxUtil {
         });
     }
 
-    public static<T> T getComboBoxValue(ComboBox<T> comboBox){
+    public static <T> T getComboBoxValue(ComboBox<T> comboBox) {
         if (comboBox.getSelectionModel().getSelectedIndex() < 0) {
             return null;
         } else {

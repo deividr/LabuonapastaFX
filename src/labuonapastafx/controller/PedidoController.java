@@ -2,6 +2,8 @@ package labuonapastafx.controller;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +13,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,7 +21,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -93,6 +93,9 @@ public class PedidoController extends StackPane implements Initializable {
 
     // Variáveis de controle geral
     private MenuController menuControl;
+    private Cliente cliente;
+    private ClienteNe clieNe;
+    private ArrayList<ItemPedido> itens;
     private Map<String, Produto> mapProdutos;
     private String telefone, nome;
     private LocalDate dtRetirada;
@@ -101,13 +104,55 @@ public class PedidoController extends StackPane implements Initializable {
     private BigDecimal qtde;
 
     /**
+     * Incluir um novo item na lista de itens, esse evento será acionado pelao botão "+".
+     *
      * @param event
      */
     @FXML
     void incluirItemListener(ActionEvent event) {
-        validateFields();
+        if (validateFields()) {
+            if (cbxProduto.getSelectionModel().isEmpty()) {
+                showAlert("Informar um produto para incluir.");
+                cbxProduto.requestFocus();
+            } else if (txtQtde.getText().equals("")) {
+                showAlert("Informar a quantidade do produto.");
+                cbxProduto.requestFocus();
+            } else {
 
+                int codigo;
 
+                if (itens.isEmpty()) {
+                    codigo = 1;
+                } else {
+                    codigo = itens.get(itens.size()).getCodigo() + 1;
+                }
+
+                NumberFormat nf = NumberFormat.getInstance();
+
+                BigDecimal qtde;
+
+                try {
+                    qtde = BigDecimal.valueOf(nf.parse(txtQtde.getText()).doubleValue());
+                } catch (ParseException e) {
+                    qtde = BigDecimal.valueOf(0.0);
+                }
+
+                ItemPedido item = new ItemPedido(codigo, cbxProduto.getValue(), cbxMolho.getValue(), qtde);
+
+                listItens.getItems().add(item.getCodigo() + "  " + item.getQtde() + "  " + item.getProduto().getNome()
+                        + " " + item.getMolho().getNome());
+
+                itens.add(item);
+
+                cbxProduto.getSelectionModel().clearSelection();
+
+                cbxMolho.getSelectionModel().clearSelection();
+
+                txtQtde.setText("");
+
+                cbxProduto.requestFocus();
+            }
+        }
     }
 
     @FXML
@@ -177,22 +222,25 @@ public class PedidoController extends StackPane implements Initializable {
      * Método para obter os valores do campos que foram modificados pelo usuário.
      */
     private void getValueFields() {
-    	this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
-    	this.nome = txtNome.getText();
-    	this.dtRetirada = dtpickRetirada.getValue();
+        this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
+        this.nome = txtNome.getText();
+        this.dtRetirada = dtpickRetirada.getValue();
 
-        if (!txtHoraDe.getText().equals(""))
-    	    this.horaDe = Integer.parseInt(txtHoraDe.getText().replaceAll("[^0-9]", ""));
+        if (!txtHoraDe.getText().equals("")) {
+            this.horaDe = Integer.parseInt(txtHoraDe.getText().replaceAll("[^0-9]", ""));
+        }
 
-        if (!txtHoraAte.getText().equals(""))
-    	    this.horaAte = Integer.parseInt(txtHoraAte.getText().replaceAll("[^0-9]", ""));
+        if (!txtHoraAte.getText().equals("")) {
+            this.horaAte = Integer.parseInt(txtHoraAte.getText().replaceAll("[^0-9]", ""));
+        }
 
-        if (!txtGeladeira.getText().equals(""))
-    	    this.geladeira = Integer.parseInt(txtGeladeira.getText());
+        if (!txtGeladeira.getText().equals("")) {
+            this.geladeira = Integer.parseInt(txtGeladeira.getText());
+        }
 
-    	this.produto = cbxProduto.getValue();
-    	this.molho = cbxMolho.getValue();
-	}
+        this.produto = cbxProduto.getValue();
+        this.molho = cbxMolho.getValue();
+    }
 
     /**
      * Mostrar tela de mensagem para apontar erro ao usuário.
@@ -218,6 +266,8 @@ public class PedidoController extends StackPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        clieNe = new ClienteNe();
+
         txtNumPed.textProperty().addListener((observable, oldValue, newValue) -> {
             //Só vai permitir alterar ou excluir quando o usuário selecionar um pedido.
             if (newValue.equals("")) {
@@ -232,6 +282,17 @@ public class PedidoController extends StackPane implements Initializable {
         });
 
         txtTelefone.textProperty().addListener(new FoneFieldListener(txtTelefone));
+
+        txtTelefone.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
+                if (!telefone.equals("")) {
+                    cliente = clieNe.obterClienteTelefone(telefone);
+                    txtNome.setText(cliente.getNome());
+                }
+            }
+        });
+
         txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
         dtpickRetirada.setValue(LocalDate.now());
 
@@ -263,13 +324,14 @@ public class PedidoController extends StackPane implements Initializable {
         });
 
         cbxProduto.getItems().setAll(produtos);
-        cbxMolho.getItems().setAll(molhos);
+        cbxMolho.getItems().add(new Produto());
+        cbxMolho.getItems().addAll(molhos);
 
         txtQtde.textProperty().addListener(new QuantityFieldListener(txtQtde));
 
         cbxProduto.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null &&
-                    newValue.getTipo() != ProdutoEnum.MASSA) {
+            if (newValue != null
+                    && newValue.getTipo() != ProdutoEnum.MASSA) {
                 cbxMolho.setValue(null);
                 cbxMolho.setDisable(true);
             } else {
@@ -281,7 +343,9 @@ public class PedidoController extends StackPane implements Initializable {
 
             @Override
             public String toString(Produto produto) {
-                if (produto == null) return "";
+                if (produto == null) {
+                    return "";
+                }
                 String str = produto.getNome();
                 return str;
             }
@@ -298,6 +362,8 @@ public class PedidoController extends StackPane implements Initializable {
         });
 
         FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
+
+        itens = new ArrayList<>();
 
         Platform.runLater(() -> {
             txtTelefone.requestFocus();
