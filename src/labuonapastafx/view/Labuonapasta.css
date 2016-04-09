@@ -48,3 +48,9 @@
     -fx-min-height: 35px;
     -fx-pref-height: 35px;
 }
+
+.list-view-font {
+    -fx-font-family: monospace;
+    -fx-font-style: normal;
+    -fx-font-size: 12pt;
+}

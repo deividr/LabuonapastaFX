@@ -26,8 +26,9 @@ public class Pedido implements Serializable {
 		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, "", null, "", (byte) 0);
     }
 
-    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, LocalDate dtRetirada,
-                  Integer horaDe, Integer horaAte, String geladeira, List<ItemPedido> itens, String observacao, Byte retirado) {
+    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, 
+            LocalDate dtRetirada, Integer horaDe, Integer horaAte, String geladeira, 
+            List<ItemPedido> itens, String observacao, Byte retirado) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
         this.usuar = new SimpleObjectProperty<>(usuar);

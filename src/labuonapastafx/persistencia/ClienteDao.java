@@ -26,8 +26,8 @@ public class ClienteDao {
     public Cliente lerCodCliente(int cdCliente) {
         Cliente cliente;
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
-                + "dt_criacao FROM cliente WHERE cd_cliente = ?";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, "
+                + "ds_endereco, dt_criacao FROM cliente WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {

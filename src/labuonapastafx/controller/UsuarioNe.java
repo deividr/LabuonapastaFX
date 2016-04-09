@@ -8,7 +8,7 @@ import labuonapastafx.persistencia.UsuarioDao;
 
 public class UsuarioNe {
 
-    private UsuarioDao usuarioDao;
+    private final UsuarioDao usuarioDao;
     
     public UsuarioNe() {
     	usuarioDao = new UsuarioDao();
@@ -18,6 +18,7 @@ public class UsuarioNe {
      * Metodo para verificar se existe usuario informado cadastrado na base de dados
      *
      * @param login Login do Usuário que se deseja pesquisar.
+     * @return Retonar um objeto do tipo Usuário.
      */
     public Usuario obterUsuario(String login) {
 
@@ -29,6 +30,7 @@ public class UsuarioNe {
      * Metodo para verificar se existe usuario informado cadastrado na base de dados
      *
      * @param cdUsuario Código do Usuário que se deseja pesquisar.
+     * @return 
      */
     public Usuario obterCodUsuario(int cdUsuario) {
 
@@ -51,11 +53,7 @@ public class UsuarioNe {
         //Se o usuario nao existir ou estiver inativo serah retornado false
         if (usuario == null || !usuario.isAtivo()) {
             return false;
-        } else if (usuario.getSenha().equals(senha)) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return usuario.getSenha().equals(senha);
 
     }
 

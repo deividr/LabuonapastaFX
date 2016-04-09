@@ -30,42 +30,53 @@ public class FxUtil {
 
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.UP) {
-                    caretPos = -1;
-                    moveCaret(comboBox.getEditor().getText().length());
-                    return;
-                } else if (event.getCode() == KeyCode.DOWN) {
-                    if (!comboBox.isShowing()) {
-                        comboBox.show();
-                    }
-                    caretPos = -1;
-                    moveCaret(comboBox.getEditor().getText().length());
-                    return;
-                } else if (event.getCode() == KeyCode.BACK_SPACE) {
-                    moveCaretToPos = true;
-                    caretPos = comboBox.getEditor().getCaretPosition();
-                } else if (event.getCode() == KeyCode.DELETE) {
-                    moveCaretToPos = true;
-                    caretPos = comboBox.getEditor().getCaretPosition();
+                if (null != event.getCode()) switch (event.getCode()) {
+                    case UP:
+                        caretPos = -1;
+                        moveCaret(comboBox.getEditor().getText().length());
+                        return;
+                    case DOWN:
+                        if (!comboBox.isShowing()) {
+                            comboBox.show();
+                        }
+                        caretPos = -1;
+                        moveCaret(comboBox.getEditor().getText().length());
+                        return;
+                    case BACK_SPACE:
+                        moveCaretToPos = true;
+                        caretPos = comboBox.getEditor().getCaretPosition();
+                        break;
+                    case DELETE:
+                        moveCaretToPos = true;
+                        caretPos = comboBox.getEditor().getCaretPosition();
+                        break;
+                    default:
+                        break;
                 }
 
-                if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT || event.getCode()
-                        .equals(KeyCode.SHIFT) || event.getCode().equals(KeyCode.CONTROL)
-                        || event.isControlDown() || event.getCode() == KeyCode.HOME
-                        || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB) {
+                if (event.getCode() == KeyCode.RIGHT 
+                        || event.getCode() == KeyCode.LEFT 
+                        || event.getCode().equals(KeyCode.SHIFT) 
+                        || event.getCode().equals(KeyCode.CONTROL)
+                        || event.isControlDown() 
+                        || event.getCode() == KeyCode.HOME
+                        || event.getCode() == KeyCode.END 
+                        || event.getCode() == KeyCode.TAB) {
                     return;
                 }
 
                 ObservableList<T> list = FXCollections.observableArrayList();
-                for (T aData : data) {
-                    if (mode.equals(AutoCompleteMode.STARTS_WITH) && aData.toString().toLowerCase()
-                            .startsWith(comboBox.getEditor().getText().toLowerCase())) {
+                data.stream().forEach((aData) -> {
+                    if (mode.equals(AutoCompleteMode.STARTS_WITH) 
+                            && aData.toString().toLowerCase().startsWith(comboBox.getEditor()
+                                    .getText().toLowerCase())) {
                         list.add(aData);
-                    } else if (mode.equals(AutoCompleteMode.CONTAINING) && aData.toString().toLowerCase()
-                            .contains(comboBox.getEditor().getText().toLowerCase())) {
+                    } else if (mode.equals(AutoCompleteMode.CONTAINING) 
+                            && aData.toString().toLowerCase().contains(comboBox.getEditor()
+                                    .getText().toLowerCase())) {
                         list.add(aData);
                     }
-                }
+                });
                 String t = comboBox.getEditor().getText();
 
                 comboBox.setItems(list);

@@ -2,8 +2,6 @@ package labuonapastafx.controller;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,13 +91,14 @@ public class PedidoController extends StackPane implements Initializable {
 
     // Variáveis de controle geral
     private MenuController menuControl;
-    private Cliente cliente;
     private ClienteNe clieNe;
+    private PedidoNe pedidoNe;
+    private ObservableList<Pedido> pedidos;
     private ArrayList<ItemPedido> itens;
     private Map<String, Produto> mapProdutos;
-    private String telefone, nome;
+    private String telefone, nome, geladeira;
     private LocalDate dtRetirada;
-    private Integer horaDe, horaAte, geladeira;
+    private Integer horaDe, horaAte;
     private Produto produto, molho;
     private BigDecimal qtde;
 
@@ -110,59 +109,111 @@ public class PedidoController extends StackPane implements Initializable {
      */
     @FXML
     void incluirItemListener(ActionEvent event) {
-        if (validateFields()) {
-            if (cbxProduto.getSelectionModel().isEmpty()) {
-                showAlert("Informar um produto para incluir.");
-                cbxProduto.requestFocus();
-            } else if (txtQtde.getText().equals("")) {
-                showAlert("Informar a quantidade do produto.");
-                cbxProduto.requestFocus();
+
+        getValuesItemPedido();
+
+        if (produto == null) {
+            showAlert("Informar um produto para incluir.");
+            cbxProduto.requestFocus();
+        } else if (qtde.doubleValue() == 0.0) {
+            showAlert("Informar a quantidade do produto.");
+            txtQtde.requestFocus();
+        } else {
+
+            int codigo;
+
+            if (itens.isEmpty()) {
+                codigo = 1;
             } else {
-
-                int codigo;
-
-                if (itens.isEmpty()) {
-                    codigo = 1;
-                } else {
-                    codigo = itens.get(itens.size()).getCodigo() + 1;
-                }
-
-                NumberFormat nf = NumberFormat.getInstance();
-
-                BigDecimal qtde;
-
-                try {
-                    qtde = BigDecimal.valueOf(nf.parse(txtQtde.getText()).doubleValue());
-                } catch (ParseException e) {
-                    qtde = BigDecimal.valueOf(0.0);
-                }
-
-                ItemPedido item = new ItemPedido(codigo, cbxProduto.getValue(), cbxMolho.getValue(), qtde);
-
-                listItens.getItems().add(item.getCodigo() + "  " + item.getQtde() + "  " + item.getProduto().getNome()
-                        + " " + item.getMolho().getNome());
-
-                itens.add(item);
-
-                cbxProduto.getSelectionModel().clearSelection();
-
-                cbxMolho.getSelectionModel().clearSelection();
-
-                txtQtde.setText("");
-
-                cbxProduto.requestFocus();
+                codigo = itens.get(itens.size() - 1).getCodigo() + 1;
             }
+
+            ItemPedido item = new ItemPedido(codigo, produto, molho, qtde);
+
+            addItemList(item);
+
+            itens.add(item);
+
+            cbxProduto.getSelectionModel().clearSelection();
+
+            cbxMolho.getSelectionModel().clearSelection();
+
+            txtQtde.setText("");
+
+            cbxProduto.requestFocus();
         }
     }
 
+    /**
+     * Excluir um item da lista de pedidos do cliente.
+     *
+     * @param event
+     */
     @FXML
     void excluirItemListener(ActionEvent event) {
 
+        int index = listItens.getSelectionModel().getSelectedIndex();
+
+        itens.remove(index);
+
+        listItens.getItems().clear();
+
+        int codigo = 1;
+
+        for (ItemPedido item : itens) {
+            item.setCodigo(codigo++);
+            addItemList(item);
+        }
+
     }
 
+    /**
+     * Formatar e incluir um novo item na lista de itens do pedido.
+     *
+     * @param item
+     */
+    private void addItemList(ItemPedido item) {
+
+        String strFormat = String.format("%3s  %7s %s  %s %s", item.getCodigo(),
+                item.getQtde().toString(),
+                item.getProduto().getUnidade().getCodigo().toLowerCase(),
+                item.getProduto().getNome(),
+                item.getMolho() != null ? item.getMolho().getNome() : "");
+
+        listItens.getItems().add(strFormat);
+
+    }
+
+    /**
+     * Incluir o pedido na base quando o botão Incluir for pressionado.
+     * 
+     * @param event 
+     *          Evento disparado para esse método, no caso, acionado o botão Incluir.
+     */
     @FXML
     void botaoIncluirListener(ActionEvent event) {
-
+        //Se as informações foram preenchidas corretamente, faz a inclusão na base de pedidos.
+        if (validateFields()) {
+            
+            Cliente clie = clieNe.obterClienteTelefone(telefone);
+            
+            //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
+            if (clie == null) {
+                clieNe.incluirCliente(nome, telefone, "", "", "");
+                clie = clieNe.obterClienteTelefone(telefone);
+            }
+            
+            Usuario usuar = menuControl.user;
+            
+            if (pedidoNe.incluir(usuar, clie, dtRetirada, horaDe, horaAte, geladeira, itens, 
+                    telefone, (byte) 0)) {
+                showAlert("Inclusão do pedido efetuada com sucesso, número do pedido é: " 
+                        + "");
+                txtTelefone.requestFocus();
+                limparCampos(event);
+            }
+            
+        }
     }
 
     @FXML
@@ -194,7 +245,7 @@ public class PedidoController extends StackPane implements Initializable {
      * Método para validar os campos da tela.
      */
     private boolean validateFields() {
-        getValueFields();
+        getValuesPedido();
 
         if (telefone.equals("")) {
             showAlert("Informar o telefone do Cliente");
@@ -213,17 +264,25 @@ public class PedidoController extends StackPane implements Initializable {
             dtpickRetirada.requestFocus();
             return false;
         }
+        
+        if (itens.isEmpty()) {
+            showAlert("Incluir ao menos um item para o pedido.");
+            cbxProduto.requestFocus();
+            return false;
+        }
 
         return true;
 
     }
 
     /**
-     * Método para obter os valores do campos que foram modificados pelo usuário.
+     * Método para obter os valores dos campos referentes ao Pedido.
      */
-    private void getValueFields() {
+    private void getValuesPedido() {
         this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
+
         this.nome = txtNome.getText();
+
         this.dtRetirada = dtpickRetirada.getValue();
 
         if (!txtHoraDe.getText().equals("")) {
@@ -234,12 +293,23 @@ public class PedidoController extends StackPane implements Initializable {
             this.horaAte = Integer.parseInt(txtHoraAte.getText().replaceAll("[^0-9]", ""));
         }
 
-        if (!txtGeladeira.getText().equals("")) {
-            this.geladeira = Integer.parseInt(txtGeladeira.getText());
-        }
+        this.geladeira = txtGeladeira.getText();
 
+    }
+
+    /**
+     * Método para obter os valores dos campos referentes aos Itens do Pedido.
+     */
+    private void getValuesItemPedido() {
         this.produto = cbxProduto.getValue();
+
         this.molho = cbxMolho.getValue();
+
+        if (!txtQtde.getText().equals("")) {
+            this.qtde = new BigDecimal(txtQtde.getText().replace(",", "."));
+        } else {
+            this.qtde = BigDecimal.valueOf(0.0);
+        }
     }
 
     /**
@@ -267,6 +337,7 @@ public class PedidoController extends StackPane implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
         clieNe = new ClienteNe();
+        pedidoNe = new PedidoNe();
 
         txtNumPed.textProperty().addListener((observable, oldValue, newValue) -> {
             //Só vai permitir alterar ou excluir quando o usuário selecionar um pedido.
@@ -285,10 +356,13 @@ public class PedidoController extends StackPane implements Initializable {
 
         txtTelefone.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
-                String telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
-                if (!telefone.equals("")) {
-                    cliente = clieNe.obterClienteTelefone(telefone);
-                    txtNome.setText(cliente.getNome());
+
+                getValuesPedido();
+
+                //Se telefone foi informado, consultar se está cadastrado para algum cliente.
+                if (!this.telefone.equals("")) {
+                    Cliente clie = clieNe.obterClienteTelefone(telefone);
+                    txtNome.setText(clie.getNome());
                 }
             }
         });
@@ -315,16 +389,19 @@ public class PedidoController extends StackPane implements Initializable {
         mapProdutos = new HashMap<>();
 
         //Separa da lista da tabela todos os que são do tipo Molho.
-        produtos.forEach(produto -> {
-            if (produto.getTipo() == ProdutoEnum.MOLHO) {
-                molhos.add(produto);
+        produtos.forEach(prod -> {
+            if (prod.getTipo() == ProdutoEnum.MOLHO) {
+                molhos.add(prod);
             }
             //Criar Map para consultar e sortear produtos no Combo de Produtos.
-            mapProdutos.put(produto.getNome(), produto);
+            mapProdutos.put(prod.getNome(), prod);
         });
 
         cbxProduto.getItems().setAll(produtos);
+
+        //Criar um tipo de produto null para o caso de não ser selecionado nenhum molho.
         cbxMolho.getItems().add(new Produto());
+        //Adciona todos os produtos do tipo molho ao ComboBox de Molhos.
         cbxMolho.getItems().addAll(molhos);
 
         txtQtde.textProperty().addListener(new QuantityFieldListener(txtQtde));
@@ -368,6 +445,7 @@ public class PedidoController extends StackPane implements Initializable {
         Platform.runLater(() -> {
             txtTelefone.requestFocus();
         });
+        
     }
 
     /**

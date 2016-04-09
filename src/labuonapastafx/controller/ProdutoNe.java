@@ -10,7 +10,7 @@ import labuonapastafx.persistencia.ProdutoDao;
 
 public class ProdutoNe {
 
-    private ProdutoDao produtoDao;
+    private final ProdutoDao produtoDao;
 
     public ProdutoNe() {
         produtoDao = new ProdutoDao();
@@ -67,6 +67,7 @@ public class ProdutoNe {
     /**
      * Atualizar as informações do {@code Produto} que foi passado como parâmetro.
      *
+     * @param cdProduto
      * @param nome
      * @param unidade
      * @param valor
@@ -74,8 +75,8 @@ public class ProdutoNe {
      * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto não existe).
      */
-    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, BigDecimal valor,
-                                  ProdutoEnum tipo) {
+    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, 
+            BigDecimal valor, ProdutoEnum tipo) {
 
         Produto prod = obterCodProduto(cdProduto);
         // Se o usuario existir atualiza, senao retorna false para o chamador

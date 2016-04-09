@@ -38,7 +38,7 @@ public class Cliente implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-		//se o objeto recebido for diferente de null e a sua classe for um Produto verifica
+		//Se o objeto recebido for diferente de null e a sua classe for um Produto verifica
         //igualdade no codigo do usuario.
         if (o != null && o.getClass() == this.getClass()) {
             Cliente prod = (Cliente) o;
