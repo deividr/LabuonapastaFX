@@ -56,13 +56,22 @@ public class ClienteNe {
      * @param telefone2 Telefone secundário do cliente.
      * @param email Email do cliente.
      * @param endereco Endereço do cliente.
-     * @return True se a inclusão ocorreu com sucesso, False se ocorreu algum erro.
+     * @return True se a inclusão ocorreu com sucesso, False se o Cliente já existe na base.
      */
-    public boolean incluirCliente(String nome, String telefone1, String telefone2, String email, 
+    public boolean incluirCliente(String nome, String telefone1, String telefone2, String email,
             String endereco) {
+
+        boolean temNome = obterClienteNome(nome) != null;
+        boolean temTelefone1 = obterClienteTelefone(telefone1) != null;
+        boolean temTelefone2 = false;
+
+        //Se o telefone2 foi informado, consultar se já existe cadastro pra ele.
+        if (!telefone2.equals("")) {
+            temTelefone2 = obterClienteTelefone(telefone2) == null;
+        }
+
         // Se o cliente não existir faça a inclusão
-        if (obterClienteNome(nome) == null && obterClienteTelefone(telefone1) == null
-                && obterClienteTelefone(telefone2) == null) {
+        if (!temNome && !temTelefone1 && !temTelefone2) {
             Cliente cliente = new Cliente(0, nome, telefone1, telefone2, email, endereco, null);
             clienteDao.incluir(cliente);
             return true;
@@ -85,7 +94,7 @@ public class ClienteNe {
      *
      * @return True se atualizado com sucesso, False se houve erro.
      */
-    public boolean alterarCliente(int cdCliente, String nome, String telefone1, String telefone2, 
+    public boolean alterarCliente(int cdCliente, String nome, String telefone1, String telefone2,
             String email, String endereco) {
 
         Cliente clie = obterCodCliente(cdCliente);

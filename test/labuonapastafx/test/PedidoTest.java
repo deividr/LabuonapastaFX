@@ -25,7 +25,7 @@ public class PedidoTest {
     private ProdutoNe prodNe;
     private Usuario usuar;
     private Cliente clie;
-    private ArrayList<Pedido> pedidos;
+    private Pedido pedido;
     private ArrayList<ItemPedido> itens;
 
     @Before
@@ -61,7 +61,7 @@ public class PedidoTest {
                 ProdutoEnum.DIVERSOS);
 
         // Gerar uma lista de itens para utilizar nos testes:
-        itens = new ArrayList<ItemPedido>();
+        itens = new ArrayList<>();
 
         itens.add(new ItemPedido(1, prodNe.obterProduto("Produto Massa"),
                 prodNe.obterProduto("Produto Molho"), BigDecimal.valueOf(1.300)));
@@ -101,66 +101,64 @@ public class PedidoTest {
 
         LocalDate dtRetirada = LocalDate.now().plusDays(2);
 
-        assertTrue(pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, "010", itens, "Algumas observacoes quaisquer",
-                (byte) 0));
+        pedido = pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, "010", itens, 
+                "Algumas observacoes quaisquer", (byte) 0);
 
-        pedidos = pedNe.obterPedidoCliente(clie.getClieId());
+        assertEquals("Teste Pedido", pedido.getUsuario().getNomeCompleto());
 
-        assertEquals("Teste Pedido", pedidos.get(0).getUsuario().getNomeCompleto());
+        assertEquals("Teste Pedido", pedido.getClie().getNome());
 
-        assertEquals("Teste Pedido", pedidos.get(0).getClie().getNome());
+        assertEquals(LocalDate.now(), pedido.getDtPedido());
 
-        assertEquals(LocalDate.now(), pedidos.get(0).getDtPedido());
+        assertEquals(dtRetirada, pedido.getDtRetirada());
 
-        assertEquals(dtRetirada, pedidos.get(0).getDtRetirada());
+        assertEquals(900, pedido.getHoraDe().intValue());
 
-        assertEquals(900, pedidos.get(0).getHoraDe());
+        assertEquals(1000, pedido.getHoraAte().intValue());
 
-        assertEquals(1000, pedidos.get(0).getHoraAte());
+        assertEquals("010", pedido.getGeladeira());
 
-        assertEquals("010", pedidos.get(0).getGeladeira());
+        assertEquals("Algumas observacoes quaisquer", pedido.getObsercao());
 
-        assertEquals("Algumas observacoes quaisquer", pedidos.get(0).getObsercao());
+        assertFalse(pedido.isRetirado());
 
-        assertFalse(pedidos.get(0).isRetirado());
-
-        assertEquals(4, pedidos.get(0).getItens().size());
+        assertEquals(4, pedido.getItens().size());
 
         assertEquals(itens.get(0).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(0).getProduto().getProdId());
+                pedido.getItens().get(0).getProduto().getProdId());
 
         assertEquals(itens.get(0).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(0).getMolho().getProdId());
+                pedido.getItens().get(0).getMolho().getProdId());
 
         assertEquals(itens.get(0).getProduto().getValor(),
-                pedidos.get(0).getItens().get(0).getProduto().getValor());
+                pedido.getItens().get(0).getProduto().getValor());
 
         assertEquals(itens.get(1).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(1).getProduto().getProdId());
+                pedido.getItens().get(1).getProduto().getProdId());
 
         assertEquals(itens.get(1).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(1).getMolho().getProdId());
+                pedido.getItens().get(1).getMolho().getProdId());
 
         assertEquals(itens.get(1).getProduto().getValor(),
-                pedidos.get(0).getItens().get(1).getProduto().getValor());
+                pedido.getItens().get(1).getProduto().getValor());
 
         assertEquals(itens.get(2).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(2).getProduto().getProdId());
+                pedido.getItens().get(2).getProduto().getProdId());
 
         assertEquals(itens.get(2).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(2).getMolho().getProdId());
+                pedido.getItens().get(2).getMolho().getProdId());
 
         assertEquals(itens.get(2).getProduto().getValor(),
-                pedidos.get(0).getItens().get(2).getProduto().getValor());
+                pedido.getItens().get(2).getProduto().getValor());
 
         assertEquals(itens.get(3).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(3).getProduto().getProdId());
+                pedido.getItens().get(3).getProduto().getProdId());
 
         assertEquals(itens.get(3).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(3).getMolho().getProdId());
+                pedido.getItens().get(3).getMolho().getProdId());
 
         assertEquals(itens.get(3).getProduto().getValor(),
-                pedidos.get(0).getItens().get(3).getProduto().getValor());
+                pedido.getItens().get(3).getProduto().getValor());
 
     }
 
@@ -169,7 +167,7 @@ public class PedidoTest {
 
         testIncluirPedido();
 
-        Pedido ped = pedidos.get(0);
+        Pedido ped = pedido;
 
         ped.setUsuar(usuarNe.obterUsuario("deivid"));
 
@@ -188,43 +186,43 @@ public class PedidoTest {
 
         assertTrue(pedNe.alterar(ped));
 
-        pedidos = pedNe.obterPedidoCliente(clie.getClieId());
+        pedido = pedNe.obterPedidos(clie).get(0);
 
-        assertEquals("Deivid", pedidos.get(0).getUsuario().getNomeCompleto());
+        assertEquals("Deivid", pedido.getUsuario().getNomeCompleto());
 
-        assertEquals("Teste Pedido", pedidos.get(0).getClie().getNome());
+        assertEquals("Teste Pedido", pedido.getClie().getNome());
 
-        assertEquals(LocalDate.now(), pedidos.get(0).getDtPedido());
+        assertEquals(LocalDate.now(), pedido.getDtPedido());
 
-        assertEquals(LocalDate.now().plusDays(4), pedidos.get(0).getDtRetirada());
+        assertEquals(LocalDate.now().plusDays(4), pedido.getDtRetirada());
 
-        assertEquals(1100, pedidos.get(0).getHoraDe());
+        assertEquals(1100, pedido.getHoraDe().intValue());
 
-        assertEquals(1200, pedidos.get(0).getHoraAte());
+        assertEquals(1200, pedido.getHoraAte().intValue());
 
-        assertEquals(2, pedidos.get(0).getItens().size());
+        assertEquals(2, pedido.getItens().size());
 
-        assertEquals(itens.get(0).getCodigo(), pedidos.get(0).getItens().get(0).getCodigo());
+        assertEquals(itens.get(0).getCodigo(), pedido.getItens().get(0).getCodigo());
 
         assertEquals(itens.get(0).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(0).getProduto().getProdId());
+                pedido.getItens().get(0).getProduto().getProdId());
 
         assertEquals(itens.get(0).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(0).getMolho().getProdId());
+                pedido.getItens().get(0).getMolho().getProdId());
 
         assertEquals(itens.get(0).getProduto().getValor(),
-                pedidos.get(0).getItens().get(0).getProduto().getValor());
+                pedido.getItens().get(0).getProduto().getValor());
 
-        assertEquals(itens.get(1).getCodigo(), pedidos.get(0).getItens().get(1).getCodigo());
+        assertEquals(itens.get(1).getCodigo(), pedido.getItens().get(1).getCodigo());
 
         assertEquals(itens.get(1).getProduto().getProdId(),
-                pedidos.get(0).getItens().get(1).getProduto().getProdId());
+                pedido.getItens().get(1).getProduto().getProdId());
 
         assertEquals(itens.get(1).getMolho().getProdId(),
-                pedidos.get(0).getItens().get(1).getMolho().getProdId());
+                pedido.getItens().get(1).getMolho().getProdId());
 
         assertEquals(itens.get(1).getProduto().getValor(),
-                pedidos.get(0).getItens().get(1).getProduto().getValor());
+                pedido.getItens().get(1).getProduto().getValor());
 
     }
 
@@ -235,7 +233,7 @@ public class PedidoTest {
 
         pedNe.excluirPorCliente(clie);
 
-        assertEquals(0, pedNe.obterPedidoCliente(clie.getClieId()).size());
+        assertEquals(0, pedNe.obterPedidos(clie).size());
 
     }
 
@@ -244,9 +242,9 @@ public class PedidoTest {
 
         testIncluirPedido();
 
-        pedNe.excluirPedido(pedidos.get(0));
+        pedNe.excluirPedido(pedido);
 
-        assertEquals(0, pedNe.obterPedidoCliente(clie.getClieId()).size());
+        assertEquals(0, pedNe.obterPedidos(clie).size());
 
     }
 

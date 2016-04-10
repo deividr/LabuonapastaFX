@@ -1,9 +1,6 @@
 package labuonapastafx.persistencia;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import labuonapastafx.model.Cliente;
 
@@ -53,8 +50,8 @@ public class ClienteDao {
 
         Cliente cliente;
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
-                + "dt_criacao FROM cliente WHERE nm_cliente = ?";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
+                "ds_endereco, dt_criacao FROM cliente WHERE nm_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {
@@ -80,8 +77,9 @@ public class ClienteDao {
 
         Cliente cliente;
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
-                + "dt_criacao FROM cliente WHERE nr_telefone1 = ? or nr_telefone2 = ?";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
+                "ds_endereco, dt_criacao FROM cliente " +
+                "WHERE nr_telefone1 = ? or nr_telefone2 = ?";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {
@@ -121,14 +119,20 @@ public class ClienteDao {
      */
     public void incluir(Cliente cliente) {
 
-        String sql = "INSERT INTO cliente (nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco, "
-                + "dt_criacao) VALUES (?, ?, ?, ?, ?, current_timestamp())";
+        String sql = "INSERT INTO cliente (nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
+                "ds_endereco, dt_criacao) VALUES (?, ?, ?, ?, ?, current_timestamp())";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, cliente.getNome());
             stm.setString(2, cliente.getTelefone1());
-            stm.setString(3, cliente.getTelefone2());
+
+            if (cliente.getTelefone2().equals("")) {
+                stm.setNull(3, Types.CHAR);
+            } else {
+                stm.setString(3, cliente.getTelefone2());
+            }
+
             stm.setString(4, cliente.getEmail());
             stm.setString(5, cliente.getEndereco());
             stm.executeUpdate();
@@ -144,14 +148,20 @@ public class ClienteDao {
      * @param cliente com as informacoes para serem atualizadas na base.
      */
     public void atualizar(Cliente cliente) {
-        String sql = "UPDATE cliente SET nm_cliente = ?, nr_telefone1 = ?, nr_telefone2 = ?, ds_email = ?, "
-                + "ds_endereco = ? WHERE cd_cliente = ?";
+        String sql = "UPDATE cliente SET nm_cliente = ?, nr_telefone1 = ?, nr_telefone2 = ?, " +
+                "ds_email = ?, ds_endereco = ? WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, cliente.getNome());
             stm.setString(2, cliente.getTelefone1());
-            stm.setString(3, cliente.getTelefone2());
+
+            if (cliente.getTelefone2().equals("")) {
+                stm.setNull(3, Types.CHAR);
+            } else {
+                stm.setString(3, cliente.getTelefone2());
+            }
+
             stm.setString(4, cliente.getEmail());
             stm.setString(5, cliente.getEndereco());
             stm.setInt(6, cliente.getClieId());
@@ -249,8 +259,9 @@ public class ClienteDao {
      */
     public ArrayList<Cliente> listarTelefone(String telefone) {
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco,"
-                + " dt_criacao FROM cliente WHERE nr_telefone1 LIKE ? OR nr_telefone2 LIKE ?";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, "
+                + "ds_endereco, dt_criacao FROM cliente "
+                + "WHERE nr_telefone1 LIKE ? OR nr_telefone2 LIKE ?";
 
         ArrayList<Cliente> clientes = new ArrayList<>();
 
@@ -262,8 +273,8 @@ public class ClienteDao {
 
             while (rs.next()) {
                 // Carregar o cliente da base de dados
-                clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-                        rs.getString(5), rs.getString(6), rs.getDate(7)));
+                clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), 
+                        rs.getString(4), rs.getString(5), rs.getString(6), rs.getDate(7)));
             }
 
         } catch (SQLException e) {

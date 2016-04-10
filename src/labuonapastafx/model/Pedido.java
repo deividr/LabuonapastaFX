@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import javafx.beans.value.ObservableIntegerValue;
 
 
 public class Pedido implements Serializable {
@@ -40,16 +41,16 @@ public class Pedido implements Serializable {
 
         ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
 
-        this.itens = new SimpleListProperty<ItemPedido>(itensObs);
+        this.itens = new SimpleListProperty<>(itensObs);
         this.observacao = new SimpleStringProperty(observacao);
-        this.retirado = new SimpleObjectProperty<Byte>(retirado);
+        this.retirado = new SimpleObjectProperty<>(retirado);
     }
 
     public final IntegerProperty pedIdProperty() {
         return this.pedId;
     }
 
-    public final int getPedId() {
+    public final Integer getPedId() {
         return this.pedIdProperty().get();
     }
 
@@ -61,8 +62,8 @@ public class Pedido implements Serializable {
         return this.horaDe;
     }
 
-    public final int getHoraDe() {
-        return this.horaDeProperty().get();
+    public final Integer getHoraDe() {
+        return this.horaDeProperty().getValue();
     }
 
     public final void setHoraDe(final int horaDe) {
@@ -73,8 +74,8 @@ public class Pedido implements Serializable {
         return this.horaAte;
     }
 
-    public final int getHoraAte() {
-        return this.horaAteProperty().get();
+    public final Integer getHoraAte() {
+        return this.horaAteProperty().getValue();
     }
 
     public final void setHoraAte(final int horaAte) {

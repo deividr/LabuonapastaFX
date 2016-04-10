@@ -3,12 +3,14 @@ package labuonapastafx.controller;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -75,7 +77,7 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TableColumn<Pedido, Integer> tblcolNumero;
     @FXML
-    private TableColumn<Cliente, String> tblcolCliente;
+    private TableColumn<Pedido, String> tblcolCliente;
     @FXML
     private TableColumn<Cliente, String> tblcolTelefone;
     @FXML
@@ -96,6 +98,8 @@ public class PedidoController extends StackPane implements Initializable {
     private ObservableList<Pedido> pedidos;
     private ArrayList<ItemPedido> itens;
     private Map<String, Produto> mapProdutos;
+    
+    //Variáveis para controle do formulário da tela.
     private String telefone, nome, geladeira;
     private LocalDate dtRetirada;
     private Integer horaDe, horaAte;
@@ -186,33 +190,34 @@ public class PedidoController extends StackPane implements Initializable {
 
     /**
      * Incluir o pedido na base quando o botão Incluir for pressionado.
-     * 
-     * @param event 
-     *          Evento disparado para esse método, no caso, acionado o botão Incluir.
+     *
+     * @param event Evento disparado para esse método, no caso, acionado o botão Incluir.
      */
     @FXML
     void botaoIncluirListener(ActionEvent event) {
         //Se as informações foram preenchidas corretamente, faz a inclusão na base de pedidos.
         if (validateFields()) {
-            
+
             Cliente clie = clieNe.obterClienteTelefone(telefone);
-            
+
             //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
             if (clie == null) {
                 clieNe.incluirCliente(nome, telefone, "", "", "");
                 clie = clieNe.obterClienteTelefone(telefone);
             }
-            
+
             Usuario usuar = menuControl.user;
+
+            Pedido ped = pedidoNe.incluir(usuar, clie, dtRetirada, horaDe, horaAte, geladeira,
+                    itens, telefone, (byte) 0);
+
+            showAlert("Inclusão do pedido efetuada com sucesso, número do pedido é: "
+                    + ped.getPedId());
             
-            if (pedidoNe.incluir(usuar, clie, dtRetirada, horaDe, horaAte, geladeira, itens, 
-                    telefone, (byte) 0)) {
-                showAlert("Inclusão do pedido efetuada com sucesso, número do pedido é: " 
-                        + "");
-                txtTelefone.requestFocus();
-                limparCampos(event);
-            }
-            
+            txtTelefone.requestFocus();
+
+            limparCampos(event);
+
         }
     }
 
@@ -264,7 +269,7 @@ public class PedidoController extends StackPane implements Initializable {
             dtpickRetirada.requestFocus();
             return false;
         }
-        
+
         if (itens.isEmpty()) {
             showAlert("Incluir ao menos um item para o pedido.");
             cbxProduto.requestFocus();
@@ -338,6 +343,7 @@ public class PedidoController extends StackPane implements Initializable {
 
         clieNe = new ClienteNe();
         pedidoNe = new PedidoNe();
+        itens = new ArrayList<>();
 
         txtNumPed.textProperty().addListener((observable, oldValue, newValue) -> {
             //Só vai permitir alterar ou excluir quando o usuário selecionar um pedido.
@@ -439,13 +445,19 @@ public class PedidoController extends StackPane implements Initializable {
         });
 
         FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
-
-        itens = new ArrayList<>();
+        
+        pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(
+                LocalDate.of(2016, Month.APRIL, 9)));
+        
+        // Formatar a TableView com as informações dos produtos obtidos.
+        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().getClie().nomeProperty());
+        
+        tblPedido.setItems(pedidos);
 
         Platform.runLater(() -> {
             txtTelefone.requestFocus();
         });
-        
+
     }
 
     /**

@@ -19,6 +19,7 @@ public class PedidoDao {
      * Incluir um novo {@code pedido}.
      *
      * @param ped Pedido que se deseja incluir.
+     * @return Retorna o objeto Pedido com o número do pedido atualizado para o que foi gravado.
      */
     public Pedido incluir(Pedido ped) {
 
@@ -99,93 +100,11 @@ public class PedidoDao {
     }
 
     /**
-     * Obter pedidos que pertence a um determinado {@code Cliente}.
-     *
-     * @param clieId Código do Cliente que se deseja consultar os pedidos.
-     * @return
-     */
-    public ArrayList<Pedido> obterPedidosCliente(int clieId) {
-        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
-                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido WHERE cd_cliente = ?";
-
-        ArrayList<Pedido> pedidos = new ArrayList<>();
-
-        try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
-            stm.setInt(1, clieId);
-            ResultSet rs = stm.executeQuery();
-
-            while (rs.next()) {
-                // Carregar o Pedido
-                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
-                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
-
-                LocalDate dtPedido = rs.getDate(4).toLocalDate();
-                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
-
-                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
-
-                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
-                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9), rs.getByte(10)));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
-        }
-
-        return pedidos;
-    }
-
-    /**
-     * Obter todos os itens do Pedido.
-     *
-     * @param cdPedido Código do pedido que se deseja obter os itens.
-     */
-    private ArrayList<ItemPedido> obterItensPedido(int cdPedido) {
-
-        String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido "
-                + "WHERE cd_pedido = ?";
-
-        ArrayList<ItemPedido> itens = new ArrayList<>();
-
-        try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
-            stm.setInt(1, cdPedido);
-
-            ResultSet rs = stm.executeQuery();
-
-            Produto molho;
-
-            while (rs.next()) {
-
-                ProdutoDao prodDao = new ProdutoDao();
-
-                Produto prod = prodDao.lerCodProduto(rs.getInt(2));
-
-                if (rs.getInt(3) != 0) {
-                    molho = prodDao.lerCodProduto(rs.getInt(3));
-                } else {
-                    molho = new Produto();
-                }
-
-                itens.add(new ItemPedido(rs.getInt(1), prod, molho, rs.getBigDecimal(4)));
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erro ao consultar itens dos pedidos do Cliente: " + e.getMessage());
-        }
-
-        return itens;
-
-    }
-
-    /**
      * Excluir todos os Pedidos do Cliente informado.
      *
      * @param clie Cliente que se deseja excluir os pedidos.
      */
-    public void excluirPorCliente(Cliente clie) {
+    public void excluir(Cliente clie) {
 
         String sql = "DELETE FROM pedido WHERE cd_cliente = ?";
 
@@ -226,7 +145,7 @@ public class PedidoDao {
      *
      * @param pedido Pedido que se deseja excluir os itens que o compõe.
      */
-    private void excluirItensPedido(Pedido pedido) {
+    private void excluirItens(Pedido pedido) {
 
         String sql = "DELETE FROM item_pedido WHERE cd_pedido = ?";
 
@@ -251,7 +170,7 @@ public class PedidoDao {
      */
     public void alterar(Pedido pedido) {
 
-        excluirItensPedido(pedido);
+        excluirItens(pedido);
 
         String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ?, nr_geladeira = ?, "
                 + "ds_observacao = ?, st_retirado = ? WHERE cd_pedido = ?";
@@ -278,6 +197,172 @@ public class PedidoDao {
         }
 
         incluirItens(pedido);
+
+    }
+
+    /**
+     * Obter pedidos que pertence a um determinado {@code Cliente}.
+     *
+     * @param clie Cliente que se deseja consultar os pedidos.
+     * @return Lista dos pedidos feito por esse Cliente, ordenada descendentemente por data em que
+     * foi feito o pedido.
+     */
+    public ArrayList<Pedido> obterPedidos(Cliente clie) {
+        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
+                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
+                + "WHERE cd_cliente = ? ORDER BY dt_pedido DESC";
+
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+            stm.setInt(1, clie.getClieId());
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                // Carregar o Pedido
+                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
+                Cliente cliente = new ClienteDao().lerCodCliente(rs.getInt(3));
+
+                LocalDate dtPedido = rs.getDate(4).toLocalDate();
+                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
+
+                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+
+                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
+                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
+                        rs.getByte(10)));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+        }
+
+        return pedidos;
+    }
+
+    /**
+     * Obter pedidos que pertence a um determinado {@code Cliente}.
+     *
+     * @param date Data que se deseja consultar os pedidos.
+     * @return Lista de todos os pedidos feito na data informada, ordenado de forma crescente por
+     * data.
+     */
+    public ArrayList<Pedido> obterPedidos(LocalDate date) {
+        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
+                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
+                + "WHERE dt_pedido = ?";
+
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+            stm.setDate(1, Date.valueOf(date));
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                // Carregar o Pedido
+                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
+                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
+
+                LocalDate dtPedido = rs.getDate(4).toLocalDate();
+                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
+
+                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+
+                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
+                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
+                        rs.getByte(10)));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+        }
+
+        return pedidos;
+    }
+
+
+    /**
+     * Obter pedidos que pertence a um determinado {@code Cliente}.
+     *
+     * @return Lista de todos os pedidos.
+     */
+    public ArrayList<Pedido> obterPedidos() {
+        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
+                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido";
+
+        ArrayList<Pedido> pedidos = new ArrayList<>();
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+            
+            ResultSet rs = stm.executeQuery();
+
+            while (rs.next()) {
+                // Carregar o Pedido
+                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
+                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
+
+                LocalDate dtPedido = rs.getDate(4).toLocalDate();
+                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
+
+                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+
+                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
+                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
+                        rs.getByte(10)));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+        }
+
+        return pedidos;
+    }
+    
+    
+    /**
+     * Obter todos os itens do Pedido.
+     *
+     * @param cdPedido Código do pedido que se deseja obter os itens.
+     */
+    private ArrayList<ItemPedido> obterItensPedido(int cdPedido) {
+
+        String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido "
+                + "WHERE cd_pedido = ?";
+
+        ArrayList<ItemPedido> itens = new ArrayList<>();
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+            stm.setInt(1, cdPedido);
+
+            ResultSet rs = stm.executeQuery();
+
+            Produto molho;
+
+            while (rs.next()) {
+
+                ProdutoDao prodDao = new ProdutoDao();
+
+                Produto prod = prodDao.lerCodProduto(rs.getInt(2));
+
+                if (rs.getInt(3) != 0) {
+                    molho = prodDao.lerCodProduto(rs.getInt(3));
+                } else {
+                    molho = new Produto();
+                }
+
+                itens.add(new ItemPedido(rs.getInt(1), prod, molho, rs.getBigDecimal(4)));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "Erro ao consultar itens dos pedidos do Cliente: " + e.getMessage());
+        }
+
+        return itens;
 
     }
 
