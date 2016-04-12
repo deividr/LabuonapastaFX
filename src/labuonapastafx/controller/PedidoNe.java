@@ -29,9 +29,9 @@ public class PedidoNe {
      * @param retirado Indicador do status de retirada do pedido, se foi ou não retirado.
      * @return
      */
-    public Pedido incluir(Usuario usuar, Cliente clie, LocalDate dtRetirada, Integer horaDe,
-            Integer horaAte, String geladeira, List<ItemPedido> itens,
-            String observacao, Byte retirado) {
+    public Pedido incluir(Usuario usuar, Cliente clie, LocalDate dtRetirada, String horaDe,
+                          String horaAte, String geladeira, List<ItemPedido> itens,
+                          String observacao, Byte retirado) {
 
         Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dtRetirada, horaDe, horaAte, 
                 geladeira, itens, observacao, retirado);

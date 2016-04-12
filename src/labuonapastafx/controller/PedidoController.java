@@ -1,31 +1,32 @@
 package labuonapastafx.controller;
 
-import java.math.BigDecimal;
-import java.net.URL;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import labuonapastafx.model.*;
+
+import java.math.BigDecimal;
+import java.net.URL;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Classe controladora do painel de manutenção dos Pedidos.
@@ -75,34 +76,36 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private TableView<Pedido> tblPedido;
     @FXML
-    private TableColumn<Pedido, Integer> tblcolNumero;
+    private TableColumn<Pedido, Number> tblcolNumero;
     @FXML
     private TableColumn<Pedido, String> tblcolCliente;
     @FXML
-    private TableColumn<Cliente, String> tblcolTelefone;
+    private TableColumn<Pedido, String> tblcolTelefone;
     @FXML
-    private TableColumn<Pedido, LocalDate> tblcolRetirada;
+    private TableColumn<Pedido, String> tblcolRetirada;
     @FXML
-    private TableColumn<Pedido, Integer> tblcolDe;
+    private TableColumn<Pedido, String> tblcolDe;
     @FXML
-    private TableColumn<Pedido, Integer> tblcolAte;
+    private TableColumn<Pedido, String> tblcolAte;
     @FXML
-    private TableColumn<Pedido, Integer> tblcolGeladeira;
+    private TableColumn<Pedido, String> tblcolGeladeira;
     @FXML
-    private TableColumn<Pedido, LocalDate> tblcolSolicitado;
+    private TableColumn<Pedido, String> tblcolSolicitado;
 
     // Variáveis de controle geral
     private MenuController menuControl;
     private ClienteNe clieNe;
     private PedidoNe pedidoNe;
+    private Pedido pedidoSel;
+    private int idxItemSel;
     private ObservableList<Pedido> pedidos;
     private ArrayList<ItemPedido> itens;
     private Map<String, Produto> mapProdutos;
     
     //Variáveis para controle do formulário da tela.
-    private String telefone, nome, geladeira;
+    private String telefone, nome, horaDe, horaAte, geladeira, observacao;
+    private int numPed;
     private LocalDate dtRetirada;
-    private Integer horaDe, horaAte;
     private Produto produto, molho;
     private BigDecimal qtde;
 
@@ -209,12 +212,15 @@ public class PedidoController extends StackPane implements Initializable {
             Usuario usuar = menuControl.user;
 
             Pedido ped = pedidoNe.incluir(usuar, clie, dtRetirada, horaDe, horaAte, geladeira,
-                    itens, telefone, (byte) 0);
+                    itens, observacao, (byte) 0);
 
             showAlert("Inclusão do pedido efetuada com sucesso, número do pedido é: "
                     + ped.getPedId());
             
             txtTelefone.requestFocus();
+
+            //Adiciona o novo pedido a tabela de pedidos.
+            pedidos.add(ped);
 
             limparCampos(event);
 
@@ -223,7 +229,42 @@ public class PedidoController extends StackPane implements Initializable {
 
     @FXML
     void botaoAlterarListener(ActionEvent event) {
+        //Se as informações foram preenchidas corretamente, faz a alteração na base de pedidos.
+        if (validateFields()) {
+            Cliente clie = clieNe.obterClienteTelefone(telefone);
 
+            //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
+            if (clie == null) {
+                clieNe.incluirCliente(nome, telefone, "", "", "");
+                clie = clieNe.obterClienteTelefone(telefone);
+            }
+
+            Usuario usuar = menuControl.user;
+
+            pedidoSel.setUsuar(usuar);
+            pedidoSel.setClie(clie);
+            pedidoSel.setDtRetirada(dtRetirada);
+            pedidoSel.setHoraDe(horaDe);
+            pedidoSel.setHoraAte(horaAte);
+            pedidoSel.setGeladeira(geladeira);
+            pedidoSel.setObservacao(observacao);
+            pedidoSel.setItens(FXCollections.observableList(itens));
+
+            if (pedidoNe.alterar(pedidoSel)) {
+
+                pedidos.set(idxItemSel, pedidoSel);
+
+                showAlert(String.format("Alteração do pedido %s efetuada com sucesso.",
+                        pedidoSel.getPedId()));
+
+                limparCampos(event);
+            } else {
+                showAlert("Pedido não encontrado, favor confirmar as informações.");
+            }
+
+            System.out.println("pedidos: " + pedidos.get(idxItemSel).getItens().size());
+            System.out.println("tblPedido: " + tblPedido.getItems().get(idxItemSel).getItens().size());
+        }
     }
 
     @FXML
@@ -234,6 +275,22 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     void limparCampos(ActionEvent event) {
 
+        gridForm.getChildren().stream().forEach((c) -> {
+            if (c instanceof TextField) {
+                ((TextField) c).setText("");
+            } else if (c instanceof ChoiceBox) {
+                ((ChoiceBox<?>) c).getSelectionModel().clearSelection();
+            } else if (c instanceof  DatePicker) {
+                ((DatePicker) c).setValue(LocalDate.now());
+            } else if (c instanceof TextArea) {
+                ((TextArea) c).clear();
+            } else if (c instanceof ListView) {
+                ((ListView) c).getItems().clear();
+            }
+        });
+
+        txtTelefone.requestFocus();
+
     }
 
     @FXML
@@ -242,8 +299,24 @@ public class PedidoController extends StackPane implements Initializable {
     }
 
     @FXML
-    void tabelaPedidoListener(ActionEvent event) {
+    void tabelaPedidoListener(MouseEvent event) {
+        // Se foi clicado duas vezes e o item não está nulo então processa a
+        // consulta
 
+        System.out.println("pedidos: " + pedidos.get(idxItemSel).getItens().size());
+        System.out.println("tblPedido: " + tblPedido.getItems().get(idxItemSel).getItens().size());
+
+        if (event.getClickCount() == 2
+                && tblPedido.getSelectionModel().getSelectedItem() != null) {
+
+            pedidoSel = tblPedido.getSelectionModel().getSelectedItem();
+            idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
+
+            System.out.println("pedidoSel: " + tblPedido.getSelectionModel().getSelectedItem()
+                    .getItens().size());
+
+            setValueFields(pedidoSel);
+        }
     }
 
     /**
@@ -254,6 +327,10 @@ public class PedidoController extends StackPane implements Initializable {
 
         if (telefone.equals("")) {
             showAlert("Informar o telefone do Cliente");
+            txtTelefone.requestFocus();
+            return false;
+        } else if (telefone.length() < 10) {
+            showAlert("Número de telefone inválido");
             txtTelefone.requestFocus();
             return false;
         }
@@ -270,6 +347,40 @@ public class PedidoController extends StackPane implements Initializable {
             return false;
         }
 
+        if (!horaDe.equals("")) {
+            if (!horaDe.matches("[0-9]{2}:[0-9]{2}")) {
+                showAlert("Hora De inválida.");
+                txtHoraDe.requestFocus();
+                return false;
+            }
+
+            try {
+                LocalTime time = LocalTime.of(Integer.parseInt(horaDe.substring(0, 2)),
+                        Integer.parseInt(horaDe.substring(3, 5)));
+            } catch (DateTimeException e) {
+                showAlert("Hora De inválida.");
+                txtHoraDe.requestFocus();
+                return false;
+            }
+        }
+
+        if (!horaAte.equals("")) {
+            if (!horaAte.matches("[0-9]{2}:[0-9]{2}")) {
+                showAlert("Hora Até inválida.");
+                txtHoraAte.requestFocus();
+                return false;
+            }
+
+            try {
+                LocalTime time = LocalTime.of(Integer.parseInt(horaAte.substring(0, 2)),
+                        Integer.parseInt(horaAte.substring(3, 5)));
+            } catch (DateTimeException e) {
+                showAlert("Hora Até inválida.");
+                txtHoraAte.requestFocus();
+                return false;
+            }
+        }
+
         if (itens.isEmpty()) {
             showAlert("Incluir ao menos um item para o pedido.");
             cbxProduto.requestFocus();
@@ -284,22 +395,55 @@ public class PedidoController extends StackPane implements Initializable {
      * Método para obter os valores dos campos referentes ao Pedido.
      */
     private void getValuesPedido() {
+        if (!txtNumPed.getText().equals("")) {
+            this.numPed = Integer.parseInt(txtNumPed.getText());
+        } else {
+            this.numPed = 0;
+        }
+
         this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
-
         this.nome = txtNome.getText();
-
         this.dtRetirada = dtpickRetirada.getValue();
-
-        if (!txtHoraDe.getText().equals("")) {
-            this.horaDe = Integer.parseInt(txtHoraDe.getText().replaceAll("[^0-9]", ""));
-        }
-
-        if (!txtHoraAte.getText().equals("")) {
-            this.horaAte = Integer.parseInt(txtHoraAte.getText().replaceAll("[^0-9]", ""));
-        }
-
+        this.horaDe = txtHoraDe.getText();
+        this.horaAte = txtHoraAte.getText();
         this.geladeira = txtGeladeira.getText();
+        this.observacao = txtObservacoes.getText();
+    }
 
+    /**
+     * Setar as informações do formulário com os dados do Pedido informado.
+     *
+     * @param ped Pedido que se deseja formatar no formulário do cadastro.
+     */
+    private void setValueFields(Pedido ped) {
+        txtNumPed.setText(ped.getPedId().toString());
+        txtTelefone.setText(ped.getClie().getTelefone1());
+        txtNome.setText(ped.getClie().getNome());
+        dtpickRetirada.setValue(ped.getDtRetirada());
+
+        if (!ped.getHoraDe().equals("")) {
+            txtHoraDe.setText(ped.getHoraDe());
+        }
+
+        if (!ped.getHoraAte().equals("")) {
+            txtHoraAte.setText(ped.getHoraAte());
+        }
+
+        if (!ped.getGeladeira().equals("")) {
+            txtGeladeira.setText(ped.getGeladeira());
+        }
+
+        listItens.getItems().clear();
+        itens.clear();
+
+        for (ItemPedido item : ped.getItens()) {
+            addItemList(item);
+            itens.add(item);
+        }
+
+        if (!ped.getObsercao().equals("")) {
+            txtObservacoes.setText(ped.getObsercao());
+        }
     }
 
     /**
@@ -368,7 +512,11 @@ public class PedidoController extends StackPane implements Initializable {
                 //Se telefone foi informado, consultar se está cadastrado para algum cliente.
                 if (!this.telefone.equals("")) {
                     Cliente clie = clieNe.obterClienteTelefone(telefone);
-                    txtNome.setText(clie.getNome());
+                    if (clie != null) {
+                        txtNome.setText(clie.getNome());
+                    } else {
+                        txtNome.setText("");
+                    }
                 }
             }
         });
@@ -442,16 +590,46 @@ public class PedidoController extends StackPane implements Initializable {
 
                 return mapProdutos.get(string);
             }
+
         });
 
         FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
-        
-        pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(
-                LocalDate.of(2016, Month.APRIL, 9)));
-        
+
         // Formatar a TableView com as informações dos produtos obtidos.
-        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().getClie().nomeProperty());
-        
+        tblcolNumero.setCellValueFactory(cellData -> cellData.getValue().pedIdProperty());
+
+        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue()
+                .getClie().nomeProperty());
+
+        tblcolTelefone.setCellValueFactory(cellData -> {
+
+            String tel = cellData.getValue().getClie().getTelefone1();
+
+            tel = tel.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+            tel = tel.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
+
+            return new SimpleStringProperty(tel);
+
+        });
+
+        tblcolRetirada.setCellValueFactory(cellData -> {
+            LocalDate date = cellData.getValue().getDtRetirada();
+            String txtDate = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+            return new SimpleStringProperty(txtDate);
+        });
+
+        tblcolDe.setCellValueFactory(cellData -> cellData.getValue().horaDeProperty());
+        tblcolAte.setCellValueFactory(cellData -> cellData.getValue().horaAteProperty());
+        tblcolGeladeira.setCellValueFactory(cellData -> cellData.getValue().geladeiraProperty());
+
+        tblcolSolicitado.setCellValueFactory(cellData -> {
+            LocalDate date = cellData.getValue().getDtPedido();
+            String txtDate = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+            return new SimpleStringProperty(txtDate);
+        });
+
+        pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(LocalDate.now()));
+
         tblPedido.setItems(pedidos);
 
         Platform.runLater(() -> {

@@ -210,7 +210,7 @@ public class ProdutoController extends StackPane implements Initializable {
             if (c instanceof TextField) {
                 ((TextField) c).setText("");
             } else if (c instanceof ChoiceBox) {
-                ((ChoiceBox<?>) c).getSelectionModel().select(1);
+                ((ChoiceBox<?>) c).getSelectionModel().clearSelection();
             }
         });
 
@@ -334,10 +334,7 @@ public class ProdutoController extends StackPane implements Initializable {
         txtProduto.textProperty().addListener(new LimitedTextListener(txtProduto, 50));
         txtValor.textProperty().addListener(new MoneyFieldListener(txtValor));
         cbxTipo.getItems().addAll(ProdutoEnum.values());
-        cbxTipo.setValue(ProdutoEnum.DIVERSOS);
-
         cbxUnidade.getItems().addAll(UnidadeEnum.values());
-        cbxUnidade.setValue(UnidadeEnum.KILOGRAMA);
 
         // Obter a lista inicial dos produtos cadastrados na base de dados.
         prodts = FXCollections.observableArrayList(produtoNe.listarProdutos());

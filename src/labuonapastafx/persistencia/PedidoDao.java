@@ -6,8 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 /**
- * Responsável por todo o procedimento de persistência na base de dados {@code pedido} e
- * {@code item_pedido}.
+ * Responsável por pela persistência nas bases de dados {@code Pedido} e {@code ItemPedido}.
  *
  * @author Deivid Assumpcao Rodrigues
  * @version %I%, %G%
@@ -23,8 +22,9 @@ public class PedidoDao {
      */
     public Pedido incluir(Pedido ped) {
 
-        String sql = "INSERT INTO pedido (cd_cliente, cd_usuario, dt_pedido, dt_retirada, hr_de, "
-                + "hr_ate, nr_geladeira, ds_observacao, st_retirado) VALUES (?,?,?,?,?,?,?,?,0)";
+        String sql = "INSERT INTO pedido (cd_cliente, cd_usuario, dt_pedido, dt_retirada, " +
+                "hr_de, hr_ate, nr_geladeira, ds_observacao, st_retirado) " +
+                "VALUES (?,?,?,?,?,?,?,?,0)";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql,
@@ -34,10 +34,30 @@ public class PedidoDao {
             stm.setInt(2, ped.getUsuario().getUserId());
             stm.setDate(3, java.sql.Date.valueOf(ped.getDtPedido()));
             stm.setDate(4, java.sql.Date.valueOf(ped.getDtRetirada()));
-            stm.setInt(5, ped.getHoraDe());
-            stm.setInt(6, ped.getHoraAte());
-            stm.setString(7, ped.getGeladeira());
-            stm.setString(8, ped.getObsercao());
+
+            if (ped.getHoraDe().equals("")) {
+                stm.setNull(5, Types.CHAR);
+            } else {
+                stm.setString(5, ped.getHoraDe());
+            }
+
+            if (ped.getHoraAte().equals("")) {
+                stm.setNull(6, Types.CHAR);
+            } else {
+                stm.setString(6, ped.getHoraAte());
+            }
+
+            if (ped.getGeladeira().equals("")) {
+                stm.setNull(7, Types.CHAR);
+            } else {
+                stm.setString(7, ped.getGeladeira());
+            }
+
+            if (ped.getObsercao().equals("")) {
+                stm.setNull(8, Types.CHAR);
+            } else {
+                stm.setString(8, ped.getObsercao());
+            }
 
             stm.executeUpdate();
 
@@ -60,7 +80,7 @@ public class PedidoDao {
     /**
      * Incluir os itens pertencentes ao Pedido.
      *
-     * @param ped
+     * @param ped Pedido da qual se deseja incluir os itens.
      */
     private void incluirItens(Pedido ped) {
 
@@ -113,7 +133,8 @@ public class PedidoDao {
             stm.setInt(1, clie.getClieId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir os pedidos do Cliente: " + e.getMessage());
+            throw new RuntimeException("Erro ao excluir os pedidos do Cliente: "
+                    + e.getMessage());
         }
 
     }
@@ -135,7 +156,8 @@ public class PedidoDao {
             stm.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir o pedido do Cliente: " + e.getMessage());
+            throw new RuntimeException("Erro ao excluir o pedido do Cliente: "
+                    + e.getMessage());
         }
 
     }
@@ -166,28 +188,49 @@ public class PedidoDao {
     /**
      * Alterar o Pedido informado como parâmetro.
      *
-     * @param pedido Pedido que se deseja alterar as informações.
+     * @param ped Pedido que se deseja alterar as informações.
      */
-    public void alterar(Pedido pedido) {
+    public void alterar(Pedido ped) {
 
-        excluirItens(pedido);
-
-        String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ?, nr_geladeira = ?, "
-                + "ds_observacao = ?, st_retirado = ? WHERE cd_pedido = ?";
+        String sql = "UPDATE pedido SET cd_usuario = ?, cd_cliente = ?, dt_retirada = ?, " +
+                "hr_de = ?, hr_ate = ?, nr_geladeira = ?, ds_observacao = ?, st_retirado = ? " +
+                "WHERE cd_pedido = ?";
 
         try (Connection con = Conexao.getConexao();
                 PreparedStatement stm = con.prepareStatement(sql)) {
 
-            java.sql.Date dtRetirada = java.sql.Date.valueOf(pedido.getDtRetirada());
+            java.sql.Date dtRetirada = java.sql.Date.valueOf(ped.getDtRetirada());
 
-            stm.setInt(1, pedido.getUsuario().getUserId());
-            stm.setDate(2, dtRetirada);
-            stm.setInt(3, pedido.getHoraDe());
-            stm.setInt(4, pedido.getHoraAte());
-            stm.setString(5, pedido.getGeladeira());
-            stm.setString(6, pedido.getObsercao());
-            stm.setByte(7, pedido.getRetirado());
-            stm.setInt(8, pedido.getPedId());
+            stm.setInt(1, ped.getUsuario().getUserId());
+            stm.setInt(2, ped.getClie().getClieId());
+            stm.setDate(3, dtRetirada);
+
+            if (ped.getHoraDe().equals("")) {
+                stm.setNull(4, Types.CHAR);
+            } else {
+                stm.setString(4, ped.getHoraDe());
+            }
+
+            if (ped.getHoraAte().equals("")) {
+                stm.setNull(5, Types.CHAR);
+            } else {
+                stm.setString(5, ped.getHoraAte());
+            }
+
+            if (ped.getGeladeira().equals("")) {
+                stm.setNull(6, Types.CHAR);
+            } else {
+                stm.setString(6, ped.getGeladeira());
+            }
+
+            if (ped.getObsercao().equals("")) {
+                stm.setNull(7, Types.CHAR);
+            } else {
+                stm.setString(7, ped.getObsercao());
+            }
+
+            stm.setByte(8, ped.getRetirado());
+            stm.setInt(9, ped.getPedId());
 
             stm.executeUpdate();
 
@@ -196,7 +239,9 @@ public class PedidoDao {
                     "Erro ao atualizar o Pedido do Cliente: " + e.getMessage());
         }
 
-        incluirItens(pedido);
+        excluirItens(ped);
+
+        incluirItens(ped);
 
     }
 
@@ -208,8 +253,8 @@ public class PedidoDao {
      * foi feito o pedido.
      */
     public ArrayList<Pedido> obterPedidos(Cliente clie) {
-        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
-                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
+        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, " +
+                "hr_de, hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
                 + "WHERE cd_cliente = ? ORDER BY dt_pedido DESC";
 
         ArrayList<Pedido> pedidos = new ArrayList<>();
@@ -221,21 +266,12 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
-                Cliente cliente = new ClienteDao().lerCodCliente(rs.getInt(3));
-
-                LocalDate dtPedido = rs.getDate(4).toLocalDate();
-                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
-
-                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
-
-                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
-                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
-                        rs.getByte(10)));
+                pedidos.add(readNextPedido(rs,null,clie));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+            throw new RuntimeException("Erro ao consultar pedidos do Cliente: "
+                    + e.getMessage());
         }
 
         return pedidos;
@@ -262,17 +298,7 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
-                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
-
-                LocalDate dtPedido = rs.getDate(4).toLocalDate();
-                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
-
-                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
-
-                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
-                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
-                        rs.getByte(10)));
+                pedidos.add(readNextPedido(rs,null,null));
             }
 
         } catch (SQLException e) {
@@ -301,17 +327,7 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-                Usuario usuar = new UsuarioDao().lerCodUsuario(rs.getInt(2));
-                Cliente clie = new ClienteDao().lerCodCliente(rs.getInt(3));
-
-                LocalDate dtPedido = rs.getDate(4).toLocalDate();
-                LocalDate dtRetirada = rs.getDate(5).toLocalDate();
-
-                ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
-
-                pedidos.add(new Pedido(rs.getInt(1), usuar, clie, dtPedido, dtRetirada,
-                        rs.getInt(6), rs.getInt(7), rs.getString(8), itens, rs.getString(9),
-                        rs.getByte(10)));
+                pedidos.add(readNextPedido(rs,null,null));
             }
 
         } catch (SQLException e) {
@@ -320,7 +336,49 @@ public class PedidoDao {
 
         return pedidos;
     }
-    
+
+    /**
+     * Construir um objeto Pedido com as informações do ResultSet informado.
+     *
+     * @param rs RecordSet para leitura da tabela de Pedido.
+     * @param usuar Usuario que registrou o Pedido.
+     * @param clie Cliente que efetuou o Pedido.
+     * @return Objeto Pedido com as informações do RecordSet.
+     * @throws SQLException
+     */
+    private Pedido readNextPedido(ResultSet rs, Usuario usuar, Cliente clie) throws SQLException  {
+
+        Usuario usuarTab;
+
+        //Se usuário já vier preenchido não é necessário consultar a base de usuário.
+        if (usuar == null) {
+            usuarTab = new UsuarioDao().lerCodUsuario(rs.getInt(2));
+        } else {
+            usuarTab = usuar;
+        }
+
+        Cliente clieTab;
+
+        //Se cliente já vier preenchido não é necessário consultar a base de cliente.
+        if (clie == null) {
+            clieTab = new ClienteDao().lerCodCliente(rs.getInt(3));
+        } else {
+            clieTab = clie;
+        }
+
+        LocalDate dtPedido = rs.getDate(4).toLocalDate();
+        LocalDate dtRetirada = rs.getDate(5).toLocalDate();
+
+        ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+
+        String horaDe = rs.getString(6) == null ? "" : rs.getString(6);
+        String horaAte = rs.getString(7) == null ? "" : rs.getString(7);
+        String geladeira = rs.getString(8) == null ? "" : rs.getString(8);
+        String observacao = rs.getString(9) == null ? "" : rs.getString(9);
+
+        return new Pedido(rs.getInt(1), usuarTab, clieTab, dtPedido, dtRetirada,
+                horaDe, horaAte, geladeira, itens, observacao, rs.getByte(10));
+    }
     
     /**
      * Obter todos os itens do Pedido.

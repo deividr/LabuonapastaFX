@@ -101,7 +101,7 @@ public class PedidoTest {
 
         LocalDate dtRetirada = LocalDate.now().plusDays(2);
 
-        pedido = pedNe.incluir(usuar, clie, dtRetirada, 900, 1000, "010", itens, 
+        pedido = pedNe.incluir(usuar, clie, dtRetirada, "09:00", "10:00", "010", itens,
                 "Algumas observacoes quaisquer", (byte) 0);
 
         assertEquals("Teste Pedido", pedido.getUsuario().getNomeCompleto());
@@ -112,9 +112,9 @@ public class PedidoTest {
 
         assertEquals(dtRetirada, pedido.getDtRetirada());
 
-        assertEquals(900, pedido.getHoraDe().intValue());
+        assertEquals("09:00", pedido.getHoraDe());
 
-        assertEquals(1000, pedido.getHoraAte().intValue());
+        assertEquals("10:00", pedido.getHoraAte());
 
         assertEquals("010", pedido.getGeladeira());
 
@@ -172,8 +172,8 @@ public class PedidoTest {
         ped.setUsuar(usuarNe.obterUsuario("deivid"));
 
         ped.setDtRetirada(LocalDate.now().plusDays(4));
-        ped.setHoraDe(1100);
-        ped.setHoraAte(1200);
+        ped.setHoraDe("11:00");
+        ped.setHoraAte("12:00");
         ped.setGeladeira("020");
 
         itens.remove(0);
@@ -196,9 +196,9 @@ public class PedidoTest {
 
         assertEquals(LocalDate.now().plusDays(4), pedido.getDtRetirada());
 
-        assertEquals(1100, pedido.getHoraDe().intValue());
+        assertEquals("11:00", pedido.getHoraDe());
 
-        assertEquals(1200, pedido.getHoraAte().intValue());
+        assertEquals("12:00", pedido.getHoraAte());
 
         assertEquals(2, pedido.getItens().size());
 

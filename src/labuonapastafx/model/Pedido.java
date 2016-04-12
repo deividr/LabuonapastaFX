@@ -6,37 +6,36 @@ import javafx.collections.ObservableList;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-import javafx.beans.value.ObservableIntegerValue;
-
 
 public class Pedido implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private IntegerProperty pedId, horaDe, horaAte;
+    private IntegerProperty pedId;
     private ObjectProperty<Cliente> clie;
     private ObjectProperty<Usuario> usuar;
     private ObjectProperty<LocalDate> dtPedido;
     private ObjectProperty<LocalDate> dtRetirada;
-    private StringProperty geladeira;
+    private StringProperty geladeira, horaDe, horaAte;
     private ListProperty<ItemPedido> itens;
     private StringProperty observacao;
     private ObjectProperty<Byte> retirado;
 
     public Pedido() {
-		this(0, null, null, LocalDate.now(), LocalDate.now(), 0, 0, "", null, "", (byte) 0);
+		this(0, null, null, LocalDate.now(), LocalDate.now(), "", "", "", null, "",
+                (byte)0);
     }
 
     public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, 
-            LocalDate dtRetirada, Integer horaDe, Integer horaAte, String geladeira, 
+            LocalDate dtRetirada, String horaDe, String horaAte, String geladeira,
             List<ItemPedido> itens, String observacao, Byte retirado) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
         this.usuar = new SimpleObjectProperty<>(usuar);
         this.dtPedido = new SimpleObjectProperty<>(dtPedido);
         this.dtRetirada = new SimpleObjectProperty<>(dtRetirada);
-        this.horaDe = new SimpleIntegerProperty(horaDe);
-        this.horaAte = new SimpleIntegerProperty(horaAte);
+        this.horaDe = new SimpleStringProperty(horaDe);
+        this.horaAte = new SimpleStringProperty(horaAte);
         this.geladeira = new SimpleStringProperty(geladeira);
 
         ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
@@ -58,27 +57,27 @@ public class Pedido implements Serializable {
         this.pedIdProperty().set(pedId);
     }
 
-    public final IntegerProperty horaDeProperty() {
+    public final StringProperty horaDeProperty() {
         return this.horaDe;
     }
 
-    public final Integer getHoraDe() {
+    public final String getHoraDe() {
         return this.horaDeProperty().getValue();
     }
 
-    public final void setHoraDe(final int horaDe) {
+    public final void setHoraDe(final String horaDe) {
         this.horaDeProperty().set(horaDe);
     }
 
-    public final IntegerProperty horaAteProperty() {
+    public final StringProperty horaAteProperty() {
         return this.horaAte;
     }
 
-    public final Integer getHoraAte() {
+    public final String getHoraAte() {
         return this.horaAteProperty().getValue();
     }
 
-    public final void setHoraAte(final int horaAte) {
+    public final void setHoraAte(final String horaAte) {
         this.horaAteProperty().set(horaAte);
     }
 
