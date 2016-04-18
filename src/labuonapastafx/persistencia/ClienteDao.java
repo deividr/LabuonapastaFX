@@ -2,10 +2,11 @@ package labuonapastafx.persistencia;
 
 import java.sql.*;
 import java.util.ArrayList;
+
 import labuonapastafx.model.Cliente;
 
 /**
- * Responsável por todo o procedimento de persistência na base de dados {@code Cliente}.
+ * Responsável pelos procedimentos de persistências na base de dados {@code Cliente}.
  *
  * @author Deivid Assumpcao Rodrigues
  * @version %I%, %G%
@@ -17,7 +18,6 @@ public class ClienteDao {
      * Obter o {@code Cliente} referente ao Id informado.
      *
      * @param cdCliente Código interno do cliente no cadastro.
-     *
      * @return Objeto {@code Cliente} referente ao Id informado.
      */
     public Cliente lerCodCliente(int cdCliente) {
@@ -27,7 +27,7 @@ public class ClienteDao {
                 + "ds_endereco, dt_criacao FROM cliente WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setInt(1, cdCliente);
             ResultSet rs = stm.executeQuery();
 
@@ -54,7 +54,7 @@ public class ClienteDao {
                 "ds_endereco, dt_criacao FROM cliente WHERE nm_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, nome);
             ResultSet rs = stm.executeQuery();
 
@@ -79,10 +79,10 @@ public class ClienteDao {
 
         String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
                 "ds_endereco, dt_criacao FROM cliente " +
-                "WHERE nr_telefone1 = ? or nr_telefone2 = ?";
+                "WHERE nr_telefone1 = ? OR nr_telefone2 = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, telefone);
             stm.setString(2, telefone);
             ResultSet rs = stm.executeQuery();
@@ -105,8 +105,13 @@ public class ClienteDao {
      */
     private Cliente readNextCliente(ResultSet rs) throws SQLException {
         if (rs.next()) {
-            return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5),
-                    rs.getString(6), rs.getDate(7));
+
+            String tel2 = rs.getString(4) == null ? "" : rs.getString(4);
+            String email = rs.getString(5) == null ? "" : rs.getString(5);
+            String endereco = rs.getString(6) == null ? "" : rs.getString(6);
+
+            return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), tel2,
+                    email, endereco, rs.getDate(7));
         } else {
             return null;
         }
@@ -119,11 +124,12 @@ public class ClienteDao {
      */
     public void incluir(Cliente cliente) {
 
-        String sql = "INSERT INTO cliente (nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
-                "ds_endereco, dt_criacao) VALUES (?, ?, ?, ?, ?, current_timestamp())";
+        String sql = "INSERT INTO cliente (nm_cliente, nr_telefone1, nr_telefone2, " +
+                "ds_email, ds_endereco, dt_criacao) " +
+                "VALUES (?, ?, ?, ?, ?, current_timestamp())";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, cliente.getNome());
             stm.setString(2, cliente.getTelefone1());
 
@@ -133,8 +139,19 @@ public class ClienteDao {
                 stm.setString(3, cliente.getTelefone2());
             }
 
-            stm.setString(4, cliente.getEmail());
-            stm.setString(5, cliente.getEndereco());
+            if (cliente.getEmail().equals("")) {
+                stm.setNull(4, Types.CHAR);
+            } else {
+                stm.setString(4, cliente.getEmail());
+            }
+
+
+            if (cliente.getEndereco().equals("")) {
+                stm.setNull(5, Types.CHAR);
+            } else {
+                stm.setString(5, cliente.getEndereco());
+            }
+
             stm.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
@@ -152,7 +169,7 @@ public class ClienteDao {
                 "ds_email = ?, ds_endereco = ? WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, cliente.getNome());
             stm.setString(2, cliente.getTelefone1());
 
@@ -162,8 +179,19 @@ public class ClienteDao {
                 stm.setString(3, cliente.getTelefone2());
             }
 
-            stm.setString(4, cliente.getEmail());
-            stm.setString(5, cliente.getEndereco());
+            if (cliente.getEmail().equals("")) {
+                stm.setNull(4, Types.CHAR);
+            } else {
+                stm.setString(4, cliente.getEmail());
+            }
+
+
+            if (cliente.getEndereco().equals("")) {
+                stm.setNull(5, Types.CHAR);
+            } else {
+                stm.setString(5, cliente.getEndereco());
+            }
+
             stm.setInt(6, cliente.getClieId());
             stm.executeUpdate();
         } catch (SQLException e) {
@@ -181,7 +209,7 @@ public class ClienteDao {
         String sql = "DELETE FROM cliente WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setInt(1, cdCliente);
             stm.executeUpdate();
         } catch (SQLException e) {
@@ -198,20 +226,16 @@ public class ClienteDao {
      */
     public ArrayList<Cliente> listar() {
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco,"
-                + " dt_criacao FROM cliente";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
+                "ds_endereco, dt_criacao FROM cliente";
 
-        ArrayList<Cliente> clientes = new ArrayList<>();
+        ArrayList<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             ResultSet rs = stm.executeQuery();
 
-            while (rs.next()) {
-                // Carregar o cliente da base de dados
-                clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-                        rs.getString(5), rs.getString(6), rs.getDate(7)));
-            }
+            clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar clientes: " + e.getMessage());
@@ -228,21 +252,17 @@ public class ClienteDao {
      */
     public ArrayList<Cliente> listar(String nome) {
 
-        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, ds_endereco,"
-                + " dt_criacao FROM cliente WHERE nm_cliente LIKE ?";
+        String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
+                "ds_endereco, dt_criacao FROM cliente WHERE nm_cliente LIKE ?";
 
-        ArrayList<Cliente> clientes = new ArrayList<>();
+        ArrayList<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, nome + "%");
             ResultSet rs = stm.executeQuery();
 
-            while (rs.next()) {
-                // Carregar o cliente da base de dados
-                clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
-                        rs.getString(5), rs.getString(6), rs.getDate(7)));
-            }
+            clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
@@ -263,25 +283,42 @@ public class ClienteDao {
                 + "ds_endereco, dt_criacao FROM cliente "
                 + "WHERE nr_telefone1 LIKE ? OR nr_telefone2 LIKE ?";
 
-        ArrayList<Cliente> clientes = new ArrayList<>();
+        ArrayList<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setString(1, telefone + "%");
             stm.setString(2, telefone + "%");
             ResultSet rs = stm.executeQuery();
 
-            while (rs.next()) {
-                // Carregar o cliente da base de dados
-                clientes.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), 
-                        rs.getString(4), rs.getString(5), rs.getString(6), rs.getDate(7)));
-            }
+            clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
         }
 
         return clientes;
+    }
+
+    /**
+     * Carregar o objeto Cliente na lista que foi informada, usando o RecordSet informado.
+     */
+    private ArrayList<Cliente> carregarClientes(ResultSet rs) throws SQLException {
+
+        ArrayList<Cliente> clies = new ArrayList<>();
+
+        while (rs.next()) {
+            String tel2 = rs.getString(4) == null ? "" : rs.getString(4);
+            String email = rs.getString(5) == null ? "" : rs.getString(5);
+            String endereco = rs.getString(6) == null ? "" : rs.getString(6);
+
+            // Carregar o cliente da base de dados
+            clies.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),
+                    tel2, email, endereco, rs.getDate(7)));
+        }
+
+        return clies;
+
     }
 
 }

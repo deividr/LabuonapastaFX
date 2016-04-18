@@ -373,9 +373,7 @@ public class UsuarioController extends StackPane implements Initializable {
 
         tblUsuario.setItems(users);
 
-        Platform.runLater(() -> {
-            txtLogin.requestFocus();
-        });
+        Platform.runLater(() -> txtLogin.requestFocus());
 
     }
 
