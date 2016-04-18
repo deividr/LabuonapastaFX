@@ -10,7 +10,7 @@ import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
 
 /**
- * Responsável por todo o procedimento de persistência na base de dados Usuário.
+ * Responsável pelos procedimentos de persistência na base de dados {@code Usuário}.
  *  
  * @author   Deivid Assumpcao Rodrigues
  * @version  %I%, %G%
