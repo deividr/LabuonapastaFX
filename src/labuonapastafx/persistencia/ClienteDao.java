@@ -2,6 +2,7 @@ package labuonapastafx.persistencia;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import labuonapastafx.model.Cliente;
 
@@ -221,15 +222,15 @@ public class ClienteDao {
     /**
      * Listar todos os {@code Cliente} que estão incluídos na base de dados.
      *
-     * @return ArrayList de {@code Cliente} que estão incluídos na base de dados. Caso não exista
+     * @return List de {@code Cliente} que estão incluídos na base de dados. Caso não exista
      * nenhum será retornado um ArrayList vazio.
      */
-    public ArrayList<Cliente> listar() {
+    public List<Cliente> listar() {
 
         String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
                 "ds_endereco, dt_criacao FROM cliente";
 
-        ArrayList<Cliente> clientes;
+        List<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -248,14 +249,14 @@ public class ClienteDao {
      * Listar todos os {@code Cliente} que estão cadastrados conforme nome informado.
      *
      * @param nome do Cliente que deve ser pesquisado para montagem da lista
-     * @return ArrayList de todos os clientes que se assemelham com o nome informado.
+     * @return List de todos os clientes que se assemelham com o nome informado.
      */
-    public ArrayList<Cliente> listar(String nome) {
+    public List<Cliente> listar(String nome) {
 
         String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, " +
                 "ds_endereco, dt_criacao FROM cliente WHERE nm_cliente LIKE ?";
 
-        ArrayList<Cliente> clientes;
+        List<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -275,15 +276,15 @@ public class ClienteDao {
      * Listar todos os {@code Cliente} que estão cadastrados conforme telefone informado.
      *
      * @param telefone do Cliente que deve ser pesquisado para montagem da lista
-     * @return ArrayList de todos os clientes que se assemelham com o nome informado.
+     * @return List de todos os clientes que se assemelham com o nome informado.
      */
-    public ArrayList<Cliente> listarTelefone(String telefone) {
+    public List<Cliente> listarTelefone(String telefone) {
 
         String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, "
                 + "ds_endereco, dt_criacao FROM cliente "
                 + "WHERE nr_telefone1 LIKE ? OR nr_telefone2 LIKE ?";
 
-        ArrayList<Cliente> clientes;
+        List<Cliente> clientes;
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -303,9 +304,9 @@ public class ClienteDao {
     /**
      * Carregar o objeto Cliente na lista que foi informada, usando o RecordSet informado.
      */
-    private ArrayList<Cliente> carregarClientes(ResultSet rs) throws SQLException {
+    private List<Cliente> carregarClientes(ResultSet rs) throws SQLException {
 
-        ArrayList<Cliente> clies = new ArrayList<>();
+        List<Cliente> clies = new ArrayList<>();
 
         while (rs.next()) {
             String tel2 = rs.getString(4) == null ? "" : rs.getString(4);

@@ -18,34 +18,26 @@ public class PedidoNe {
     /**
      * Incluir um pedido.
      *
-     * @param usuar Usuário que está efetuando a inclusão do Pedido.
-     * @param clie Cliente que está fazendo o Pedido.
-     * @param dtRetirada Data em que o Pedido será retirado.
-     * @param horaDe Hora inicial em que o Pedido deve ser retirado.
-     * @param horaAte Hora final em que o Pedido deve ser retirado.
-     * @param geladeira Código da geladeira onde o pedido está armazenado.
-     * @param itens Lista dos produtos que compõe o pedido.
-     * @param observacao Informações pertinentes ao pedido.
-     * @param retirado Indicador do status de retirada do pedido, se foi ou não retirado.
+     * @param pedido Pedido que se deseja incluir na base. Não é necessário informar o código e
+     *               nem a data em que foi efetuada o pedido.
      * @return
      */
-    public Pedido incluir(Usuario usuar, Cliente clie, LocalDate dtRetirada, String horaDe,
-                          String horaAte, String geladeira, List<ItemPedido> itens,
-                          String observacao, Byte retirado) {
+    public Pedido incluir(Pedido pedido) {
 
-        Pedido ped = new Pedido(0, usuar, clie, LocalDate.now(), dtRetirada, horaDe, horaAte, 
-                geladeira, itens, observacao, retirado);
+        pedido.setPedId(0);
+        pedido.setDtPedido(LocalDate.now());
+        pedido.setRetirado((byte) 0);
 
-        return pedDao.incluir(ped);
+        return pedDao.incluir(pedido);
     }
 
     /**
      * Obter pedidos que pertence a um determinado {@code Cliente}.
      *
      * @param clie Cliente que se deseja consultar os pedidos.
-     * @return
+     * @return List com todos os pedidos pertecentes ao cliente informado.
      */
-    public ArrayList<Pedido> obterPedidos(Cliente clie) {
+    public List<Pedido> obterPedidos(Cliente clie) {
         return pedDao.obterPedidos(clie);
     }
 
@@ -55,7 +47,7 @@ public class PedidoNe {
      * @param date Data dos pedidos.
      * @return
      */
-    public ArrayList<Pedido> obterPedidos(LocalDate date) {
+    public List<Pedido> obterPedidos(LocalDate date) {
         return pedDao.obterPedidos(date);
     }
 
@@ -64,7 +56,7 @@ public class PedidoNe {
      *
      * @return
      */
-    public ArrayList<Pedido> obterPedidos() {
+    public List<Pedido> obterPedidos() {
         return pedDao.obterPedidos();
     }
 
@@ -83,8 +75,7 @@ public class PedidoNe {
      * Efetuar alterações no Pedido conforme passado por parâmetro.
      *
      * @param pedido Pedido que se deseja alterar as informações. O código do pedido precisa ser de
-     * um pedido que realmente existe na base, por tanto não deve ser alterado.
-     *
+     *               um pedido que realmente existe na base, por tanto não deve ser alterado.
      * @return
      */
     public boolean alterar(Pedido pedido) {

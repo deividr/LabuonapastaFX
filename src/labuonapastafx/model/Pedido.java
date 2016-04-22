@@ -3,6 +3,7 @@ package labuonapastafx.model;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,13 +23,13 @@ public class Pedido implements Serializable {
     private ObjectProperty<Byte> retirado;
 
     public Pedido() {
-		this(0, null, null, LocalDate.now(), LocalDate.now(), "", "", "", null, "",
-                (byte)0);
+        this(0, null, null, LocalDate.now(), LocalDate.now(), "", "", "", null, "",
+                (byte) 0);
     }
 
-    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido, 
-            LocalDate dtRetirada, String horaDe, String horaAte, String geladeira,
-            List<ItemPedido> itens, String observacao, Byte retirado) {
+    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido,
+                  LocalDate dtRetirada, String horaDe, String horaAte, String geladeira,
+                  List<ItemPedido> itens, String observacao, Byte retirado) {
         this.pedId = new SimpleIntegerProperty(pedId);
         this.clie = new SimpleObjectProperty<>(clie);
         this.usuar = new SimpleObjectProperty<>(usuar);
@@ -38,7 +39,11 @@ public class Pedido implements Serializable {
         this.horaAte = new SimpleStringProperty(horaAte);
         this.geladeira = new SimpleStringProperty(geladeira);
 
-        ObservableList<ItemPedido> itensObs = FXCollections.observableArrayList(itens);
+        ObservableList<ItemPedido> itensObs = null;
+
+        if (itens != null && !itens.isEmpty()) {
+            FXCollections.observableArrayList(itens);
+        }
 
         this.itens = new SimpleListProperty<>(itensObs);
         this.observacao = new SimpleStringProperty(observacao);

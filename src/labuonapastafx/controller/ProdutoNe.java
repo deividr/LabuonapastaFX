@@ -1,7 +1,7 @@
 package labuonapastafx.controller;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 import labuonapastafx.model.Produto;
 import labuonapastafx.model.ProdutoEnum;
@@ -75,8 +75,8 @@ public class ProdutoNe {
      * @return true se a alteração ocorreu com sucesso, e false se ocorreu algum
      * erro (Ex.: Produto não existe).
      */
-    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade, 
-            BigDecimal valor, ProdutoEnum tipo) {
+    public boolean alterarProduto(int cdProduto, String nome, UnidadeEnum unidade,
+                                  BigDecimal valor, ProdutoEnum tipo) {
 
         Produto prod = obterCodProduto(cdProduto);
         // Se o usuario existir atualiza, senao retorna false para o chamador
@@ -149,7 +149,7 @@ public class ProdutoNe {
      *
      * @return
      */
-    public ArrayList<Produto> listarProdutos() {
+    public List<Produto> listarProdutos() {
 
         return produtoDao.listar();
 
@@ -162,7 +162,7 @@ public class ProdutoNe {
      * @param nome
      * @return
      */
-    public ArrayList<Produto> listarProdutos(String nome) {
+    public List<Produto> listarProdutos(String nome) {
 
         return produtoDao.listar(nome);
 

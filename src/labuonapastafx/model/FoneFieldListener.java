@@ -24,16 +24,16 @@ public class FoneFieldListener implements ChangeListener<String> {
 
         Platform.runLater(() -> {
             field.setText(value);
-			// Devido ao incremento dos caracteres das máscaras é necessário que o
+            // Devido ao incremento dos caracteres das máscaras é necessário que o
             // cursor sempre se posicione no final da string.
             field.positionCaret(field.getText().length());
         });
 
         field.textProperty().addListener((ObservableValue<? extends String> observableValue,
-                String oldValue1, String newValue1) -> {
-                    if (newValue1.length() > 14) {
-                        field.setText(oldValue1);
-                    }
+                                          String oldValue1, String newValue1) -> {
+            if (newValue1.length() > 14) {
+                field.setText(oldValue1);
+            }
         });
     }
 }

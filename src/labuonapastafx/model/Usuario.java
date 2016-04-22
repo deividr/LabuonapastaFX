@@ -1,6 +1,7 @@
 package labuonapastafx.model;
 
 import java.io.Serializable;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -27,12 +28,12 @@ public class Usuario implements Serializable {
     /**
      * Construtor com dados iniciais
      *
-     * @param userId Número único que identifica o usuario dentro do sistema
-     * @param login Login do usuário dentro do sistema
+     * @param userId       Número único que identifica o usuario dentro do sistema
+     * @param login        Login do usuário dentro do sistema
      * @param nomeCompleto Nome completo do usuário
-     * @param tipoAcesso Perfil de acesso para esse usuário
-     * @param senha Senha cadastrada para ele
-     * @param ativo Informa se o usuário está ativo ou não no sistema
+     * @param tipoAcesso   Perfil de acesso para esse usuário
+     * @param senha        Senha cadastrada para ele
+     * @param ativo        Informa se o usuário está ativo ou não no sistema
      */
     public Usuario(int userId, String login, String nomeCompleto, AcessoEnum tipoAcesso, String senha, byte ativo) {
         this.userId = new SimpleIntegerProperty(userId);

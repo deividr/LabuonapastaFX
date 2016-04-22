@@ -10,8 +10,8 @@
 }
 
 .titled-opcao:expanded {
-    -fx-border-color: rgb(0,168,89);
-    -fx-text-fill: rgb(255,255,255);
+    -fx-border-color: rgb(0, 168, 89);
+    -fx-text-fill: rgb(255, 255, 255);
     -fx-alignment: center;
     -fx-content-display: text-only;
 }
@@ -20,14 +20,14 @@
     -fx-font-family: "Arial";
     -fx-font-size: 23px;
     -fx-font-weight: bold;
-    -fx-background-color: rgb(0,168,89);
+    -fx-background-color: rgb(0, 168, 89);
 }
 
 .label-separator {
     -fx-font-family: "Arial";
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: rgba(0,168,89,1);
+    -fx-text-fill: rgba(0, 168, 89, 1);
 }
 
 .item-inativo {

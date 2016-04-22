@@ -1,6 +1,7 @@
 package labuonapastafx.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import labuonapastafx.model.AcessoEnum;
 import labuonapastafx.model.Usuario;
@@ -9,9 +10,9 @@ import labuonapastafx.persistencia.UsuarioDao;
 public class UsuarioNe {
 
     private final UsuarioDao usuarioDao;
-    
+
     public UsuarioNe() {
-    	usuarioDao = new UsuarioDao();
+        usuarioDao = new UsuarioDao();
     }
 
     /**
@@ -30,7 +31,7 @@ public class UsuarioNe {
      * Metodo para verificar se existe usuario informado cadastrado na base de dados
      *
      * @param cdUsuario Código do Usuário que se deseja pesquisar.
-     * @return 
+     * @return
      */
     public Usuario obterCodUsuario(int cdUsuario) {
 
@@ -85,7 +86,7 @@ public class UsuarioNe {
     /**
      * Alterar as informações do usuário conforme passado via parâmetro.
      *
-     * @param cdUsuario Código do Usuário que se deseja alterar.
+     * @param cdUsuario    Código do Usuário que se deseja alterar.
      * @param login
      * @param nomeCompleto
      * @param tipoAcesso
@@ -128,7 +129,7 @@ public class UsuarioNe {
     /**
      * Excluir o usuário logicamente, essa exclusão não irá eliminar o usuário
      * da tabela, apenas torna-lo inativo. Isso é útil para o histórico do sistema.
-     * 
+     *
      * @param cdUsuario
      * @return
      */
@@ -147,7 +148,7 @@ public class UsuarioNe {
     /**
      * Excluir o usuário fisicamente das bases de dados. CUIDADO:Essa exclusão pode
      * compromenter as informações de históricos do sistema
-     * 
+     *
      * @param cdUsuario
      * @return
      */
@@ -165,10 +166,10 @@ public class UsuarioNe {
 
     /**
      * Retorna uma lista dos usuários cadastrados na base de dados.
-     * 
+     *
      * @return
      */
-    public ArrayList<Usuario> listarUsuarios() {
+    public List<Usuario> listarUsuarios() {
 
         return usuarioDao.listar();
 
@@ -177,7 +178,7 @@ public class UsuarioNe {
     /**
      * Retorna uma lista das usuários que começam com a informação
      * passa por parâmetro.
-     * 
+     *
      * @param login
      * @return
      */
@@ -186,5 +187,5 @@ public class UsuarioNe {
         return usuarioDao.listar(login);
 
     }
-    
+
 }

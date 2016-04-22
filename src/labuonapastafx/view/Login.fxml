@@ -6,55 +6,67 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="backLogin" prefHeight="309.0" prefWidth="542.0" scaleShape="false" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.LoginController">
-   <children>
-      <HBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
-         <children>
-            <ImageView fitHeight="276.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@imagens/brasao_login.png" />
-               </image>
-            </ImageView>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="276.0" prefWidth="236.0" spacing="5.0">
-               <children>
-                  <Label prefHeight="31.0" prefWidth="52.0" text="Login:" />
-                  <TextField fx:id="txtLogin" prefHeight="31.0" prefWidth="258.0" promptText="Digite o seu login">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets></TextField>
-                  <Label prefHeight="31.0" prefWidth="56.0" text="Senha:" />
-                  <PasswordField fx:id="txtSenha" promptText="Digite a sua Senha" />
-                  <Button alignment="CENTER" mnemonicParsing="false" onAction="#botaoOKListener" prefHeight="40.0" prefWidth="100.0" text="Entrar">
-                     <VBox.margin>
-                        <Insets left="135.0" top="10.0" />
-                     </VBox.margin>
-                     <graphic>
-                        <ImageView pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@imagens/confirmar.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
-                  <Label fx:id="lblMensagem" prefHeight="21.0" prefWidth="237.0" textFill="#e10909">
-                     <VBox.margin>
-                        <Insets top="10.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Hyperlink fx:id="lnkSair" alignment="CENTER" contentDisplay="CENTER" onAction="#linkSairListener" prefHeight="29.0" prefWidth="40.0" text="Sair">
-                     <VBox.margin>
-                        <Insets left="200.0" top="20.0" />
-                     </VBox.margin>
-                  </Hyperlink>
-               </children>
-               <HBox.margin>
-                  <Insets left="20.0" />
-               </HBox.margin>
-            </VBox>
-         </children>
-      </HBox>
-   </children>
-   <stylesheets>
-      <URL value="@Labuonapasta.css" />
-   </stylesheets>
+<AnchorPane id="backLogin" prefHeight="309.0" prefWidth="542.0" scaleShape="false"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="labuonapastafx.controller.LoginController">
+    <children>
+        <HBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0"
+              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
+            <children>
+                <ImageView fitHeight="276.0" fitWidth="280.0" pickOnBounds="true"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@imagens/brasao_login.png"/>
+                    </image>
+                </ImageView>
+                <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                      minWidth="-Infinity" prefHeight="276.0" prefWidth="236.0" spacing="5.0">
+                    <children>
+                        <Label prefHeight="31.0" prefWidth="52.0" text="Login:"/>
+                        <TextField fx:id="txtLogin" prefHeight="31.0" prefWidth="258.0"
+                                   promptText="Digite o seu login">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                        </TextField>
+                        <Label prefHeight="31.0" prefWidth="56.0" text="Senha:"/>
+                        <PasswordField fx:id="txtSenha" promptText="Digite a sua Senha"/>
+                        <Button alignment="CENTER" mnemonicParsing="false"
+                                onAction="#botaoOKListener" prefHeight="40.0" prefWidth="100.0"
+                                text="Entrar">
+                            <VBox.margin>
+                                <Insets left="135.0" top="10.0"/>
+                            </VBox.margin>
+                            <graphic>
+                                <ImageView pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@imagens/confirmar.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                        <Label fx:id="lblMensagem" prefHeight="21.0" prefWidth="237.0"
+                               textFill="#e10909">
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </Label>
+                        <Hyperlink fx:id="lnkSair" alignment="CENTER" contentDisplay="CENTER"
+                                   onAction="#linkSairListener" prefHeight="29.0" prefWidth="40.0"
+                                   text="Sair">
+                            <VBox.margin>
+                                <Insets left="200.0" top="20.0"/>
+                            </VBox.margin>
+                        </Hyperlink>
+                    </children>
+                    <HBox.margin>
+                        <Insets left="20.0"/>
+                    </HBox.margin>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+    <stylesheets>
+        <URL value="@Labuonapasta.css"/>
+    </stylesheets>
 </AnchorPane>

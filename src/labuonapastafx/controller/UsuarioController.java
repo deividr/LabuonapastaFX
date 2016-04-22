@@ -84,17 +84,17 @@ public class UsuarioController extends StackPane implements Initializable {
     @FXML
     public void botaoIncluirListener(ActionEvent event) {
 
-		// Efetuar a inclusão somente se as informações passadas estiverem
+        // Efetuar a inclusão somente se as informações passadas estiverem
         // corretas.
         if (validarInformacoes()) {
-			// Se o retorno da inclusão do usuário for true significa que a
+            // Se o retorno da inclusão do usuário for true significa que a
             // inclusão foi ok
             if (usuarioNe.incluirUsuario(login, nome, acesso, senha)) {
                 showAlert("Inclusão de usuário efetuada com sucesso");
                 txtLogin.requestFocus();
                 limparCampos();
             } else {
-				// Inclusão nao foi efetuada porque o usário ja existe na base
+                // Inclusão nao foi efetuada porque o usário ja existe na base
                 // de dados
                 showAlert("Usuário já existe na base de dados");
                 txtLogin.requestFocus();
@@ -112,7 +112,7 @@ public class UsuarioController extends StackPane implements Initializable {
     @FXML
     public void botaoAlterarListener(ActionEvent event) {
 
-		// Efetuar a alteração somente se as informações passadas estiverem
+        // Efetuar a alteração somente se as informações passadas estiverem
         // corretas
         if (validarInformacoes()) {
             // Se o retorno da inclusao do usuario for true significa que a
@@ -177,7 +177,7 @@ public class UsuarioController extends StackPane implements Initializable {
      */
     @FXML
     private void tabelaUsuarioListener(MouseEvent event) {
-		// Se foi clicado duas vezes e o item não está nulo então processa a
+        // Se foi clicado duas vezes e o item não está nulo então processa a
         // consulta
         if (event.getClickCount() == 2 && tblUsuario.getSelectionModel().getSelectedItem() != null) {
 
@@ -235,7 +235,11 @@ public class UsuarioController extends StackPane implements Initializable {
      * Obter os valores dos componentes do formulario de usuarios
      */
     private void getValueFields() {
-        this.cdUsuario = Integer.parseInt(txtCodUsuario.getText());
+
+        if (!txtCodUsuario.getText().equals("")) {
+            this.cdUsuario = Integer.parseInt(txtCodUsuario.getText());
+        }
+
         this.login = txtLogin.getText();
         this.nome = txtNome.getText();
         this.acesso = cbxAcesso.getValue();
@@ -311,8 +315,8 @@ public class UsuarioController extends StackPane implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    	
-    	usuarioNe = new UsuarioNe();
+
+        usuarioNe = new UsuarioNe();
 
         txtCodUsuario.textProperty().addListener((observable, oldValue, newValue) -> {
             //Só vai permitir alterar ou excluir quando o usuário selecionar um Usuário.
@@ -354,7 +358,7 @@ public class UsuarioController extends StackPane implements Initializable {
         tblUsuario.setRowFactory((TableView<Usuario> table) -> new TableRow<Usuario>() {
             @Override
             protected void updateItem(Usuario user, boolean empty) {
-				// Sempre chamar o metodo herdado para que a atualiação das
+                // Sempre chamar o metodo herdado para que a atualiação das
                 // linhas ocorra com sucesso:
                 super.updateItem(user, empty);
 

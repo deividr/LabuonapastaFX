@@ -1,9 +1,11 @@
 package labuonapastafx.persistencia;
 
 import labuonapastafx.model.*;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Responsável por pela persistência nas bases de dados {@code Pedido} e {@code ItemPedido}.
@@ -27,8 +29,8 @@ public class PedidoDao {
                 "VALUES (?,?,?,?,?,?,?,?,0)";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stm = con.prepareStatement(sql,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             stm.setInt(1, ped.getClie().getClieId());
             stm.setInt(2, ped.getUsuario().getUserId());
@@ -88,7 +90,7 @@ public class PedidoDao {
                 + " cd_molho, vl_quantidade) VALUES (?,?,?,?,?)";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
 
             for (ItemPedido itemPedido : ped.getItens()) {
                 try {
@@ -98,7 +100,7 @@ public class PedidoDao {
 
                     stm.setNull(4, Types.INTEGER);
 
-                    if (itemPedido.getMolho() != null 
+                    if (itemPedido.getMolho() != null
                             && itemPedido.getMolho().getProdId() != 0) {
                         stm.setInt(4, itemPedido.getMolho().getProdId());
                     }
@@ -129,7 +131,7 @@ public class PedidoDao {
         String sql = "DELETE FROM pedido WHERE cd_cliente = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
             stm.setInt(1, clie.getClieId());
             stm.executeUpdate();
         } catch (SQLException e) {
@@ -149,7 +151,7 @@ public class PedidoDao {
         String sql = "DELETE FROM pedido WHERE cd_pedido = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
 
             stm.setInt(1, pedido.getPedId());
 
@@ -172,7 +174,7 @@ public class PedidoDao {
         String sql = "DELETE FROM item_pedido WHERE cd_pedido = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
 
             stm.setInt(1, pedido.getPedId());
 
@@ -197,7 +199,7 @@ public class PedidoDao {
                 "WHERE cd_pedido = ?";
 
         try (Connection con = Conexao.getConexao();
-                PreparedStatement stm = con.prepareStatement(sql)) {
+             PreparedStatement stm = con.prepareStatement(sql)) {
 
             java.sql.Date dtRetirada = java.sql.Date.valueOf(ped.getDtRetirada());
 
@@ -252,12 +254,12 @@ public class PedidoDao {
      * @return Lista dos pedidos feito por esse Cliente, ordenada descendentemente por data em que
      * foi feito o pedido.
      */
-    public ArrayList<Pedido> obterPedidos(Cliente clie) {
+    public List<Pedido> obterPedidos(Cliente clie) {
         String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, " +
                 "hr_de, hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
                 + "WHERE cd_cliente = ? ORDER BY dt_pedido DESC";
 
-        ArrayList<Pedido> pedidos = new ArrayList<>();
+        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -266,7 +268,7 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-                pedidos.add(readNextPedido(rs,null,clie));
+                pedidos.add(readNextPedido(rs, null, clie));
             }
 
         } catch (SQLException e) {
@@ -284,12 +286,12 @@ public class PedidoDao {
      * @return Lista de todos os pedidos feito na data informada, ordenado de forma crescente por
      * data.
      */
-    public ArrayList<Pedido> obterPedidos(LocalDate date) {
+    public List<Pedido> obterPedidos(LocalDate date) {
         String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
                 + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
                 + "WHERE dt_pedido = ?";
 
-        ArrayList<Pedido> pedidos = new ArrayList<>();
+        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -298,7 +300,7 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-                pedidos.add(readNextPedido(rs,null,null));
+                pedidos.add(readNextPedido(rs, null, null));
             }
 
         } catch (SQLException e) {
@@ -314,20 +316,20 @@ public class PedidoDao {
      *
      * @return Lista de todos os pedidos.
      */
-    public ArrayList<Pedido> obterPedidos() {
+    public List<Pedido> obterPedidos() {
         String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
                 + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido";
 
-        ArrayList<Pedido> pedidos = new ArrayList<>();
+        List<Pedido> pedidos = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
-            
+
             ResultSet rs = stm.executeQuery();
 
             while (rs.next()) {
                 // Carregar o Pedido
-                pedidos.add(readNextPedido(rs,null,null));
+                pedidos.add(readNextPedido(rs, null, null));
             }
 
         } catch (SQLException e) {
@@ -340,13 +342,13 @@ public class PedidoDao {
     /**
      * Construir um objeto Pedido com as informações do ResultSet informado.
      *
-     * @param rs RecordSet para leitura da tabela de Pedido.
+     * @param rs    RecordSet para leitura da tabela de Pedido.
      * @param usuar Usuario que registrou o Pedido.
-     * @param clie Cliente que efetuou o Pedido.
+     * @param clie  Cliente que efetuou o Pedido.
      * @return Objeto Pedido com as informações do RecordSet.
      * @throws SQLException
      */
-    private Pedido readNextPedido(ResultSet rs, Usuario usuar, Cliente clie) throws SQLException  {
+    private Pedido readNextPedido(ResultSet rs, Usuario usuar, Cliente clie) throws SQLException {
 
         Usuario usuarTab;
 
@@ -369,7 +371,7 @@ public class PedidoDao {
         LocalDate dtPedido = rs.getDate(4).toLocalDate();
         LocalDate dtRetirada = rs.getDate(5).toLocalDate();
 
-        ArrayList<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+        List<ItemPedido> itens = obterItensPedido(rs.getInt(1));
 
         String horaDe = rs.getString(6) == null ? "" : rs.getString(6);
         String horaAte = rs.getString(7) == null ? "" : rs.getString(7);
@@ -379,18 +381,18 @@ public class PedidoDao {
         return new Pedido(rs.getInt(1), usuarTab, clieTab, dtPedido, dtRetirada,
                 horaDe, horaAte, geladeira, itens, observacao, rs.getByte(10));
     }
-    
+
     /**
      * Obter todos os itens do Pedido.
      *
      * @param cdPedido Código do pedido que se deseja obter os itens.
      */
-    private ArrayList<ItemPedido> obterItensPedido(int cdPedido) {
+    private List<ItemPedido> obterItensPedido(int cdPedido) {
 
         String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido "
                 + "WHERE cd_pedido = ?";
 
-        ArrayList<ItemPedido> itens = new ArrayList<>();
+        List<ItemPedido> itens = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {

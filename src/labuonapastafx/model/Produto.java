@@ -2,6 +2,7 @@ package labuonapastafx.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -24,8 +25,8 @@ public class Produto implements Serializable {
         this(0, "", UnidadeEnum.UNIDADE, BigDecimal.valueOf(0.00), ProdutoEnum.DIVERSOS, (byte) 1);
     }
 
-    public Produto(int prodId, String nome, UnidadeEnum unidade, BigDecimal valor, 
-            ProdutoEnum tipo, Byte ativo) {
+    public Produto(int prodId, String nome, UnidadeEnum unidade, BigDecimal valor,
+                   ProdutoEnum tipo, Byte ativo) {
         this.prodId = new SimpleIntegerProperty(prodId);
         this.nome = new SimpleStringProperty(nome);
         this.unidade = new SimpleObjectProperty<>(unidade);

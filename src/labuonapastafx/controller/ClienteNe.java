@@ -1,6 +1,7 @@
 package labuonapastafx.controller;
 
-import java.util.ArrayList;
+import java.util.List;
+
 import labuonapastafx.model.Cliente;
 import labuonapastafx.persistencia.ClienteDao;
 
@@ -51,15 +52,15 @@ public class ClienteNe {
     /**
      * Incluir um {@code Cliente}.
      *
-     * @param nome Nome do cliente.
+     * @param nome      Nome do cliente.
      * @param telefone1 Telefone principal do cliente.
      * @param telefone2 Telefone secundário do cliente.
-     * @param email Email do cliente.
-     * @param endereco Endereço do cliente.
+     * @param email     Email do cliente.
+     * @param endereco  Endereço do cliente.
      * @return True se a inclusão ocorreu com sucesso, False se o Cliente já existe na base.
      */
     public boolean incluirCliente(String nome, String telefone1, String telefone2, String email,
-            String endereco) {
+                                  String endereco) {
 
         boolean temNome = obterClienteNome(nome) != null;
         boolean temTelefone1 = obterClienteTelefone(telefone1) != null;
@@ -86,16 +87,15 @@ public class ClienteNe {
      * Atualizar as informações do {@code Cliente} que foi passado como parâmetro.
      *
      * @param cdCliente Código do cliente
-     * @param nome Nome do cliente
+     * @param nome      Nome do cliente
      * @param telefone1 Telefone princial do cliente.
      * @param telefone2 Telefone secundário do cliente.
-     * @param email Email do cliente.
-     * @param endereco Endereco do cliente
-     *
+     * @param email     Email do cliente.
+     * @param endereco  Endereco do cliente
      * @return True se atualizado com sucesso, False se houve erro.
      */
     public boolean alterarCliente(int cdCliente, String nome, String telefone1, String telefone2,
-            String email, String endereco) {
+                                  String email, String endereco) {
 
         Cliente clie = obterCodCliente(cdCliente);
         Cliente clie2 = obterClienteTelefone(telefone1);
@@ -152,7 +152,7 @@ public class ClienteNe {
      *
      * @return Lista de clientes.
      */
-    public ArrayList<Cliente> listarClientes() {
+    public List<Cliente> listarClientes() {
 
         return clienteDao.listar();
 
@@ -164,7 +164,7 @@ public class ClienteNe {
      * @param nome do cliente que se deseja usar como filtro.
      * @return Lista de clientes.
      */
-    public ArrayList<Cliente> listarClientes(String nome) {
+    public List<Cliente> listarClientes(String nome) {
 
         return clienteDao.listar(nome);
 
@@ -176,7 +176,7 @@ public class ClienteNe {
      * @param telefone do cliente que se deseja usar como filtro.
      * @return Lista de clientes.
      */
-    public ArrayList<Cliente> listarClientesTelefone(String telefone) {
+    public List<Cliente> listarClientesTelefone(String telefone) {
 
         return clienteDao.listarTelefone(telefone);
 

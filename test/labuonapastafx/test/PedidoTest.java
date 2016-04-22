@@ -101,8 +101,18 @@ public class PedidoTest {
 
         LocalDate dtRetirada = LocalDate.now().plusDays(2);
 
-        pedido = pedNe.incluir(usuar, clie, dtRetirada, "09:00", "10:00", "010", itens,
-                "Algumas observacoes quaisquer", (byte) 0);
+        pedido.setUsuar(usuar);
+        pedido.setClie(clie);
+        pedido.setDtRetirada(dtRetirada);
+        pedido.setHoraDe("09:00");
+        pedido.setHoraDe("10:00");
+        pedido.setGeladeira("010");
+        pedido.setItens(FXCollections.observableArrayList(itens));
+        pedido.setObservacao("Algumas observacoes quaisquer");
+        pedido.setRetirado((byte) 0);
+
+        //Pedido será incluído e retornado com o número do pedido atualizado.
+        pedido = pedNe.incluir(pedido);
 
         assertEquals("Teste Pedido", pedido.getUsuario().getNomeCompleto());
 

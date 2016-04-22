@@ -54,26 +54,26 @@ public class FxUtil {
                         break;
                 }
 
-                if (event.getCode() == KeyCode.RIGHT 
-                        || event.getCode() == KeyCode.LEFT 
-                        || event.getCode().equals(KeyCode.SHIFT) 
+                if (event.getCode() == KeyCode.RIGHT
+                        || event.getCode() == KeyCode.LEFT
+                        || event.getCode().equals(KeyCode.SHIFT)
                         || event.getCode().equals(KeyCode.CONTROL)
-                        || event.isControlDown() 
+                        || event.isControlDown()
                         || event.getCode() == KeyCode.HOME
-                        || event.getCode() == KeyCode.END 
+                        || event.getCode() == KeyCode.END
                         || event.getCode() == KeyCode.TAB) {
                     return;
                 }
 
                 ObservableList<T> list = FXCollections.observableArrayList();
                 data.stream().forEach((aData) -> {
-                    if (mode.equals(AutoCompleteMode.STARTS_WITH) 
+                    if (mode.equals(AutoCompleteMode.STARTS_WITH)
                             && aData.toString().toLowerCase().startsWith(comboBox.getEditor()
-                                    .getText().toLowerCase())) {
+                            .getText().toLowerCase())) {
                         list.add(aData);
-                    } else if (mode.equals(AutoCompleteMode.CONTAINING) 
+                    } else if (mode.equals(AutoCompleteMode.CONTAINING)
                             && aData.toString().toLowerCase().contains(comboBox.getEditor()
-                                    .getText().toLowerCase())) {
+                            .getText().toLowerCase())) {
                         list.add(aData);
                     }
                 });

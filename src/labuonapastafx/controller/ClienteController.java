@@ -89,7 +89,8 @@ public class ClienteController extends StackPane implements Initializable {
                 limparCampos();
             } else {
                 // Inclusão nao foi efetuada porque o cliente ja existe na base de dados
-                showAlert("Cliente já existe na base de dados ou o telefone está cadastrado para outro Cliente");
+                showAlert("Cliente já existe na base de dados ou o telefone está cadastrado para " +
+                        "outro Cliente");
                 txtNome.requestFocus();
             }
         }
@@ -110,15 +111,18 @@ public class ClienteController extends StackPane implements Initializable {
 
             if (Cliente != null) {
                 // Se o retorno da inclusão do Cliente for true significa que a inclusão foi ok.
-                if (clienteNe.alterarCliente(cdCliente, nome, telefone1, telefone2, email, endereco)) {
+                if (clienteNe.alterarCliente(cdCliente, nome, telefone1, telefone2,
+                        email, endereco)) {
                     showAlert("Alteração de Cliente efetuada com sucesso");
                     limparCampos();
                 } else {
                     // Inclusão nao foi efetuada porque o Cliente já existe na base de dados.
-                    showAlert("Cliente não existe, ou número de telefone já cadastrado para outro Cliente");
+                    showAlert("Cliente não existe, ou número de telefone já cadastrado para " +
+                            "outro Cliente");
                 }
             } else {
-                showAlert("Cliente não existe, ou número de telefone já cadastrado para outro Cliente");
+                showAlert("Cliente não existe, ou número de telefone já cadastrado para " +
+                        "outro Cliente");
             }
 
         }
@@ -137,17 +141,18 @@ public class ClienteController extends StackPane implements Initializable {
         if (nome.equals("")) {
             showAlert("Informar o cliente");
         } else {
-            new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Cliente").showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    if (clienteNe.excluir(this.cdCliente)) {
-                        showAlert("Exclusão efetuada com sucesso");
-                        limparCampos();
-                    } else {
-                        showAlert("Cliente não encontrado na base");
-                    }
-                }
-                txtNome.requestFocus();
-            });
+            new Alert(AlertType.CONFIRMATION, "Confirma a exclusão do Cliente").showAndWait()
+                    .ifPresent(response -> {
+                        if (response == ButtonType.OK) {
+                            if (clienteNe.excluir(this.cdCliente)) {
+                                showAlert("Exclusão efetuada com sucesso");
+                                limparCampos();
+                            } else {
+                                showAlert("Cliente não encontrado na base");
+                            }
+                        }
+                        txtNome.requestFocus();
+                    });
         }
     }
 
@@ -181,7 +186,8 @@ public class ClienteController extends StackPane implements Initializable {
     @FXML
     private void tabelaClienteListener(MouseEvent event) {
         // Se foi clicado duas vezes e o item não está nulo então processa a consulta
-        if (event.getClickCount() == 2 && tblCliente.getSelectionModel().getSelectedItem() != null) {
+        if (event.getClickCount() == 2 && tblCliente.getSelectionModel()
+                .getSelectedItem() != null) {
 
             Cliente prodt = tblCliente.getSelectionModel().getSelectedItem();
 
@@ -239,14 +245,17 @@ public class ClienteController extends StackPane implements Initializable {
     }
 
     /**
-     * Obter o texto digitado no {@code Telefone} e atualizar a lista de {@code Cliente} que possuam os caracteres
+     * Obter o texto digitado no {@code Telefone} e atualizar a lista de {@code Cliente} que possuam
+     * os caracteres
      * informados.
      */
     private void reiniciarListaTelefone() {
         if (txtTelefone1.isFocused()) {
-            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone1.getText().replaceAll("[^0-9]", "")));
+            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone1.getText()
+                    .replaceAll("[^0-9]", "")));
         } else {
-            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone2.getText().replaceAll("[^0-9]", "")));
+            clies.setAll(clienteNe.listarClientesTelefone(txtTelefone2.getText()
+                    .replaceAll("[^0-9]", "")));
         }
     }
 
@@ -256,7 +265,7 @@ public class ClienteController extends StackPane implements Initializable {
     private void getValueFields() {
 
         if (!txtClieId.getText().equals(""))
-    	    this.cdCliente = Integer.parseInt(txtClieId.getText());
+            this.cdCliente = Integer.parseInt(txtClieId.getText());
 
         this.nome = txtNome.getText();
         this.telefone1 = txtTelefone1.getText().replaceAll("[^0-9]", "");
@@ -290,9 +299,9 @@ public class ClienteController extends StackPane implements Initializable {
             txtNome.requestFocus();
             return false;
         } else if (telefone1.equals("")) {
-        	showAlert("Informar o telefone principal do Cliente");
-        	txtTelefone1.requestFocus();
-        	return false;
+            showAlert("Informar o telefone principal do Cliente");
+            txtTelefone1.requestFocus();
+            return false;
         } else if (!telefone1.equals("") &&
                 !telefone1.matches("([0-9]{10,11})")) {
             showAlert("Telefone principal inválido.");
@@ -303,7 +312,7 @@ public class ClienteController extends StackPane implements Initializable {
             showAlert("Telefone secundário inválido");
             txtTelefone2.requestFocus();
             return false;
-        }else if (!email.equals("") &&
+        } else if (!email.equals("") &&
                 !email.matches("[a-zA-Z0-9]{4,}+([-_.][a-zA-Z0-9]{1,}@|@)+" +
                         "[a-zA-Z0-9]{2,}\\.([a-zA-Z]{2,}|[a-zA-Z]{2,}\\.[a-zA-Z]{2,})")) {
             showAlert("Endereço de email inválido");
@@ -324,7 +333,8 @@ public class ClienteController extends StackPane implements Initializable {
         alert.setTitle("Informação Inválida");
         alert.setHeaderText(null);
         alert.setContentText(msg);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
+                .add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
         alert.showAndWait();
     }
 
@@ -336,8 +346,8 @@ public class ClienteController extends StackPane implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    	
-    	clienteNe = new ClienteNe();
+
+        clienteNe = new ClienteNe();
 
         txtClieId.textProperty().addListener((observable, oldValue, newValue) -> {
             //Só vai permitir alterar ou excluir quando o usuário selecionar um produto.
@@ -372,7 +382,7 @@ public class ClienteController extends StackPane implements Initializable {
 
         tblcolTelefone2.setCellValueFactory(cellData -> {
             String value = cellData.getValue().getTelefone2();
-            if (value !=null) {
+            if (value != null) {
                 value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
                 value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
                 return new SimpleStringProperty(value);
@@ -388,7 +398,8 @@ public class ClienteController extends StackPane implements Initializable {
         tblCliente.setItems(clies);
 
         Platform.runLater(() -> {
-            txtNome.requestFocus();;
+            txtNome.requestFocus();
+            ;
         });
 
     }
