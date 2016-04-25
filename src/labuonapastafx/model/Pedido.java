@@ -39,10 +39,12 @@ public class Pedido implements Serializable {
         this.horaAte = new SimpleStringProperty(horaAte);
         this.geladeira = new SimpleStringProperty(geladeira);
 
+
         ObservableList<ItemPedido> itensObs = null;
 
         if (itens != null && !itens.isEmpty()) {
-            FXCollections.observableArrayList(itens);
+            //Se a lista de pedidos for diferente de null e vazia carrega o atributo da classe.
+            itensObs = FXCollections.observableArrayList(itens);
         }
 
         this.itens = new SimpleListProperty<>(itensObs);

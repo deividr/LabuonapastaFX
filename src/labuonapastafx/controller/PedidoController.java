@@ -4,11 +4,12 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.print.PrinterJob;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -69,6 +70,8 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private Button btnExcluir;
     @FXML
+    private TextField txtPesquisar;
+    @FXML
     private TableView<Pedido> tblPedido;
     @FXML
     private TableColumn<Pedido, Number> tblcolNumero;
@@ -95,6 +98,7 @@ public class PedidoController extends StackPane implements Initializable {
     private Pedido pedidoSel;
     private int idxItemSel;
     private ObservableList<Pedido> pedidos;
+    private FilteredList<Pedido> filteredList;
     private List<ItemPedido> itens;
     private Map<String, Produto> mapProdutos;
 
@@ -282,13 +286,7 @@ public class PedidoController extends StackPane implements Initializable {
     }
 
     private void imprimirCupom() {
-        PrinterJob job = PrinterJob.createPrinterJob();
-        if (job != null) {
-            boolean success = job.printPage(btnIncluir);
-            if (success) {
-                job.endJob();
-            }
-        }
+
     }
 
     @FXML
@@ -488,7 +486,7 @@ public class PedidoController extends StackPane implements Initializable {
      */
     private void showAlertWarning(String msg) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Informação Inválida");
+        alert.setTitle("Cadastro de Pedido");
         alert.setHeaderText(null);
         alert.setContentText(msg);
         ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
@@ -644,7 +642,10 @@ public class PedidoController extends StackPane implements Initializable {
 
         pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(LocalDate.now()));
 
-        tblPedido.setItems(pedidos);
+        //Criar lista para efetuar filtro conforme argumentos de pesquisa do usuário.
+        filteredList = new FilteredList<>(pedidos, p -> true);
+
+        tblPedido.setItems(filteredList);
 
     }
 
@@ -689,7 +690,9 @@ public class PedidoController extends StackPane implements Initializable {
 
         dtpickRetirada.valueProperty().addListener((observable2, oldDate, newDate) -> {
             if (!newDate.isAfter(LocalDate.now())) {
-                tblPedido.getItems().setAll(pedidoNe.obterPedidos(newDate));
+                pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(newDate));
+                filteredList = new FilteredList<>(pedidos, p -> true);
+                tblPedido.setItems(filteredList);
             }
         });
 
@@ -716,6 +719,40 @@ public class PedidoController extends StackPane implements Initializable {
             } else {
                 cbxMolho.setDisable(false);
             }
+        });
+
+        txtPesquisar.textProperty().addListener((observable, oldValue, newValue) -> {
+
+            filteredList.setPredicate(pedido -> {
+
+                if (newValue == null || newValue.equals("")) {
+                    return true;
+                }
+
+                //Pesquisar no número do pedido.
+                if (pedido.getPedId().toString().contains(newValue)) {
+                    return true;
+                }
+
+                //Pesquisar no nome do cliente.
+                if (pedido.getClie().getNome().toLowerCase().contains(newValue)) {
+                    return true;
+                }
+
+                //Pesquisar no número do telefone principal.
+                if (pedido.getClie().getTelefone1().contains(newValue)) {
+                    return true;
+                }
+
+                //Pesquisar no número do telefone secundário.
+                if (pedido.getClie().getTelefone2().contains(newValue)) {
+                    return true;
+                }
+
+                return false;
+
+            });
+
         });
 
     }

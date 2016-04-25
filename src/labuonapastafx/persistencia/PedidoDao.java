@@ -283,13 +283,13 @@ public class PedidoDao {
      * Obter pedidos que pertence a um determinado {@code Cliente}.
      *
      * @param date Data que se deseja consultar os pedidos.
-     * @return Lista de todos os pedidos feito na data informada, ordenado de forma crescente por
-     * data.
+     * @return Lista de todos os pedidos feito na data informada em diante, ordenado de forma
+     * crescente por data.
      */
     public List<Pedido> obterPedidos(LocalDate date) {
-        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada, hr_de, "
-                + "hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
-                + "WHERE dt_pedido = ?";
+        String sql = "SELECT cd_pedido, cd_usuario, cd_cliente, dt_pedido, dt_retirada,"
+                + " hr_de, hr_ate, nr_geladeira, ds_observacao, st_retirado FROM pedido "
+                + "WHERE dt_pedido >= ? ORDER BY dt_pedido ASC";
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -300,11 +300,15 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
+
+                Pedido pedidoObtido = readNextPedido(rs, null, null);
+
                 pedidos.add(readNextPedido(rs, null, null));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+            throw new RuntimeException("Erro ao consultar pedidos do Cliente: "
+                    + e.getMessage());
         }
 
         return pedidos;

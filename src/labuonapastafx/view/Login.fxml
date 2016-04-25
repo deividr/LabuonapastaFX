@@ -67,6 +67,6 @@
         </HBox>
     </children>
     <stylesheets>
-        <URL value="@Labuonapasta.css"/>
+        <URL value="@css/Labuonapasta.css"/>
     </stylesheets>
 </AnchorPane>

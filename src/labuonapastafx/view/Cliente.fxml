@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-           styleClass="fundo-opcao" stylesheets="@Labuonapasta.css"
+           styleClass="fundo-opcao" stylesheets="@css/Labuonapasta.css"
            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="labuonapastafx.controller.ClienteController">
     <children>

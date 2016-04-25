@@ -1,5 +1,6 @@
 package labuonapastafx;
 
+import java.awt.*;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,10 +9,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import labuonapastafx.controller.LoginController;
 import labuonapastafx.controller.MenuController;
 import labuonapastafx.controller.UsuarioNe;
@@ -100,7 +104,8 @@ public class LabuonapastaFX extends Application {
 
         stage.setScene(scene);
         stage.setTitle("Labuonapasta Produtos Alimenticios");
-        stage.getIcons().add(new Image(getClass().getResource("view/imagens/brasao_menu.png").toString()));
+        stage.getIcons().add(new Image(getClass()
+                .getResource("view/imagens/brasao_menu.png").toString()));
         stage.centerOnScreen();
 
         return (Initializable) loader.getController();
