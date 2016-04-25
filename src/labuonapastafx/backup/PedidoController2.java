@@ -1,4 +1,4 @@
-package labuonapastafx.controller;
+package labuonapastafx.backup;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,6 +16,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import labuonapastafx.controller.ClienteNe;
+import labuonapastafx.controller.MenuController;
+import labuonapastafx.controller.PedidoNe;
+import labuonapastafx.controller.ProdutoNe;
 import labuonapastafx.model.*;
 
 import java.math.BigDecimal;
@@ -212,7 +216,7 @@ public class PedidoController2 extends StackPane implements Initializable {
 
             Pedido pedido = new Pedido();
 
-            pedido.setUsuar(menuControl.user);
+            //pedido.setUsuar(menuControl.user);
             pedido.setClie(clie);
             pedido.setDtRetirada(dtRetirada);
             pedido.setHoraDe(horaDe);
@@ -253,7 +257,7 @@ public class PedidoController2 extends StackPane implements Initializable {
                 clie = clieNe.obterClienteTelefone(telefone);
             }
 
-            pedidoSel.setUsuar(menuControl.user);
+            //pedidoSel.setUsuar(menuControl.user);
             pedidoSel.setClie(clie);
             pedidoSel.setDtRetirada(dtRetirada);
             pedidoSel.setHoraDe(horaDe);
