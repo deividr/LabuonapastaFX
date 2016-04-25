@@ -5,25 +5,29 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
+import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import labuonapastafx.model.*;
+import javafx.stage.StageStyle;
+import labuonapastafx.LabuonapastaFX;
+import labuonapastafx.model.Pedido;
+import labuonapastafx.model.Produto;
+import labuonapastafx.model.ProdutoEnum;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -40,35 +44,7 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     private GridPane gridForm;
     @FXML
-    private TextField txtNumPed;
-    @FXML
-    private TextField txtTelefone;
-    @FXML
-    private TextField txtNome;
-    @FXML
     private DatePicker dtpickRetirada;
-    @FXML
-    private TextField txtHoraDe;
-    @FXML
-    private TextField txtHoraAte;
-    @FXML
-    private TextField txtGeladeira;
-    @FXML
-    private ComboBox<Produto> cbxProduto;
-    @FXML
-    private ComboBox<Produto> cbxMolho;
-    @FXML
-    private TextField txtQtde;
-    @FXML
-    private TextArea txtObservacoes;
-    @FXML
-    private ListView<String> listItens;
-    @FXML
-    private Button btnIncluir;
-    @FXML
-    private Button btnAlterar;
-    @FXML
-    private Button btnExcluir;
     @FXML
     private TextField txtPesquisar;
     @FXML
@@ -91,107 +67,16 @@ public class PedidoController extends StackPane implements Initializable {
     private TableColumn<Pedido, String> tblcolSolicitado;
 
     // Variáveis de controle geral
-    private MenuController menuControl;
-    private ClienteNe clieNe;
+    public MenuController menuControl;
     private PedidoNe pedidoNe;
     private ProdutoNe prodNe;
     private Pedido pedidoSel;
-    private int idxItemSel;
     private ObservableList<Pedido> pedidos;
     private FilteredList<Pedido> filteredList;
-    private List<ItemPedido> itens;
-    private Map<String, Produto> mapProdutos;
+    public Map<String, Produto> mapProdutos;
+    public List<Produto> produtos;
+    public List<Produto> molhos;
 
-    //Variáveis para controle do formulário da tela.
-    private String telefone, nome, horaDe, horaAte, geladeira, observacao;
-    private LocalDate dtRetirada;
-    private Produto produto, molho;
-    private BigDecimal qtde;
-
-    /**
-     * Incluir um novo item na lista de itens, esse evento será acionado pelao botão "+".
-     *
-     * @param event
-     */
-    @FXML
-    void incluirItemListener(ActionEvent event) {
-
-        getValuesItemPedido();
-
-        if (produto == null) {
-            showAlertWarning("Informar um produto para incluir.");
-            cbxProduto.requestFocus();
-        } else if (qtde.doubleValue() == 0.0) {
-            showAlertWarning("Informar a quantidade do produto.");
-            txtQtde.requestFocus();
-        } else {
-
-            int codigo;
-
-            if (itens.isEmpty()) {
-                codigo = 1;
-            } else {
-                codigo = itens.get(itens.size() - 1).getCodigo() + 1;
-            }
-
-            ItemPedido item = new ItemPedido(codigo, produto, molho, qtde);
-
-            addItemList(item);
-
-            itens.add(item);
-
-            cbxProduto.getSelectionModel().clearSelection();
-
-            cbxMolho.getSelectionModel().clearSelection();
-
-            txtQtde.setText("");
-
-            cbxProduto.requestFocus();
-        }
-    }
-
-    /**
-     * Excluir um item da lista de pedidos do cliente.
-     *
-     * @param event
-     */
-    @FXML
-    void excluirItemListener(ActionEvent event) {
-
-        int index = listItens.getSelectionModel().getSelectedIndex();
-
-        itens.remove(index);
-
-        listItens.getItems().clear();
-
-        int codigo = 1;
-
-        for (ItemPedido item : itens) {
-            item.setCodigo(codigo++);
-            addItemList(item);
-        }
-
-    }
-
-    /**
-     * Formatar e incluir um novo item na lista de itens do pedido.
-     *
-     * @param item
-     */
-    private void addItemList(ItemPedido item) {
-
-        String massaMaisMolho = String.format("%s %s", item.getProduto().getNome(),
-                item.getMolho() != null ? item.getMolho().getNome() : "");
-
-        String strFormat = String.format("%3s  %7s %s  %-30s  %.2f", item.getCodigo(),
-                item.getQtde().toString(),
-                item.getProduto().getUnidade().getCodigo().toLowerCase(),
-                massaMaisMolho,
-                item.getProduto().getValor().multiply(item.getQtde()));
-
-        listItens.getItems().add(strFormat);
-
-    }
 
     /**
      * Incluir o pedido na base quando o botão Incluir for pressionado.
@@ -200,107 +85,36 @@ public class PedidoController extends StackPane implements Initializable {
      */
     @FXML
     void botaoIncluirListener(ActionEvent event) {
-        //Se as informações foram preenchidas corretamente, faz a inclusão na base de pedidos.
-        if (validateFields()) {
 
-            Cliente clie = clieNe.obterClienteTelefone(telefone);
+        Stage incluirStage = new Stage();
 
-            //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
-            if (clie == null) {
-                clieNe.incluirCliente(nome, telefone, "", "", "");
-                clie = clieNe.obterClienteTelefone(telefone);
-            }
+        String fxml = "view/IncluirPedido.fxml";
 
-            Pedido pedido = new Pedido();
+        FXMLLoader loader = new FXMLLoader();
 
-            pedido.setUsuar(menuControl.user);
-            pedido.setClie(clie);
-            pedido.setDtRetirada(dtRetirada);
-            pedido.setHoraDe(horaDe);
-            pedido.setHoraDe(horaAte);
-            pedido.setGeladeira(geladeira);
-            pedido.setItens(FXCollections.observableArrayList(itens));
-            pedido.setObservacao(observacao);
+        Parent page;
 
-            pedido = pedidoNe.incluir(pedido);
+        try (InputStream in = LabuonapastaFX.class.getResourceAsStream(fxml)) {
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
 
-            //Informar a inclusão do pedido e o seu número para o usuário.
-            showAlertInformation("Pedido " + pedido.getPedId());
+            loader.setLocation(LabuonapastaFX.class.getResource(fxml));
 
-            txtTelefone.requestFocus();
+            page = loader.load(in);
 
-            //Adiciona o novo pedido a tabela de pedidos.
-            pedidos.add(pedido);
+            Scene scene = new Scene(page);
 
-            limparCampos(event);
+            incluirStage.setScene(scene);
+            incluirStage.initStyle(StageStyle.UNDECORATED);
+            incluirStage.centerOnScreen();
 
+            ((IncluirPedidoController) loader.getController()).setApp(this, incluirStage);
+
+            incluirStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
 
-    /**
-     * Alterar o pedido nas bases quando o botão Alterar for acionado.
-     *
-     * @param event
-     */
-    @FXML
-    void botaoAlterarListener(ActionEvent event) {
-        //Se as informações foram preenchidas corretamente, faz a alteração na base de pedidos.
-        if (validateFields()) {
-            Cliente clie = clieNe.obterClienteTelefone(telefone);
-
-            //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
-            if (clie == null) {
-                clieNe.incluirCliente(nome, telefone, "", "", "");
-                clie = clieNe.obterClienteTelefone(telefone);
-            }
-
-            pedidoSel.setUsuar(menuControl.user);
-            pedidoSel.setClie(clie);
-            pedidoSel.setDtRetirada(dtRetirada);
-            pedidoSel.setHoraDe(horaDe);
-            pedidoSel.setHoraAte(horaAte);
-            pedidoSel.setGeladeira(geladeira);
-            pedidoSel.setObservacao(observacao);
-
-            //É necessário criar uma ArrayList a parte, porque se passarmos o atributo itens direto
-            //para o setItens do pedidoSel ele atribui essa lista como observável e tudo que
-            //alterarmos no campo itens será refletido no atributo do pedidoSel.
-            List<ItemPedido> itensAtu = new ArrayList<>();
-            itens.forEach(itensAtu::add);
-            pedidoSel.setItens(FXCollections.observableList(itensAtu));
-
-            imprimirCupom();
-
-            if (pedidoNe.alterar(pedidoSel)) {
-
-                pedidos.set(idxItemSel, pedidoSel);
-
-                showAlertWarning(String.format("Alteração do pedido %s efetuada com sucesso.",
-                        pedidoSel.getPedId()));
-
-                limparCampos(event);
-            } else {
-                showAlertWarning("Pedido não encontrado, favor confirmar as informações.");
-            }
-        }
-    }
-
-    private void imprimirCupom() {
-
-    }
-
-    @FXML
-    void botaoExcluirListener(ActionEvent event) {
-        if (pedidoNe.excluirPedido(pedidoSel)) {
-            pedidos.remove(idxItemSel);
-
-            showAlertWarning(String.format("Pedido %s excluído com sucesso.",
-                    pedidoSel.getPedId()));
-
-            limparCampos(event);
-        } else {
-            showAlertWarning("Pedido não encontrado, favor confirmar as informações.");
-        }
     }
 
     @FXML
@@ -320,7 +134,7 @@ public class PedidoController extends StackPane implements Initializable {
             }
         });
 
-        txtTelefone.requestFocus();
+        txtPesquisar.requestFocus();
 
     }
 
@@ -337,145 +151,7 @@ public class PedidoController extends StackPane implements Initializable {
                 && tblPedido.getSelectionModel().getSelectedItem() != null) {
 
             pedidoSel = tblPedido.getSelectionModel().getSelectedItem();
-            idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
-
-            setValueFields(pedidoSel);
-        }
-    }
-
-    /**
-     * Método para validar os campos da tela.
-     */
-    private boolean validateFields() {
-        getValuesPedido();
-
-        if (telefone.equals("")) {
-            showAlertWarning("Informar o telefone do Cliente");
-            txtTelefone.requestFocus();
-            return false;
-        } else if (telefone.length() < 10) {
-            showAlertWarning("Número de telefone inválido");
-            txtTelefone.requestFocus();
-            return false;
-        }
-
-        if (nome.equals("")) {
-            showAlertWarning("Informar o nome do Cliente");
-            txtNome.requestFocus();
-            return false;
-        }
-
-        if (dtRetirada.isBefore(LocalDate.now())) {
-            showAlertWarning("Data inválida. Favor informar data de hoje ou posterior.");
-            dtpickRetirada.requestFocus();
-            return false;
-        }
-
-        if (!horaDe.equals("")) {
-            if (!horaDe.matches("[0-9]{2}:[0-9]{2}")) {
-                showAlertWarning("Hora De inválida.");
-                txtHoraDe.requestFocus();
-                return false;
-            }
-
-            try {
-                LocalTime time = LocalTime.of(Integer.parseInt(horaDe.substring(0, 2)),
-                        Integer.parseInt(horaDe.substring(3, 5)));
-            } catch (DateTimeException e) {
-                showAlertWarning("Hora De inválida.");
-                txtHoraDe.requestFocus();
-                return false;
-            }
-        }
-
-        if (!horaAte.equals("")) {
-            if (!horaAte.matches("[0-9]{2}:[0-9]{2}")) {
-                showAlertWarning("Hora Até inválida.");
-                txtHoraAte.requestFocus();
-                return false;
-            }
-
-            try {
-                LocalTime time = LocalTime.of(Integer.parseInt(horaAte.substring(0, 2)),
-                        Integer.parseInt(horaAte.substring(3, 5)));
-            } catch (DateTimeException e) {
-                showAlertWarning("Hora Até inválida.");
-                txtHoraAte.requestFocus();
-                return false;
-            }
-        }
-
-        if (itens.isEmpty()) {
-            showAlertWarning("Incluir ao menos um item para o pedido.");
-            cbxProduto.requestFocus();
-            return false;
-        }
-
-        return true;
-
-    }
-
-    /**
-     * Método para obter os valores dos campos referentes ao Pedido.
-     */
-    private void getValuesPedido() {
-        this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
-        this.nome = txtNome.getText();
-        this.dtRetirada = dtpickRetirada.getValue();
-        this.horaDe = txtHoraDe.getText();
-        this.horaAte = txtHoraAte.getText();
-        this.geladeira = txtGeladeira.getText();
-        this.observacao = txtObservacoes.getText();
-    }
-
-    /**
-     * Setar as informações do formulário com os dados do Pedido informado.
-     *
-     * @param ped Pedido que se deseja formatar no formulário do cadastro.
-     */
-    private void setValueFields(Pedido ped) {
-        txtNumPed.setText(ped.getPedId().toString());
-        txtTelefone.setText(ped.getClie().getTelefone1());
-        txtNome.setText(ped.getClie().getNome());
-        dtpickRetirada.setValue(ped.getDtRetirada());
-
-        if (!ped.getHoraDe().equals("")) {
-            txtHoraDe.setText(ped.getHoraDe());
-        }
-
-        if (!ped.getHoraAte().equals("")) {
-            txtHoraAte.setText(ped.getHoraAte());
-        }
-
-        if (!ped.getGeladeira().equals("")) {
-            txtGeladeira.setText(ped.getGeladeira());
-        }
-
-        listItens.getItems().clear();
-        itens.clear();
-
-        for (ItemPedido item : ped.getItens()) {
-            addItemList(item);
-            itens.add(item);
-        }
-
-        if (!ped.getObsercao().equals("")) {
-            txtObservacoes.setText(ped.getObsercao());
-        }
-    }
-
-    /**
-     * Método para obter os valores dos campos referentes aos Itens do Pedido.
-     */
-    private void getValuesItemPedido() {
-        this.produto = cbxProduto.getValue();
-
-        this.molho = cbxMolho.getValue();
-
-        if (!txtQtde.getText().equals("")) {
-            this.qtde = new BigDecimal(txtQtde.getText().replace(",", "."));
-        } else {
-            this.qtde = BigDecimal.valueOf(0.0);
+            //idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
         }
     }
 
@@ -494,29 +170,6 @@ public class PedidoController extends StackPane implements Initializable {
         alert.showAndWait();
     }
 
-
-    /**
-     * Mostrar tela de mensagem para apontar erro ao <code>usuário</>.
-     *
-     * @param msg Mensagem que se deseja passar para o usuário.
-     */
-    private void showAlertInformation(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Cadastro de Pedido");
-        alert.setHeaderText("Inclusão efetuada com sucesso!");
-
-        Label lblNumeroPedido = new Label(msg);
-
-        lblNumeroPedido.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold");
-        lblNumeroPedido.setAlignment(Pos.CENTER);
-
-        alert.getDialogPane().setContent(lblNumeroPedido);
-
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
-                .add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
-        alert.showAndWait();
-    }
-
     /**
      * Inicializar a classe de controle.
      *
@@ -528,11 +181,7 @@ public class PedidoController extends StackPane implements Initializable {
 
         prodNe = new ProdutoNe();
 
-        clieNe = new ClienteNe();
-
         pedidoNe = new PedidoNe();
-
-        itens = new ArrayList<>();
 
         dtpickRetirada.setValue(LocalDate.now());
 
@@ -543,7 +192,7 @@ public class PedidoController extends StackPane implements Initializable {
         carregarListeners();
 
         Platform.runLater(() -> {
-            txtTelefone.requestFocus();
+            txtPesquisar.requestFocus();
         });
 
     }
@@ -553,9 +202,8 @@ public class PedidoController extends StackPane implements Initializable {
      */
     private void carregarCombosProdutos() {
 
-        List<Produto> produtos = prodNe.listarProdutos();
-        ObservableList<Produto> molhos = FXCollections.observableArrayList();
-
+        produtos = prodNe.listarProdutos();
+        molhos = new ArrayList<>();
         mapProdutos = new HashMap<>();
 
         //Separa da lista da tabela todos os que são do tipo Molho.
@@ -566,40 +214,6 @@ public class PedidoController extends StackPane implements Initializable {
             //Criar Map para consultar e sortear produtos no Combo de Produtos.
             mapProdutos.put(prod.getNome(), prod);
         });
-
-        cbxProduto.getItems().setAll(produtos);
-
-        //Criar um tipo de produto null para o caso de não ser selecionado nenhum molho.
-        cbxMolho.getItems().add(new Produto());
-
-        //Adciona todos os produtos do tipo molho ao ComboBox de Molhos.
-        cbxMolho.getItems().addAll(molhos);
-
-        //Converter a String escrita em um objeto produto da lista.
-        cbxProduto.setConverter(new StringConverter<Produto>() {
-
-            @Override
-            public String toString(Produto produto) {
-                if (produto == null) {
-                    return "";
-                }
-                String str = produto.getNome();
-                return str;
-            }
-
-            @Override
-            public Produto fromString(String string) {
-                if (!mapProdutos.containsKey(string)) {
-                    cbxProduto.setValue(null);
-                    return null;
-                }
-
-                return mapProdutos.get(string);
-            }
-
-        });
-
-        FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
 
     }
 
@@ -654,70 +268,11 @@ public class PedidoController extends StackPane implements Initializable {
      */
     private void carregarListeners() {
 
-        txtNumPed.textProperty().addListener((observable, oldValue, newValue) -> {
-            //Só vai permitir alterar ou excluir quando o usuário selecionar um pedido.
-            if (newValue.equals("")) {
-                btnAlterar.setDisable(true);
-                btnExcluir.setDisable(true);
-                btnIncluir.setDisable(false);
-            } else {
-                btnAlterar.setDisable(false);
-                btnExcluir.setDisable(false);
-                btnIncluir.setDisable(true);
-            }
-        });
-
-        txtTelefone.textProperty().addListener(new FoneFieldListener(txtTelefone));
-
-        txtTelefone.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-
-                getValuesPedido();
-
-                //Se telefone foi informado, consultar se está cadastrado para algum cliente.
-                if (!this.telefone.equals("")) {
-                    Cliente clie = clieNe.obterClienteTelefone(telefone);
-                    if (clie != null) {
-                        txtNome.setText(clie.getNome());
-                    } else {
-                        txtNome.setText("");
-                    }
-                }
-            }
-        });
-
-        txtNome.textProperty().addListener(new LimitedTextListener(txtNome, 40));
-
         dtpickRetirada.valueProperty().addListener((observable2, oldDate, newDate) -> {
             if (!newDate.isAfter(LocalDate.now())) {
                 pedidos = FXCollections.observableArrayList(pedidoNe.obterPedidos(newDate));
                 filteredList = new FilteredList<>(pedidos, p -> true);
                 tblPedido.setItems(filteredList);
-            }
-        });
-
-        txtHoraAte.textProperty().addListener(new HoraFieldListener(txtHoraAte));
-        txtHoraDe.textProperty().addListener(new HoraFieldListener(txtHoraDe));
-        txtGeladeira.textProperty().addListener(new LimitedTextListener(txtGeladeira, 3));
-
-        //Limitar a 200 caracteres as informações do campo Observação:
-        txtObservacoes.textProperty().addListener((observable1, oldValue1, newValue1) -> {
-            if (newValue1.length() > 200) {
-                txtObservacoes.setText(oldValue1);
-            }
-        });
-
-        txtQtde.textProperty().addListener(new QuantityFieldListener(txtQtde));
-
-        cbxProduto.valueProperty().addListener((observable, oldValue, newValue) -> {
-            //Se o produto selecionado não for uma massa será inibido o combo de molho, pois molho
-            //só pode ser selecionado quando o produto principal for uma massa.
-            if (newValue != null
-                    && newValue.getTipo() != ProdutoEnum.MASSA) {
-                cbxMolho.setValue(null);
-                cbxMolho.setDisable(true);
-            } else {
-                cbxMolho.setDisable(false);
             }
         });
 
@@ -755,6 +310,11 @@ public class PedidoController extends StackPane implements Initializable {
 
         });
 
+    }
+
+    //Adicionar o novo Pedido na tabela de pedidos.
+    public void addPedidos(Pedido pedido) {
+        this.pedidos.add(pedido);
     }
 
     /**
