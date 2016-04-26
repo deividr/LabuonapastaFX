@@ -1,25 +1,21 @@
 package labuonapastafx;
 
-import java.awt.*;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import labuonapastafx.controller.LoginController;
 import labuonapastafx.controller.MenuController;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
+
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Cadastro de produtos e pedidos.
@@ -36,13 +32,17 @@ public class LabuonapastaFX extends Application {
     public static final String VIEW_CLIENTE = "view/Cliente.fxml";
     public static final String VIEW_PEDIDO = "view/Pedido.fxml";
 
-    private Stage stage;
+    private static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
         goToMenu(new UsuarioNe().obterUsuario("deivid"));
         stage.show();
+    }
+
+    public static Stage getStage() {
+        return stage;
     }
 
     /**

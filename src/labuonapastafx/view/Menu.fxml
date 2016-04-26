@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="800.0" prefWidth="1280.0" stylesheets="@css/Labuonapasta.css"
-      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="labuonapastafx.controller.MenuController">
+<VBox alignment="CENTER" prefHeight="800.0" prefWidth="1280.0" stylesheets="@css/Labuonapasta.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.MenuController">
     <children>
         <MenuBar VBox.vgrow="NEVER">
             <menus>
                 <Menu mnemonicParsing="false" text="Menu">
                     <items>
-                        <MenuItem fx:id="mntmLogout" mnemonicParsing="false"
-                                  onAction="#efetuarLogout" text="Logout"/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="mntmSair" mnemonicParsing="false"
-                                  onAction="#mntmSairListener" text="Sair"/>
+                        <MenuItem fx:id="mntmLogout" mnemonicParsing="false" onAction="#efetuarLogout" text="Logout" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="mntmSair" mnemonicParsing="false" onAction="#mntmSairListener" text="Sair" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Pedido">
                     <items>
-                        <MenuItem fx:id="mntmCadPedido" mnemonicParsing="false"
-                                  onAction="#mntmCadPedidoListener" text="Cadastrar"/>
+                        <MenuItem fx:id="mntmCadPedido" mnemonicParsing="false" onAction="#mntmCadPedidoListener" text="Cadastrar" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Cadastro">
                     <items>
-                        <MenuItem fx:id="mntmCadProduto" mnemonicParsing="false"
-                                  onAction="#mntmCadProdutoListener" text="Produto"/>
-                        <MenuItem fx:id="mntmCadCliente" mnemonicParsing="false"
-                                  onAction="#mntmCadClienteListener" text="Cliente"/>
-                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false"
-                                  onAction="#mntmCadUsuarioListener" text="Usuário"/>
-                        <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false"
-                                  onAction="#mntmSenhaListener" text="Alterar Senha"/>
+                        <MenuItem fx:id="mntmCadProduto" mnemonicParsing="false" onAction="#mntmCadProdutoListener" text="Produto" />
+                        <MenuItem fx:id="mntmCadCliente" mnemonicParsing="false" onAction="#mntmCadClienteListener" text="Cliente" />
+                        <MenuItem fx:id="mntmCadUsuario" mnemonicParsing="false" onAction="#mntmCadUsuarioListener" text="Usuário" />
+                        <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false" onAction="#mntmSenhaListener" text="Alterar Senha" />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-        <StackPane id="background" fx:id="pnCentral" alignment="TOP_LEFT" VBox.vgrow="ALWAYS"/>
-        <Label fx:id="lblUsuario" alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308"
-               VBox.vgrow="NEVER"/>
+        <StackPane id="background" fx:id="pnCentral" alignment="TOP_LEFT" VBox.vgrow="ALWAYS" />
+        <Label fx:id="lblUsuario" alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER">
+         <padding>
+            <Insets left="5.0" />
+         </padding></Label>
     </children>
 </VBox>

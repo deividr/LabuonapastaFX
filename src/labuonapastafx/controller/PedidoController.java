@@ -7,30 +7,20 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.Pedido;
-import labuonapastafx.model.Produto;
-import labuonapastafx.model.ProdutoEnum;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.*;
+import java.util.ResourceBundle;
 
 /**
  * Classe controladora do painel de manutenção dos Pedidos.
@@ -69,14 +59,12 @@ public class PedidoController extends StackPane implements Initializable {
     // Variáveis de controle geral
     public MenuController menuControl;
     private PedidoNe pedidoNe;
-    private ProdutoNe prodNe;
     private Pedido pedidoSel;
     private ObservableList<Pedido> pedidos;
     private FilteredList<Pedido> filteredList;
-    public Map<String, Produto> mapProdutos;
-    public List<Produto> produtos;
-    public List<Produto> molhos;
 
+    private Stage incluirStage;
+    private Stage alterarStage;
 
     /**
      * Incluir o pedido na base quando o botão Incluir for pressionado.
@@ -86,35 +74,11 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     void botaoIncluirListener(ActionEvent event) {
 
-        Stage incluirStage = new Stage();
-
-        String fxml = "view/IncluirPedido.fxml";
-
-        FXMLLoader loader = new FXMLLoader();
-
-        Parent page;
-
-        try (InputStream in = LabuonapastaFX.class.getResourceAsStream(fxml)) {
-            loader.setBuilderFactory(new JavaFXBuilderFactory());
-
-            loader.setLocation(LabuonapastaFX.class.getResource(fxml));
-
-            page = loader.load(in);
-
-            Scene scene = new Scene(page);
-
-            incluirStage.setScene(scene);
-            incluirStage.initStyle(StageStyle.UNDECORATED);
-            incluirStage.centerOnScreen();
-
-            ((IncluirPedidoController) loader.getController()).setApp(this, incluirStage);
-
+        if (incluirStage != null) { //Se a stage já estiver carregada, basta exibi-la.
             incluirStage.showAndWait();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else { //Senão carregar os componentes da tela de incluir.
+            incluirStage = IncluirPedidoController.getInstance(this).getWindow();
         }
-
     }
 
     @FXML
@@ -179,13 +143,9 @@ public class PedidoController extends StackPane implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        prodNe = new ProdutoNe();
-
         pedidoNe = new PedidoNe();
 
         dtpickRetirada.setValue(LocalDate.now());
-
-        carregarCombosProdutos();
 
         carregarTabelaPedidos();
 
@@ -193,26 +153,6 @@ public class PedidoController extends StackPane implements Initializable {
 
         Platform.runLater(() -> {
             txtPesquisar.requestFocus();
-        });
-
-    }
-
-    /**
-     * Preparar os combos de Produtos e Molhos.
-     */
-    private void carregarCombosProdutos() {
-
-        produtos = prodNe.listarProdutos();
-        molhos = new ArrayList<>();
-        mapProdutos = new HashMap<>();
-
-        //Separa da lista da tabela todos os que são do tipo Molho.
-        produtos.forEach(prod -> {
-            if (prod.getTipo() == ProdutoEnum.MOLHO) {
-                molhos.add(prod);
-            }
-            //Criar Map para consultar e sortear produtos no Combo de Produtos.
-            mapProdutos.put(prod.getNome(), prod);
         });
 
     }
@@ -312,7 +252,9 @@ public class PedidoController extends StackPane implements Initializable {
 
     }
 
-    //Adicionar o novo Pedido na tabela de pedidos.
+    /**
+     * Adicionar o novo Pedido na tabela de pedidos.
+     */
     public void addPedidos(Pedido pedido) {
         this.pedidos.add(pedido);
     }

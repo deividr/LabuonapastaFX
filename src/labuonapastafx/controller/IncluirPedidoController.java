@@ -4,24 +4,30 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
+import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Classe controladora do painel de manutenção dos Pedidos.
@@ -31,6 +37,9 @@ import java.util.ResourceBundle;
  * @since 1.0
  */
 public class IncluirPedidoController extends StackPane implements Initializable {
+
+    private static IncluirPedidoController incluirPedidoController;
+    private static Stage window;
 
     @FXML
     private GridPane gridForm;
@@ -69,14 +78,66 @@ public class IncluirPedidoController extends StackPane implements Initializable 
     private PedidoController pedidoController;
     private ClienteNe clieNe;
     private PedidoNe pedidoNe;
+    private ProdutoNe prodNe;
     private List<ItemPedido> itens;
+    public Map<String, Produto> mapProdutos;
+    public List<Produto> produtos;
+    public List<Produto> molhos;
 
     //Variáveis para controle do formulário da tela.
     private String telefone, nome, horaDe, horaAte, geladeira, observacao;
     private LocalDate dtRetirada;
     private Produto produto, molho;
     private BigDecimal qtde;
-    private Stage stage;
+
+    /**
+     * Construtor privado para garantir apenas uma instancia desse objeto.
+     */
+    public static IncluirPedidoController getInstance(PedidoController pedidoController) {
+
+        window = new Stage();
+
+        String fxml = "view/IncluirPedido.fxml";
+
+        FXMLLoader loader = new FXMLLoader();
+
+        StackPane page;
+
+        try (InputStream in = LabuonapastaFX.class.getResourceAsStream(fxml)) {
+            loader.setBuilderFactory(new JavaFXBuilderFactory());
+            loader.setLocation(LabuonapastaFX.class.getResource(fxml));
+
+            page = loader.load(in);
+
+            Scene scene = new Scene(page);
+
+            window.setScene(scene);
+            window.initStyle(StageStyle.UNDECORATED);
+            window.initModality(Modality.WINDOW_MODAL);
+            window.initOwner(LabuonapastaFX.getStage());
+            window.centerOnScreen();
+
+            window.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        incluirPedidoController = loader.getController();
+
+        incluirPedidoController.pedidoController = pedidoController;
+
+        return incluirPedidoController;
+    }
+
+    /**
+     * Obter o Stage desse objeto.
+     *
+     * @return Stage referente ao objeto.
+     */
+    public Stage getWindow() {
+        return window;
+    }
 
     /**
      * Incluir um novo item na lista de itens, esse evento será acionado pelao botão "+".
@@ -234,7 +295,7 @@ public class IncluirPedidoController extends StackPane implements Initializable 
 
     @FXML
     void botaoSairListener(ActionEvent event) {
-        stage.close();
+        window.close();
     }
 
     /**
@@ -407,13 +468,28 @@ public class IncluirPedidoController extends StackPane implements Initializable 
      */
     private void carregarCombosProdutos() {
 
-        cbxProduto.getItems().setAll(pedidoController.produtos);
+        prodNe = new ProdutoNe();
+
+        produtos = prodNe.listarProdutos();
+        molhos = new ArrayList<>();
+        mapProdutos = new HashMap<>();
+
+        //Separa da lista da tabela todos os que são do tipo Molho.
+        produtos.forEach(prod -> {
+            if (prod.getTipo() == ProdutoEnum.MOLHO) {
+                molhos.add(prod);
+            }
+            //Criar Map para consultar e sortear produtos no Combo de Produtos.
+            mapProdutos.put(prod.getNome(), prod);
+        });
+
+        cbxProduto.getItems().setAll(produtos);
 
         //Criar um tipo de produto null para o caso de não ser selecionado nenhum molho.
         cbxMolho.getItems().add(new Produto());
 
         //Adciona todos os produtos do tipo molho ao ComboBox de Molhos.
-        cbxMolho.getItems().addAll(pedidoController.molhos);
+        cbxMolho.getItems().addAll(molhos);
 
         //Converter a String escrita em um objeto produto da lista.
         cbxProduto.setConverter(new StringConverter<Produto>() {
@@ -423,18 +499,17 @@ public class IncluirPedidoController extends StackPane implements Initializable 
                 if (produto == null) {
                     return "";
                 }
-                String str = produto.getNome();
-                return str;
+                return produto.getNome();
             }
 
             @Override
             public Produto fromString(String string) {
-                if (!pedidoController.mapProdutos.containsKey(string)) {
+                if (!mapProdutos.containsKey(string)) {
                     cbxProduto.setValue(null);
                     return null;
                 }
 
-                return pedidoController.mapProdutos.get(string);
+                return mapProdutos.get(string);
             }
 
         });
@@ -500,9 +575,8 @@ public class IncluirPedidoController extends StackPane implements Initializable 
      *
      * @param pedidoController Objeto Controller da tela Pedido.
      */
-    public void setApp(PedidoController pedidoController, Stage stage) {
+    public void setApp(PedidoController pedidoController) {
         this.pedidoController = pedidoController;
-        this.stage = stage;
     }
 
 }
