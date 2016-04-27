@@ -60,6 +60,7 @@ public class PedidoController extends StackPane implements Initializable {
     public MenuController menuControl;
     private PedidoNe pedidoNe;
     private Pedido pedidoSel;
+    private int idxItemSel;
     private ObservableList<Pedido> pedidos;
     private FilteredList<Pedido> filteredList;
 
@@ -77,7 +78,7 @@ public class PedidoController extends StackPane implements Initializable {
         if (incluirStage != null) { //Se a stage já estiver carregada, basta exibi-la.
             incluirStage.showAndWait();
         } else { //Senão carregar os componentes da tela de incluir.
-            incluirStage = IncluirPedidoController.getInstance(this).getWindow();
+            incluirStage = IncluirPedidoController.getInstance(this).getStage();
         }
     }
 
@@ -115,7 +116,7 @@ public class PedidoController extends StackPane implements Initializable {
                 && tblPedido.getSelectionModel().getSelectedItem() != null) {
 
             pedidoSel = tblPedido.getSelectionModel().getSelectedItem();
-            //idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
+            idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
         }
     }
 
@@ -257,6 +258,23 @@ public class PedidoController extends StackPane implements Initializable {
      */
     public void addPedidos(Pedido pedido) {
         this.pedidos.add(pedido);
+    }
+
+    /**
+     * Atualizar o Pedido que está no index selecionado com o Pedido que foi passado como parametro.
+     * Caso não existe indice selecinado o método simplemesmente não fará nada.
+     */
+    public void atualizaPedido(Pedido pedido) {
+        pedidos.set(idxItemSel, pedido);
+    }
+
+    /**
+     * Retorna o item Pedido que foi selecinado na tabela.
+     *
+     * @return Retorna o Pedido que foi selecionado.
+     */
+    public Pedido getPedidoSel() {
+        return pedidoSel;
     }
 
     /**

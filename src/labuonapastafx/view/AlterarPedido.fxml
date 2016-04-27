@@ -25,7 +25,7 @@
     <children>
         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
-                <TitledPane animated="false" collapsible="false" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="titled-opcao" text="Incluir Pedido" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                <TitledPane animated="false" collapsible="false" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="titled-opcao" text="Alterar Pedido" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                     <content>
                         <VBox>
                             <children>
@@ -42,16 +42,17 @@
                                         </Separator>
                                     </children>
                                 </HBox>
-                                <GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="386.0" prefWidth="1226.0">
+                                <GridPane fx:id="gridForm" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="331.0" prefWidth="1226.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="-Infinity" prefWidth="79.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="153.0" minWidth="10.0" prefWidth="95.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="178.0" minWidth="-Infinity" prefWidth="64.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="232.0" minWidth="-Infinity" prefWidth="64.0" />
                                         <ColumnConstraints fillWidth="false" maxWidth="328.0" minWidth="-Infinity" prefWidth="158.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="-Infinity" prefWidth="85.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="36.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="586.0" minWidth="10.0" prefWidth="574.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="191.0" />
                                     </columnConstraints>
                                     <rowConstraints>
                                         <RowConstraints vgrow="SOMETIMES" />
@@ -61,7 +62,8 @@
                                         <RowConstraints vgrow="SOMETIMES" />
                                         <RowConstraints vgrow="SOMETIMES" />
                                         <RowConstraints vgrow="SOMETIMES" />
-                                        <RowConstraints vgrow="SOMETIMES" />
+                                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="70.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES" />
                                     </rowConstraints>
                                     <VBox.margin>
                                         <Insets />
@@ -88,7 +90,7 @@
                                         <ComboBox fx:id="cbxMolho" prefWidth="198.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                                         <TextField fx:id="txtQtde" alignment="CENTER_RIGHT" GridPane.columnIndex="5" GridPane.rowIndex="5" />
                                         <Label prefHeight="21.0" prefWidth="101.0" text="Observações:" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
-                                        <TextArea fx:id="txtObservacoes" prefHeight="168.0" prefWidth="637.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="7">
+                                        <TextArea fx:id="txtObservacoes" prefHeight="168.0" prefWidth="637.0" wrapText="true" GridPane.columnSpan="6" GridPane.rowIndex="7" GridPane.rowSpan="2">
                                             <font>
                                                 <Font size="20.0" />
                                             </font>
@@ -96,26 +98,48 @@
                                         <Button fx:id="btnAdicionarItem" mnemonicParsing="false" onAction="#incluirItemListener" prefHeight="31.0" prefWidth="31.0" text="+" GridPane.columnIndex="6" GridPane.rowIndex="2" />
                                         <Button fx:id="btnExcluirItem" mnemonicParsing="false" onAction="#excluirItemListener" prefHeight="31.0" prefWidth="31.0" text="-" GridPane.columnIndex="6" GridPane.rowIndex="3" />
                                         <Label text="Itens:" GridPane.columnIndex="7" />
-                                        <ListView fx:id="listItens" prefHeight="260.0" prefWidth="539.0" styleClass="list-view-font" GridPane.columnIndex="7" GridPane.rowIndex="1" GridPane.rowSpan="7" />
+                                        <ListView fx:id="listItens" prefHeight="260.0" prefWidth="539.0" styleClass="list-view-font" GridPane.columnIndex="7" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="7" />
+                              <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="TOTAL.......................................:" textFill="#d00000" GridPane.columnIndex="7" GridPane.rowIndex="8">
+                                 <font>
+                                    <Font name="System Bold Italic" size="27.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="lblTotal" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0,00" textFill="#d00000" GridPane.columnIndex="8" GridPane.rowIndex="8">
+                                 <font>
+                                    <Font name="System Bold Italic" size="27.0" />
+                                 </font>
+                              </Label>
                                     </children>
                                 </GridPane>
                                 <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity">
                                     <children>
-                                        <Button fx:id="btnIncluir" mnemonicParsing="false" onAction="#botaoIncluirListener" prefHeight="34.0" prefWidth="111.0" text="Incluir">
-                                            <HBox.margin>
-                                                <Insets bottom="10.0" right="10.0" top="10.0" />
-                                            </HBox.margin>
-                                            <graphic>
-                                                <ImageView pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@imagens/adicionar.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
+                              <Button fx:id="btnAlterar" mnemonicParsing="false" onAction="#botaoAlterarListener" prefHeight="34.0" prefWidth="111.0" text="Alterar">
+                                 <graphic>
+                                    <ImageView pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagens/editar.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button fx:id="btnExcluir" mnemonicParsing="false" onAction="#botaoExcluirListener" prefHeight="34.0" prefWidth="111.0" text="Excluir">
+                                 <graphic>
+                                    <ImageView pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@imagens/lixeira.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Button>
                                         <Button mnemonicParsing="false" onAction="#limparCampos" prefHeight="34.0" prefWidth="111.0" text="Limpar">
                                             <HBox.margin>
-                                                <Insets bottom="10.0" left="10.0" right="13.0" top="10.0" />
+                                                <Insets bottom="10.0" left="10.0" right="15.0" top="10.0" />
                                             </HBox.margin>
                                             <graphic>
                                                 <ImageView pickOnBounds="true" preserveRatio="true">

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -38,7 +39,6 @@ public class LabuonapastaFX extends Application {
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
         goToMenu(new UsuarioNe().obterUsuario("deivid"));
-        stage.show();
     }
 
     public static Stage getStage() {
@@ -50,6 +50,10 @@ public class LabuonapastaFX extends Application {
      */
     public void goToLogin() {
 
+        stage.close();
+
+        stage = new Stage();
+
         LoginController login;
 
         try {
@@ -59,7 +63,6 @@ public class LabuonapastaFX extends Application {
             Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        stage.setResizable(false);
     }
 
     /**
@@ -68,6 +71,10 @@ public class LabuonapastaFX extends Application {
      * @param user
      */
     public void goToMenu(Usuario user) {
+
+        stage.close();
+
+        stage = new Stage();
 
         MenuController menuControl;
 
@@ -78,7 +85,8 @@ public class LabuonapastaFX extends Application {
             Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        stage.setResizable(true);
+        stage.setMaximized(true);
+
     }
 
     /**
@@ -107,6 +115,8 @@ public class LabuonapastaFX extends Application {
         stage.getIcons().add(new Image(getClass()
                 .getResource("view/imagens/brasao_menu.png").toString()));
         stage.centerOnScreen();
+        stage.setResizable(false);
+        stage.show();
 
         return (Initializable) loader.getController();
 

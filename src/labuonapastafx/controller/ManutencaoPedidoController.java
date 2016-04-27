@@ -35,9 +35,9 @@ import java.util.*;
  * @version %I%, %G%
  * @since 1.0
  */
-public class IncluirPedidoController extends StackPane implements Initializable {
+public abstract class ManutencaoPedidoController extends StackPane implements Initializable {
 
-    private static IncluirPedidoController incluirPedidoController;
+    private static ManutencaoPedidoController manutencaoPedidoController;
     private static Stage window;
 
     @FXML
@@ -68,12 +68,6 @@ public class IncluirPedidoController extends StackPane implements Initializable 
     private ListView<String> listItens;
     @FXML
     private Label lblTotal;
-    @FXML
-    private Button btnIncluir;
-    @FXML
-    private Button btnAlterar;
-    @FXML
-    private Button btnExcluir;
 
     // Variáveis de controle geral
     private PedidoController pedidoController;
@@ -94,15 +88,14 @@ public class IncluirPedidoController extends StackPane implements Initializable 
     /**
      * Construtor privado para garantir apenas uma instancia desse objeto.
      */
-    public static IncluirPedidoController getInstance(PedidoController pedidoController) {
+    public static ManutencaoPedidoController getInstance(PedidoController pedidoController,
+                                                         String fxml) {
 
-        if (incluirPedidoController != null)  {
-            return incluirPedidoController;
+        if (manutencaoPedidoController != null)  {
+            return manutencaoPedidoController;
         }
 
         window = new Stage();
-
-        String fxml = "view/IncluirPedido.fxml";
 
         FXMLLoader loader = new FXMLLoader();
 
@@ -121,18 +114,17 @@ public class IncluirPedidoController extends StackPane implements Initializable 
             window.setResizable(false);
             window.initOwner(LabuonapastaFX.getStage());
             window.centerOnScreen();
-
             window.show();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        incluirPedidoController = loader.getController();
+        manutencaoPedidoController = loader.getController();
 
-        incluirPedidoController.pedidoController = pedidoController;
+        manutencaoPedidoController.pedidoController = pedidoController;
 
-        return incluirPedidoController;
+        return manutencaoPedidoController;
     }
 
     /**
