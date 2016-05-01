@@ -4,12 +4,10 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.scene.Camera;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import labuonapastafx.controller.LoginController;
 import labuonapastafx.controller.MenuController;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
@@ -32,19 +30,37 @@ public class LabuonapastaFX extends Application {
     public static final String VIEW_PRODUTO = "view/Produto.fxml";
     public static final String VIEW_CLIENTE = "view/Cliente.fxml";
     public static final String VIEW_PEDIDO = "view/Pedido.fxml";
+    public static final String VIEW_NUM_PEDIDO = "view/NumeroPedido.fxml";
 
+    private static LabuonapastaFX instance;
     private static Stage stage;
+    public static Usuario user;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        instance = this;
         stage = primaryStage;
-        goToMenu(new UsuarioNe().obterUsuario("deivid"));
+        user = new UsuarioNe().obterUsuario("deivid");
+        goToMenu(user);
     }
 
     public static Stage getStage() {
         return stage;
     }
 
+    public static LabuonapastaFX getInstance() {
+        return instance;
+    }
+
+    /**
+     * Setar o Usuário que está logado no sistema.
+     * 
+     * @param user
+     */
+    public static void setUsuario(Usuario user) {
+    	LabuonapastaFX.user = user;    	
+    }
+    
     /**
      * Efetuar a construção da tela de Login.
      */
@@ -54,11 +70,8 @@ public class LabuonapastaFX extends Application {
 
         stage = new Stage();
 
-        LoginController login;
-
         try {
-            login = (LoginController) replaceSceneContent(VIEW_LOGIN);
-            login.setApp(this);
+            replaceSceneContent(VIEW_LOGIN);
         } catch (Exception ex) {
             Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -76,11 +89,8 @@ public class LabuonapastaFX extends Application {
 
         stage = new Stage();
 
-        MenuController menuControl;
-
         try {
-            menuControl = (MenuController) replaceSceneContent(VIEW_MENU);
-            menuControl.setApp(this, user);
+            replaceSceneContent(VIEW_MENU);
         } catch (Exception ex) {
             Logger.getLogger(LabuonapastaFX.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -125,7 +135,7 @@ public class LabuonapastaFX extends Application {
     /**
      * Sair do sistema.
      */
-    public void exit() {
+    public static void exit() {
         stage.close();
     }
 

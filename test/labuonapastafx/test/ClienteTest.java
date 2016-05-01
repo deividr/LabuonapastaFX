@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import labuonapastafx.controller.ClienteNe;
 import labuonapastafx.model.Cliente;
-import org.junit.After;
 
 public class ClienteTest {
 

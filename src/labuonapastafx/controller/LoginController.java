@@ -33,12 +33,10 @@ public class LoginController extends AnchorPane implements Initializable {
 
     private UsuarioNe usuarioNe;
 
-    private LabuonapastaFX app;
-
     /**
      * Procedimento a serem tomados quando pressionado o botao {@code Ok}
      *
-     * @param event
+     * @param event Evento disparado ao clickar no botão OK.
      */
     @FXML
     public void botaoOKListener(ActionEvent event) {
@@ -54,7 +52,7 @@ public class LoginController extends AnchorPane implements Initializable {
                     String.valueOf(txtSenha.getText()));
 
             if (usuarioSenhaValida) {
-                app.goToMenu(usuarioNe.obterUsuario(txtLogin.getText()));
+                LabuonapastaFX.getInstance().goToMenu(usuarioNe.obterUsuario(txtLogin.getText()));
             } else {
                 sendMessage("Usuario ou senha invalida");
             }
@@ -65,11 +63,11 @@ public class LoginController extends AnchorPane implements Initializable {
     /**
      * Procedimentos efetuados quando o usuario clickar no link Sair
      *
-     * @param event
+     * @param event Evento disparado ao clickar no botão Sair.
      */
     @FXML
     public void linkSairListener(ActionEvent event) {
-        app.exit();
+        LabuonapastaFX.exit();
     }
 
     @Override
@@ -87,10 +85,6 @@ public class LoginController extends AnchorPane implements Initializable {
         ft.setFromValue(0.0);
         ft.setToValue(1);
         ft.play();
-    }
-
-    public void setApp(LabuonapastaFX app) {
-        this.app = app;
     }
 
 }

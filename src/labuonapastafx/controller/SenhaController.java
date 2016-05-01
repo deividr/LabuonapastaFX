@@ -11,7 +11,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import labuonapastafx.LabuonapastaFX;
+import labuonapastafx.model.Controllable;
 import labuonapastafx.model.LimitedTextListener;
+import labuonapastafx.model.Usuario;
 
 /**
  * Classe controladora do panel de manutencao dos usuarios do sistema. Fornece
@@ -22,7 +25,7 @@ import labuonapastafx.model.LimitedTextListener;
  * @version %I%, %G%
  * @since 1.0
  */
-public class SenhaController extends StackPane implements Initializable {
+public class SenhaController extends StackPane implements Initializable, Controllable {
 
     @FXML
     private TextField txtSenha;
@@ -52,10 +55,13 @@ public class SenhaController extends StackPane implements Initializable {
 
         //Se as informações passadas pelo usuário forem válidas, efetuar a alteração da senha
         if (validarInformacoes()) {
+        	
+        	Usuario user = LabuonapastaFX.user;
+        	
             // Se o retorno da alteracao do usuario for true significa que a
             // alteracao foi ok
-            if (usuarioNe.alterarUsuario(menuControl.user.getUserId(), menuControl.user.getLogin(),
-                    menuControl.user.getNomeCompleto(), menuControl.user.getTipoAcesso(), novaSenha)) {
+            if (usuarioNe.alterarUsuario(user.getUserId(), user.getLogin(),
+            		user.getNomeCompleto(), user.getTipoAcesso(), novaSenha)) {
                 showAlert("Alteracao de senha efetuada com sucesso");
                 limparCampos();
             } else {
@@ -106,7 +112,7 @@ public class SenhaController extends StackPane implements Initializable {
             showAlert("Informar a senha atual");
             txtSenha.requestFocus();
             return false;
-        } else if (!senha.equals(menuControl.user.getSenha())) {
+        } else if (!senha.equals(LabuonapastaFX.user.getSenha())) {
             showAlert("Senha atual inválida");
             txtSenha.requestFocus();
             return false;

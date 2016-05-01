@@ -9,18 +9,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import labuonapastafx.model.Controllable;
 import labuonapastafx.model.Pedido;
+import labuonapastafx.model.Produto;
+import labuonapastafx.model.ProdutoEnum;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Classe controladora do painel de manutenção dos Pedidos.
@@ -29,7 +30,7 @@ import java.util.ResourceBundle;
  * @version %I%, %G%
  * @since 1.0
  */
-public class PedidoController extends StackPane implements Initializable {
+public class PedidoController extends StackPane implements Initializable, Controllable {
 
     @FXML
     private GridPane gridForm;
@@ -63,9 +64,10 @@ public class PedidoController extends StackPane implements Initializable {
     private int idxItemSel;
     private ObservableList<Pedido> pedidos;
     private FilteredList<Pedido> filteredList;
-
-    private Stage incluirStage;
-    private Stage alterarStage;
+    private ProdutoNe prodNe;
+    public Map<String, Produto> mapProdutos;
+    public List<Produto> produtos;
+    public List<Produto> molhos;
 
     /**
      * Incluir o pedido na base quando o botão Incluir for pressionado.
@@ -75,11 +77,9 @@ public class PedidoController extends StackPane implements Initializable {
     @FXML
     void botaoIncluirListener(ActionEvent event) {
 
-        if (incluirStage != null) { //Se a stage já estiver carregada, basta exibi-la.
-            incluirStage.showAndWait();
-        } else { //Senão carregar os componentes da tela de incluir.
-            incluirStage = IncluirPedidoController.getInstance(this).getStage();
-        }
+        //Senão carregar os componentes da tela de incluir.
+        ManutencaoPedidoController.getInstance(this, ManutencaoPedidoController.VIEW_INCLUIR);
+
     }
 
     @FXML
@@ -95,7 +95,7 @@ public class PedidoController extends StackPane implements Initializable {
             } else if (c instanceof TextArea) {
                 ((TextArea) c).clear();
             } else if (c instanceof ListView) {
-                ((ListView) c).getItems().clear();
+                ((ListView<?>) c).getItems().clear();
             }
         });
 
@@ -117,22 +117,11 @@ public class PedidoController extends StackPane implements Initializable {
 
             pedidoSel = tblPedido.getSelectionModel().getSelectedItem();
             idxItemSel = tblPedido.getSelectionModel().getSelectedIndex();
-        }
-    }
 
-    /**
-     * Mostrar tela de mensagem para apontar erro ao <code>usuário</>.
-     *
-     * @param msg Mensagem que se deseja passar para o usuário.
-     */
-    private void showAlertWarning(String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Cadastro de Pedido");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons()
-                .add(new Image("/labuonapastafx/view/imagens/brasao_back.png"));
-        alert.showAndWait();
+            //Senão carregar os componentes da tela de alteração ou exclusão.
+            ManutencaoPedidoController.getInstance(this, ManutencaoPedidoController.VIEW_ALTERAR);
+        }
+
     }
 
     /**
@@ -147,6 +136,21 @@ public class PedidoController extends StackPane implements Initializable {
         pedidoNe = new PedidoNe();
 
         dtpickRetirada.setValue(LocalDate.now());
+
+        prodNe = new ProdutoNe();
+
+        produtos = prodNe.listarProdutos();
+        molhos = new ArrayList<>();
+        mapProdutos = new HashMap<>();
+
+        //Separa da lista da tabela todos os que são do tipo Molho.
+        produtos.forEach(prod -> {
+            if (prod.getTipo() == ProdutoEnum.MOLHO) {
+                molhos.add(prod);
+            }
+            //Criar Map para consultar e sortear produtos no Combo de Produtos.
+            mapProdutos.put(prod.getNome(), prod);
+        });
 
         carregarTabelaPedidos();
 
@@ -256,16 +260,22 @@ public class PedidoController extends StackPane implements Initializable {
     /**
      * Adicionar o novo Pedido na tabela de pedidos.
      */
-    public void addPedidos(Pedido pedido) {
+    public void adicionarPedido(Pedido pedido) {
         this.pedidos.add(pedido);
     }
 
     /**
-     * Atualizar o Pedido que está no index selecionado com o Pedido que foi passado como parametro.
-     * Caso não existe indice selecinado o método simplemesmente não fará nada.
+     * Atualizar o Pedido que foi selecionado na tabela de Pedidos.
      */
-    public void atualizaPedido(Pedido pedido) {
-        pedidos.set(idxItemSel, pedido);
+    public void atualizarPedido() {
+        pedidos.set(idxItemSel, pedidoSel);
+    }
+
+    /**
+     * Remover o Pedido selecionado na tabela de Pedidos.
+     */
+    public void removerPedido() {
+        pedidos.remove(idxItemSel);
     }
 
     /**
@@ -276,6 +286,34 @@ public class PedidoController extends StackPane implements Initializable {
     public Pedido getPedidoSel() {
         return pedidoSel;
     }
+
+    /**
+     * Obter a lista de produtos.
+     *
+     * @return List com todos os produtos cadastrados no sistema.
+     */
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    /**
+     * Obter a lista de molhos.
+     *
+     * @return List com todos os molhos cadastrados no sistema.
+     */
+    public List<Produto> getMolhos() {
+        return molhos;
+    }
+
+    /**
+     * Obter uma lista de produtos como Map.
+     * 
+     * @return Map com todos os produtos cadastrados no sistema.
+     */
+    public Map<String, Produto> getMapProdutos() {
+        return mapProdutos;
+    }
+
 
     /**
      * Efetuar configurações iniciais para o controlador.

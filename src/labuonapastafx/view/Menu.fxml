@@ -25,7 +25,7 @@
                         <MenuItem fx:id="mntmCadPedido" mnemonicParsing="false" onAction="#mntmCadPedidoListener" text="Cadastrar" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Cadastro">
+                <Menu fx:id="mnCadastro" mnemonicParsing="false" text="Cadastro">
                     <items>
                         <MenuItem fx:id="mntmCadProduto" mnemonicParsing="false" onAction="#mntmCadProdutoListener" text="Produto" />
                         <MenuItem fx:id="mntmCadCliente" mnemonicParsing="false" onAction="#mntmCadClienteListener" text="Cliente" />
@@ -33,6 +33,11 @@
                         <MenuItem fx:id="mntmAltSenha" mnemonicParsing="false" onAction="#mntmSenhaListener" text="Alterar Senha" />
                     </items>
                 </Menu>
+            <Menu fx:id="mnConfiguracoes" mnemonicParsing="false" text="Configurações">
+              <items>
+                <MenuItem fx:id="mntmNumeroPedido" mnemonicParsing="false" onAction="#mntmNumeroPedidoListener" text="Número Pedido" />
+              </items>
+            </Menu>
             </menus>
         </MenuBar>
         <StackPane id="background" fx:id="pnCentral" alignment="TOP_LEFT" VBox.vgrow="ALWAYS" />

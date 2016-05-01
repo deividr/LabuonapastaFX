@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import labuonapastafx.model.Controllable;
 import labuonapastafx.model.FoneFieldListener;
 import labuonapastafx.model.LimitedTextListener;
 import labuonapastafx.model.Cliente;
@@ -30,7 +31,7 @@ import labuonapastafx.model.Cliente;
  * @version %I%, %G%
  * @since 1.0
  */
-public class ClienteController extends StackPane implements Initializable {
+public class ClienteController extends StackPane implements Initializable, Controllable {
 
     @FXML
     private GridPane gridForm;

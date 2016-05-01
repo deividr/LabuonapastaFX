@@ -300,9 +300,6 @@ public class PedidoDao {
 
             while (rs.next()) {
                 // Carregar o Pedido
-
-                Pedido pedidoObtido = readNextPedido(rs, null, null);
-
                 pedidos.add(readNextPedido(rs, null, null));
             }
 

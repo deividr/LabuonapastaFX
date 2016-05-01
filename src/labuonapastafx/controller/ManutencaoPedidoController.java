@@ -35,9 +35,11 @@ import java.util.*;
  * @version %I%, %G%
  * @since 1.0
  */
-public abstract class ManutencaoPedidoController extends StackPane implements Initializable {
+public class ManutencaoPedidoController extends StackPane implements Initializable {
 
-    private static ManutencaoPedidoController manutencaoPedidoController;
+    public static final String VIEW_INCLUIR = "view/IncluirPedido.fxml";
+    public static final String VIEW_ALTERAR = "view/AlterarPedido.fxml";
+
     private static Stage window;
 
     @FXML
@@ -68,32 +70,34 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     private ListView<String> listItens;
     @FXML
     private Label lblTotal;
+    @FXML
+    private Button btnIncluir;
+    @FXML
+    private Button btnAlterar;
+    @FXML
+    private Button btnExcluir;
 
     // Variáveis de controle geral
     private PedidoController pedidoController;
     private ClienteNe clieNe;
     private PedidoNe pedidoNe;
-    private ProdutoNe prodNe;
     private List<ItemPedido> itens;
-    public Map<String, Produto> mapProdutos;
-    public List<Produto> produtos;
-    public List<Produto> molhos;
 
     //Variáveis para controle do formulário da tela.
     private String telefone, nome, horaDe, horaAte, geladeira, observacao;
     private LocalDate dtRetirada;
     private Produto produto, molho;
-    private BigDecimal qtde, total = BigDecimal.valueOf(0);
+    private BigDecimal qtde, total = BigDecimal.ZERO;
 
     /**
      * Construtor privado para garantir apenas uma instancia desse objeto.
+     *
+     * @param pedidoController Objeto PedidoController para obtenção de valores comum.
+     * @param fxml Caminho do .fxml que será controlado.
+     * @return Retorna um objeto PedidoController.
      */
     public static ManutencaoPedidoController getInstance(PedidoController pedidoController,
                                                          String fxml) {
-
-        if (manutencaoPedidoController != null)  {
-            return manutencaoPedidoController;
-        }
 
         window = new Stage();
 
@@ -114,32 +118,31 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
             window.setResizable(false);
             window.initOwner(LabuonapastaFX.getStage());
             window.centerOnScreen();
+
             window.show();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        manutencaoPedidoController = loader.getController();
+        ManutencaoPedidoController manutencaoPedidoController = loader.getController();
 
         manutencaoPedidoController.pedidoController = pedidoController;
+
+        manutencaoPedidoController.setApp();
+
+        //Se iniciou a tela de alteração e exclusão, inicializar as informações do formulário.
+        if (fxml.equals(VIEW_ALTERAR)) { 
+            manutencaoPedidoController.setValueFields(pedidoController.getPedidoSel());
+        }
 
         return manutencaoPedidoController;
     }
 
     /**
-     * Obter o Stage desse objeto.
-     *
-     * @return Stage referente ao objeto.
-     */
-    public Stage getStage() {
-        return window;
-    }
-
-    /**
      * Incluir um novo item na lista de itens, esse evento será acionado pelao botão "+".
      *
-     * @param event
+     * @param event Ação feita no botão de inclusão de item na lista.
      */
     @FXML
     void incluirItemListener(ActionEvent event) {
@@ -164,8 +167,10 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
             ItemPedido item = new ItemPedido(codigo, produto, molho, qtde);
 
+            //Adicionar o item na ListView da tela.
             addItemList(item);
 
+            //Adidionar o item no array List de ItemPedido.
             itens.add(item);
 
             //Obter valor do item multiplicando a quantidade pelo seu valor unitário cadastrado.
@@ -188,7 +193,7 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     /**
      * Excluir um item da lista de pedidos do cliente.
      *
-     * @param event
+     * @param event Ação feita no botão de exclusão de item da lista.
      */
     @FXML
     void excluirItemListener(ActionEvent event) {
@@ -226,7 +231,7 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     /**
      * Formatar e incluir um novo item na lista de itens do pedido.
      *
-     * @param item
+     * @param item Item para inclusão na lista de itens.
      */
     private void addItemList(ItemPedido item) {
 
@@ -270,11 +275,11 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
             Pedido pedido = new Pedido();
 
-            pedido.setUsuar(pedidoController.menuControl.user);
+            pedido.setUsuar(LabuonapastaFX.user);
             pedido.setClie(clie);
             pedido.setDtRetirada(dtRetirada);
             pedido.setHoraDe(horaDe);
-            pedido.setHoraDe(horaAte);
+            pedido.setHoraAte(horaAte);
             pedido.setGeladeira(geladeira);
             pedido.setItens(FXCollections.observableArrayList(itens));
             pedido.setObservacao(observacao);
@@ -282,15 +287,66 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
             pedido = pedidoNe.incluir(pedido);
 
             //Informar a inclusão do pedido e o seu número para o usuário.
-            showAlertInformation("Pedido " + pedido.getPedId());
+            showAlertInformation("Inclusão do Pedido efetuada com sucesso.",
+                    "Pedido " + pedido.getPedId());
 
             txtTelefone.requestFocus();
 
             //Adiciona o novo pedido a tabela de pedidos.
-            pedidoController.addPedidos(pedido);
+            pedidoController.adicionarPedido(pedido);
 
-            limparCampos(event);
+            limparCampos();
 
+        }
+    }
+
+    /**
+     * Alterar o pedido nas bases quando o botão Alterar for acionado.
+     *
+     * @param event Ação de clicar no botão de alteração.
+     */
+    @FXML
+    void botaoAlterarListener(ActionEvent event) {
+        //Se as informações foram preenchidas corretamente, faz a alteração na base de pedidos.
+        if (validateFields()) {
+            Cliente clie = clieNe.obterClienteTelefone(telefone);
+
+            //Se não existe o cliente cadastrado na base será feito a inclusão dos dados básicos.
+            if (clie == null) {
+                clieNe.incluirCliente(nome, telefone, "", "", "");
+                clie = clieNe.obterClienteTelefone(telefone);
+            }
+
+            pedidoController.getPedidoSel().setUsuar(LabuonapastaFX.user);
+            pedidoController.getPedidoSel().setClie(clie);
+            pedidoController.getPedidoSel().setDtRetirada(dtRetirada);
+            pedidoController.getPedidoSel().setHoraDe(horaDe);
+            pedidoController.getPedidoSel().setHoraAte(horaAte);
+            pedidoController.getPedidoSel().setGeladeira(geladeira);
+            pedidoController.getPedidoSel().setObservacao(observacao);
+
+            //É necessário criar uma ArrayList a parte, porque se passarmos o atributo itens direto
+            //para o setItens do pedidoSel ele atribui essa lista como observável e tudo que
+            //alterarmos no campo itens será refletido no atributo do pedidoSel.
+            List<ItemPedido> itensAtu = new ArrayList<>();
+            itens.forEach(itensAtu::add);
+            pedidoController.getPedidoSel().setItens(FXCollections.observableList(itensAtu));
+
+            imprimirCupom();
+
+            if (pedidoNe.alterar(pedidoController.getPedidoSel())) {
+
+                pedidoController.atualizarPedido();
+
+                //Informar a inclusão do pedido e o seu número para o usuário.
+                showAlertInformation("Alteração do Pedido efetuada com sucesso.",
+                        "Pedido " + pedidoController.getPedidoSel().getPedId());
+
+                sair();
+
+            } else {
+                showAlertWarning("Pedido não encontrado, favor confirmar as informações.");
+            }
         }
     }
 
@@ -299,7 +355,27 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     }
 
     @FXML
-    void limparCampos(ActionEvent event) {
+    void botaoExcluirListener(ActionEvent event) {
+        if (pedidoNe.excluirPedido(pedidoController.getPedidoSel())) {
+            pedidoController.removerPedido();
+
+            //Informar a inclusão do pedido e o seu número para o usuário.
+            showAlertInformation("Exclusão do Pedido efetuada com sucesso.",
+                    "Pedido " + pedidoController.getPedidoSel().getPedId());
+
+            sair();
+        } else {
+            showAlertWarning("Pedido não encontrado, favor confirmar as informações.");
+        }
+    }
+
+    @FXML
+    void botaoLimparListener(ActionEvent event) {
+        limparCampos();
+    }
+
+    @FXML
+    void limparCampos() {
 
         gridForm.getChildren().stream().forEach((c) -> {
             if (c instanceof TextField) {
@@ -311,11 +387,13 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
             } else if (c instanceof TextArea) {
                 ((TextArea) c).clear();
             } else if (c instanceof ListView) {
-                ((ListView) c).getItems().clear();
+                ((ListView<?>) c).getItems().clear();
             }
         });
 
         lblTotal.setText("0,00");
+
+        total = BigDecimal.ZERO;
 
         txtTelefone.requestFocus();
 
@@ -323,14 +401,28 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
     @FXML
     void botaoSairListener(ActionEvent event) {
-        window.close();
+
+        sair();
+
     }
 
+    @FXML
+    private void sair() {
+
+        /* Como essa tela não sai de memória enquanto enquanto a PedidoController estiver ativa,
+         * temos que limpar os campos para que no retorno não venha nenhum tipo de sujeira das
+         * alterações anteriores.
+         */
+        limparCampos();
+
+        window.close();
+    }    
+    
     /**
      * Método para validar os campos da tela.
      */
     private boolean validateFields() {
-        getValuesPedido();
+        getValuesWindow();
 
         if (telefone.equals("")) {
             showAlertWarning("Informar o telefone do Cliente");
@@ -362,7 +454,7 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
             }
 
             try {
-                LocalTime time = LocalTime.of(Integer.parseInt(horaDe.substring(0, 2)),
+                LocalTime.of(Integer.parseInt(horaDe.substring(0, 2)),
                         Integer.parseInt(horaDe.substring(3, 5)));
             } catch (DateTimeException e) {
                 showAlertWarning("Hora De inválida.");
@@ -379,7 +471,7 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
             }
 
             try {
-                LocalTime time = LocalTime.of(Integer.parseInt(horaAte.substring(0, 2)),
+                LocalTime.of(Integer.parseInt(horaAte.substring(0, 2)),
                         Integer.parseInt(horaAte.substring(3, 5)));
             } catch (DateTimeException e) {
                 showAlertWarning("Hora Até inválida.");
@@ -399,9 +491,49 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     }
 
     /**
-     * Método para obter os valores dos campos referentes ao Pedido.
+     * Setar as informações do formulário com os dados do Pedido informado.
+     *
+     * @param ped Pedido que se deseja formatar no formulário do cadastro.
      */
-    private void getValuesPedido() {
+    private void setValueFields(Pedido ped) {
+        txtNumPed.setText(ped.getPedId().toString());
+        txtTelefone.setText(ped.getClie().getTelefone1());
+        txtNome.setText(ped.getClie().getNome());
+        dtpickRetirada.setValue(ped.getDtRetirada());
+
+        if (!ped.getHoraDe().equals("")) {
+            txtHoraDe.setText(ped.getHoraDe());
+        }
+
+        if (!ped.getHoraAte().equals("")) {
+            txtHoraAte.setText(ped.getHoraAte());
+        }
+
+        if (!ped.getGeladeira().equals("")) {
+            txtGeladeira.setText(ped.getGeladeira());
+        }
+
+        listItens.getItems().clear();
+        itens.clear();
+
+        for (ItemPedido item : ped.getItens()) {
+            addItemList(item);
+            itens.add(item);
+            //Soma valor do item ao valor total:
+            total = total.add(item.getQtde().multiply(item.getProduto().getValor()));
+        }
+
+        setLblTotal();
+
+        if (!ped.getObsercao().equals("")) {
+            txtObservacoes.setText(ped.getObsercao());
+        }
+    }
+
+    /**
+     * Método para obter os valores dos campos referentes a inclusão do Pedido.
+     */
+    private void getValuesWindow() {
         this.telefone = txtTelefone.getText().replaceAll("[^0-9]", "");
         this.nome = txtNome.getText();
         this.dtRetirada = dtpickRetirada.getValue();
@@ -441,16 +573,15 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
         alert.showAndWait();
     }
 
-
     /**
      * Mostrar tela de mensagem para apontar erro ao <code>usuário</>.
      *
      * @param msg Mensagem que se deseja passar para o usuário.
      */
-    private void showAlertInformation(String msg) {
+    private void showAlertInformation(String header, String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Cadastro de Pedido");
-        alert.setHeaderText("Inclusão efetuada com sucesso!");
+        alert.setHeaderText(header);
 
         Label lblNumeroPedido = new Label(msg);
 
@@ -467,8 +598,8 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
     /**
      * Inicializar a classe de controle.
      *
-     * @param url
-     * @param rb
+     * @param url Sei lá, descrição apenas para tirar o warning.
+     * @param rb Sei lá, descrição apenas para tirar o warning.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -481,13 +612,9 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
         dtpickRetirada.setValue(LocalDate.now());
 
-        carregarCombosProdutos();
-
         carregarListeners();
 
-        Platform.runLater(() -> {
-            txtTelefone.requestFocus();
-        });
+        Platform.runLater(() -> txtTelefone.requestFocus());
 
     }
 
@@ -496,28 +623,13 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
      */
     private void carregarCombosProdutos() {
 
-        prodNe = new ProdutoNe();
-
-        produtos = prodNe.listarProdutos();
-        molhos = new ArrayList<>();
-        mapProdutos = new HashMap<>();
-
-        //Separa da lista da tabela todos os que são do tipo Molho.
-        produtos.forEach(prod -> {
-            if (prod.getTipo() == ProdutoEnum.MOLHO) {
-                molhos.add(prod);
-            }
-            //Criar Map para consultar e sortear produtos no Combo de Produtos.
-            mapProdutos.put(prod.getNome(), prod);
-        });
-
-        cbxProduto.getItems().setAll(produtos);
+        cbxProduto.getItems().setAll(pedidoController.getProdutos());
 
         //Criar um tipo de produto null para o caso de não ser selecionado nenhum molho.
         cbxMolho.getItems().add(new Produto());
 
         //Adciona todos os produtos do tipo molho ao ComboBox de Molhos.
-        cbxMolho.getItems().addAll(molhos);
+        cbxMolho.getItems().addAll(pedidoController.getMolhos());
 
         //Converter a String escrita em um objeto produto da lista.
         cbxProduto.setConverter(new StringConverter<Produto>() {
@@ -532,12 +644,12 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
             @Override
             public Produto fromString(String string) {
-                if (!mapProdutos.containsKey(string)) {
+                if (!pedidoController.getMapProdutos().containsKey(string)) {
                     cbxProduto.setValue(null);
                     return null;
                 }
 
-                return mapProdutos.get(string);
+                return pedidoController.getMapProdutos().get(string);
             }
 
         });
@@ -556,7 +668,7 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
         txtTelefone.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
 
-                getValuesPedido();
+                getValuesWindow();
 
                 //Se telefone foi informado, consultar se está cadastrado para algum cliente.
                 if (!this.telefone.equals("")) {
@@ -600,11 +712,9 @@ public abstract class ManutencaoPedidoController extends StackPane implements In
 
     /**
      * Efetuar configurações iniciais para o controlador.
-     *
-     * @param pedidoController Objeto Controller da tela Pedido.
      */
-    public void setApp(PedidoController pedidoController) {
-        this.pedidoController = pedidoController;
+    public void setApp() {
+        carregarCombosProdutos();
     }
 
 }

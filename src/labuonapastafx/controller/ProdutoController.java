@@ -23,22 +23,18 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import labuonapastafx.model.LimitedTextListener;
-import labuonapastafx.model.MoneyFieldListener;
-import labuonapastafx.model.Produto;
-import labuonapastafx.model.ProdutoEnum;
-import labuonapastafx.model.UnidadeEnum;
+import labuonapastafx.model.*;
 
 /**
  * Classe controladora do panel de manutenção dos Produtos do sistema. Fornece
- * ao Produto master ou administrador a possibilidade de incluir outros Produtos
+ * ao usário master ou administrador a possibilidade de incluir outros Produtos
  * e atribuir a eles funções especificas.
  *
  * @author Deivid Assumpção Rodrigues
  * @version %I%, %G%
  * @since 1.0
  */
-public class ProdutoController extends StackPane implements Initializable {
+public class ProdutoController extends StackPane implements Initializable, Controllable {
 
     @FXML
     private GridPane gridForm;

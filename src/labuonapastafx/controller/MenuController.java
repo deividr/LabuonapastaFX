@@ -13,11 +13,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.AcessoEnum;
+import labuonapastafx.model.Controllable;
 import labuonapastafx.model.Usuario;
 
 /**
@@ -32,6 +34,8 @@ public class MenuController extends VBox implements Initializable {
     @FXML
     private MenuItem mntmSair;
     @FXML
+    private Menu mnCadastro;
+    @FXML
     private MenuItem mntmCadUsuario;
     @FXML
     private MenuItem mntmCadProduto;
@@ -42,31 +46,13 @@ public class MenuController extends VBox implements Initializable {
     @FXML
     private MenuItem mntmCadPedido;
     @FXML
+    private Menu mnConfiguracoes;
+    @FXML
+    private MenuItem mntmNumeroPedido;
+    @FXML
     private StackPane pnCentral;
     @FXML
     private Label lblUsuario;
-
-    protected Usuario user;
-    protected LabuonapastaFX app;
-
-    /**
-     * Inicializações principais para o funcionamento da classe.
-     *
-     * @param app  instancia da class principal LabuonapastaFX
-     * @param user objeto usuário conetado ao sistema
-     */
-    public void setApp(LabuonapastaFX app, Usuario user) {
-        this.app = app;
-        this.user = user;
-        lblUsuario.setText(this.user.getNomeCompleto());
-
-        if (user.getTipoAcesso() != AcessoEnum.ADMINISTRADOR) {
-            mntmCadUsuario.setVisible(false);
-        } else if (user.getTipoAcesso() != AcessoEnum.CADASTRO) {
-
-        }
-
-    }
 
     /**
      * Mostrar a tela de alteração de senha.
@@ -74,11 +60,7 @@ public class MenuController extends VBox implements Initializable {
      * @param event Informações do evento que foi disparado.
      */
     public void mntmSenhaListener(ActionEvent event) {
-        SenhaController senhaControl;
-
-        senhaControl = (SenhaController) loadView(LabuonapastaFX.VIEW_ALTERAR_SENHA);
-
-        senhaControl.setApp(this);
+        loadView(LabuonapastaFX.VIEW_ALTERAR_SENHA).setApp(this);
     }
 
     /**
@@ -87,11 +69,7 @@ public class MenuController extends VBox implements Initializable {
      * @param event Informações do evento que foi disparado.
      */
     public void mntmCadUsuarioListener(ActionEvent event) {
-        UsuarioController userControl;
-
-        userControl = (UsuarioController) loadView(LabuonapastaFX.VIEW_USUARIO);
-
-        userControl.setApp(this);
+        loadView(LabuonapastaFX.VIEW_USUARIO).setApp(this);
     }
 
     /**
@@ -100,11 +78,7 @@ public class MenuController extends VBox implements Initializable {
      * @param event Informações do evento que foi disparado.
      */
     public void mntmCadProdutoListener(ActionEvent event) {
-        ProdutoController prodtControl;
-
-        prodtControl = (ProdutoController) loadView(LabuonapastaFX.VIEW_PRODUTO);
-
-        prodtControl.setApp(this);
+        loadView(LabuonapastaFX.VIEW_PRODUTO).setApp(this);
     }
 
     /**
@@ -113,11 +87,7 @@ public class MenuController extends VBox implements Initializable {
      * @param event Informações do evento que foi disparado.
      */
     public void mntmCadClienteListener(ActionEvent event) {
-        ClienteController clieControl;
-
-        clieControl = (ClienteController) loadView(LabuonapastaFX.VIEW_CLIENTE);
-
-        clieControl.setApp(this);
+        loadView(LabuonapastaFX.VIEW_CLIENTE).setApp(this);
     }
 
     /**
@@ -126,13 +96,17 @@ public class MenuController extends VBox implements Initializable {
      * @param event Informações do evento que foi disparado.
      */
     public void mntmCadPedidoListener(ActionEvent event) {
-        PedidoController pedControl;
-
-        pedControl = (PedidoController) loadView(LabuonapastaFX.VIEW_PEDIDO);
-
-        pedControl.setApp(this);
+        loadView(LabuonapastaFX.VIEW_PEDIDO).setApp(this);
     }
 
+    /**
+     * Mostrar a tela de cadastro de {@code Pedido}.
+     *
+     * @param event Informações do evento que foi disparado.
+     */
+    public void mntmNumeroPedidoListener(ActionEvent event) {
+        loadView(LabuonapastaFX.VIEW_NUM_PEDIDO).setApp(this);
+    }
     /**
      * Efetuar a saída do sistema.
      *
@@ -148,7 +122,7 @@ public class MenuController extends VBox implements Initializable {
      * @param fxml
      * @return
      */
-    private Initializable loadView(String fxml) {
+    private Controllable loadView(String fxml) {
 
         StackPane pane;
 
@@ -180,14 +154,14 @@ public class MenuController extends VBox implements Initializable {
      * @param event
      */
     public void efetuarLogout(ActionEvent event) {
-        app.goToLogin();
+        LabuonapastaFX.getInstance().goToLogin();
     }
 
     /**
      * Efetuar o fechamento completo do sistema.
      */
     private void exit() {
-        app.exit();
+        LabuonapastaFX.exit();
     }
 
     /**
@@ -198,6 +172,17 @@ public class MenuController extends VBox implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+    	lblUsuario.setText(LabuonapastaFX.user.getNomeCompleto());
+
+        Usuario user = LabuonapastaFX.user;
+
+        if (user.getTipoAcesso() == AcessoEnum.PEDIDO) {
+            mnCadastro.setVisible(false);
+            mnConfiguracoes.setVisible(false);
+        } else if (user.getTipoAcesso() == AcessoEnum.CADASTRO) {
+            mntmCadUsuario.setVisible(false);
+            mnConfiguracoes.setVisible(false);
+        }
 
     }
 
