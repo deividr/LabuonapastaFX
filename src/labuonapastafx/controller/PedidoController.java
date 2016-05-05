@@ -169,12 +169,12 @@ public class PedidoController extends StackPane implements Initializable, Contro
         // Formatar a TableView com as informações dos produtos obtidos.
         tblcolNumero.setCellValueFactory(cellData -> cellData.getValue().pedIdProperty());
 
-        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().getClie()
+        tblcolCliente.setCellValueFactory(cellData -> cellData.getValue().getCliente()
                 .nomeProperty());
 
         tblcolTelefone.setCellValueFactory(cellData -> {
 
-            String tel = cellData.getValue().getClie().getTelefone1();
+            String tel = cellData.getValue().getCliente().getTelefone1();
 
             tel = tel.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
             tel = tel.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
@@ -235,17 +235,17 @@ public class PedidoController extends StackPane implements Initializable, Contro
                 }
 
                 //Pesquisar no nome do cliente.
-                if (pedido.getClie().getNome().toLowerCase().contains(newValue)) {
+                if (pedido.getCliente().getNome().toLowerCase().contains(newValue)) {
                     return true;
                 }
 
                 //Pesquisar no número do telefone principal.
-                if (pedido.getClie().getTelefone1().contains(newValue)) {
+                if (pedido.getCliente().getTelefone1().contains(newValue)) {
                     return true;
                 }
 
                 //Pesquisar no número do telefone secundário.
-                if (pedido.getClie().getTelefone2().contains(newValue)) {
+                if (pedido.getCliente().getTelefone2().contains(newValue)) {
                     return true;
                 }
 

@@ -93,7 +93,7 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
      * Construtor privado para garantir apenas uma instancia desse objeto.
      *
      * @param pedidoController Objeto PedidoController para obtenção de valores comum.
-     * @param fxml Caminho do .fxml que será controlado.
+     * @param fxml             Caminho do .fxml que será controlado.
      * @return Retorna um objeto PedidoController.
      */
     public static ManutencaoPedidoController getInstance(PedidoController pedidoController,
@@ -132,7 +132,7 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
         manutencaoPedidoController.setApp();
 
         //Se iniciou a tela de alteração e exclusão, inicializar as informações do formulário.
-        if (fxml.equals(VIEW_ALTERAR)) { 
+        if (fxml.equals(VIEW_ALTERAR)) {
             manutencaoPedidoController.setValueFields(pedidoController.getPedidoSel());
         }
 
@@ -273,16 +273,12 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
                 clie = clieNe.obterClienteTelefone(telefone);
             }
 
-            Pedido pedido = new Pedido();
-
-            pedido.setUsuar(LabuonapastaFX.user);
-            pedido.setClie(clie);
-            pedido.setDtRetirada(dtRetirada);
-            pedido.setHoraDe(horaDe);
-            pedido.setHoraAte(horaAte);
-            pedido.setGeladeira(geladeira);
-            pedido.setItens(FXCollections.observableArrayList(itens));
-            pedido.setObservacao(observacao);
+            Pedido pedido = new Pedido(LabuonapastaFX.user, clie, LocalDate.now(), dtRetirada,
+                    itens)
+                    .setHoraDe(horaDe)
+                    .setHoraAte(horaAte)
+                    .setGeladeira(geladeira)
+                    .setObservacao(observacao);
 
             pedido = pedidoNe.incluir(pedido);
 
@@ -317,13 +313,12 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
                 clie = clieNe.obterClienteTelefone(telefone);
             }
 
-            pedidoController.getPedidoSel().setUsuar(LabuonapastaFX.user);
-            pedidoController.getPedidoSel().setClie(clie);
-            pedidoController.getPedidoSel().setDtRetirada(dtRetirada);
-            pedidoController.getPedidoSel().setHoraDe(horaDe);
-            pedidoController.getPedidoSel().setHoraAte(horaAte);
-            pedidoController.getPedidoSel().setGeladeira(geladeira);
-            pedidoController.getPedidoSel().setObservacao(observacao);
+            pedidoController.getPedidoSel().setUsuario(LabuonapastaFX.user)
+                    .setDtRetirada(dtRetirada)
+                    .setHoraDe(horaDe)
+                    .setHoraAte(horaAte)
+                    .setGeladeira(geladeira)
+                    .setObservacao(observacao);
 
             //É necessário criar uma ArrayList a parte, porque se passarmos o atributo itens direto
             //para o setItens do pedidoSel ele atribui essa lista como observável e tudo que
@@ -416,8 +411,8 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
         limparCampos();
 
         window.close();
-    }    
-    
+    }
+
     /**
      * Método para validar os campos da tela.
      */
@@ -497,8 +492,8 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
      */
     private void setValueFields(Pedido ped) {
         txtNumPed.setText(ped.getPedId().toString());
-        txtTelefone.setText(ped.getClie().getTelefone1());
-        txtNome.setText(ped.getClie().getNome());
+        txtTelefone.setText(ped.getCliente().getTelefone1());
+        txtNome.setText(ped.getCliente().getNome());
         dtpickRetirada.setValue(ped.getDtRetirada());
 
         if (!ped.getHoraDe().equals("")) {
@@ -599,7 +594,7 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
      * Inicializar a classe de controle.
      *
      * @param url Sei lá, descrição apenas para tirar o warning.
-     * @param rb Sei lá, descrição apenas para tirar o warning.
+     * @param rb  Sei lá, descrição apenas para tirar o warning.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {

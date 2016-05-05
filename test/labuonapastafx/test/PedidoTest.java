@@ -27,6 +27,7 @@ public class PedidoTest {
     private Cliente clie;
     private Pedido pedido;
     private ArrayList<ItemPedido> itens;
+    private LocalDate dtRetirada;
 
     @Before
     public void setUp() throws Exception {
@@ -96,27 +97,28 @@ public class PedidoTest {
 
     }
 
-    @Test
-    public void testIncluirPedido() {
+    private void incluirPedido() {
+        dtRetirada = LocalDate.now().plusDays(2);
 
-        LocalDate dtRetirada = LocalDate.now().plusDays(2);
-
-        pedido.setUsuar(usuar);
-        pedido.setClie(clie);
-        pedido.setDtRetirada(dtRetirada);
-        pedido.setHoraDe("09:00");
-        pedido.setHoraDe("10:00");
-        pedido.setGeladeira("010");
-        pedido.setItens(FXCollections.observableArrayList(itens));
-        pedido.setObservacao("Algumas observacoes quaisquer");
-        pedido.setRetirado((byte) 0);
+        pedido = new Pedido(usuar, clie, LocalDate.now(), dtRetirada, itens)
+                .setHoraDe("09:00")
+                .setHoraAte("10:00")
+                .setGeladeira("010")
+                .setObservacao("Algumas observacoes quaisquer")
+                .setRetirado((byte) 0);
 
         //Pedido será incluído e retornado com o número do pedido atualizado.
         pedido = pedNe.incluir(pedido);
+    }
+
+    @Test
+    public void testIncluirPedido() {
+
+        incluirPedido();
 
         assertEquals("Teste Pedido", pedido.getUsuario().getNomeCompleto());
 
-        assertEquals("Teste Pedido", pedido.getClie().getNome());
+        assertEquals("Teste Pedido", pedido.getCliente().getNome());
 
         assertEquals(LocalDate.now(), pedido.getDtPedido());
 
@@ -175,16 +177,14 @@ public class PedidoTest {
     @Test
     public void testAlterarPedido() {
 
-        testIncluirPedido();
+        incluirPedido();
 
-        Pedido ped = pedido;
+        pedido.setUsuario(usuarNe.obterUsuario("deivid"));
 
-        ped.setUsuar(usuarNe.obterUsuario("deivid"));
-
-        ped.setDtRetirada(LocalDate.now().plusDays(4));
-        ped.setHoraDe("11:00");
-        ped.setHoraAte("12:00");
-        ped.setGeladeira("020");
+        pedido.setDtRetirada(LocalDate.now().plusDays(4));
+        pedido.setHoraDe("11:00");
+        pedido.setHoraAte("12:00");
+        pedido.setGeladeira("020");
 
         itens.remove(0);
         itens.remove(2);
@@ -192,15 +192,15 @@ public class PedidoTest {
         itens.get(0).setCodigo(1);
         itens.get(1).setCodigo(2);
 
-        ped.setItens(FXCollections.observableArrayList(itens));
+        pedido.setItens(FXCollections.observableArrayList(itens));
 
-        assertTrue(pedNe.alterar(ped));
+        assertTrue(pedNe.alterar(pedido));
 
         pedido = pedNe.obterPedidos(clie).get(0);
 
         assertEquals("Deivid", pedido.getUsuario().getNomeCompleto());
 
-        assertEquals("Teste Pedido", pedido.getClie().getNome());
+        assertEquals("Teste Pedido", pedido.getCliente().getNome());
 
         assertEquals(LocalDate.now(), pedido.getDtPedido());
 
@@ -239,7 +239,7 @@ public class PedidoTest {
     @Test
     public void testExcluirPedidoPorCliente() {
 
-        testIncluirPedido();
+        incluirPedido();
 
         pedNe.excluirPorCliente(clie);
 
@@ -250,7 +250,7 @@ public class PedidoTest {
     @Test
     public void testExcluirPedido() {
 
-        testIncluirPedido();
+        incluirPedido();
 
         pedNe.excluirPedido(pedido);
 

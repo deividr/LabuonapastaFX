@@ -13,32 +13,31 @@ public class Pedido implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private IntegerProperty pedId;
-    private ObjectProperty<Cliente> clie;
-    private ObjectProperty<Usuario> usuar;
+    private IntegerProperty numeroPedido;
+    private ObjectProperty<Cliente> cliente;
+    private ObjectProperty<Usuario> usuario;
     private ObjectProperty<LocalDate> dtPedido;
     private ObjectProperty<LocalDate> dtRetirada;
     private StringProperty geladeira, horaDe, horaAte;
     private ListProperty<ItemPedido> itens;
     private StringProperty observacao;
     private ObjectProperty<Byte> retirado;
-
+/*
     public Pedido() {
-        this(0, null, null, LocalDate.now(), LocalDate.now(), "", "", "", null, "",
-                (byte) 0);
+        this(null, null, LocalDate.now(), LocalDate.now(), null);
     }
-
-    public Pedido(Integer pedId, Usuario usuar, Cliente clie, LocalDate dtPedido,
-                  LocalDate dtRetirada, String horaDe, String horaAte, String geladeira,
-                  List<ItemPedido> itens, String observacao, Byte retirado) {
-        this.pedId = new SimpleIntegerProperty(pedId);
-        this.clie = new SimpleObjectProperty<>(clie);
-        this.usuar = new SimpleObjectProperty<>(usuar);
+*/
+    public Pedido(Usuario usuario, Cliente cliente, LocalDate dtPedido,
+                  LocalDate dtRetirada, List<ItemPedido> itens) {
+        this.pedId = new SimpleIntegerProperty();
+        this.numeroPedido = new SimpleIntegerProperty();
+        this.cliente = new SimpleObjectProperty<>(cliente);
+        this.usuario = new SimpleObjectProperty<>(usuario);
         this.dtPedido = new SimpleObjectProperty<>(dtPedido);
         this.dtRetirada = new SimpleObjectProperty<>(dtRetirada);
-        this.horaDe = new SimpleStringProperty(horaDe);
-        this.horaAte = new SimpleStringProperty(horaAte);
-        this.geladeira = new SimpleStringProperty(geladeira);
-
+        this.horaDe = new SimpleStringProperty();
+        this.horaAte = new SimpleStringProperty();
+        this.geladeira = new SimpleStringProperty();
 
         ObservableList<ItemPedido> itensObs = null;
 
@@ -48,143 +47,165 @@ public class Pedido implements Serializable {
         }
 
         this.itens = new SimpleListProperty<>(itensObs);
-        this.observacao = new SimpleStringProperty(observacao);
-        this.retirado = new SimpleObjectProperty<>(retirado);
+        this.observacao = new SimpleStringProperty();
+        this.retirado = new SimpleObjectProperty<>((byte)0);
+    }
+
+    public Pedido(int pedId, Usuario usuario, Cliente cliente, LocalDate dtPedido,
+                  LocalDate dtRetirada, List<ItemPedido> itens) {
+        this(usuario, cliente, dtPedido, dtRetirada, itens);
+
+        pedIdProperty().setValue(pedId);
     }
 
     public final IntegerProperty pedIdProperty() {
         return this.pedId;
     }
 
-    public final Integer getPedId() {
-        return this.pedIdProperty().get();
+    public final IntegerProperty numeroPedidoProperty() {
+        return this.numeroPedido;
     }
 
-    public final void setPedId(final int pedId) {
-        this.pedIdProperty().set(pedId);
+    public final ObjectProperty<Cliente> clienteProperty() {
+        return this.cliente;
     }
 
-    public final StringProperty horaDeProperty() {
-        return this.horaDe;
-    }
-
-    public final String getHoraDe() {
-        return this.horaDeProperty().getValue();
-    }
-
-    public final void setHoraDe(final String horaDe) {
-        this.horaDeProperty().set(horaDe);
-    }
-
-    public final StringProperty horaAteProperty() {
-        return this.horaAte;
-    }
-
-    public final String getHoraAte() {
-        return this.horaAteProperty().getValue();
-    }
-
-    public final void setHoraAte(final String horaAte) {
-        this.horaAteProperty().set(horaAte);
-    }
-
-    public final ObjectProperty<Cliente> clieProperty() {
-        return this.clie;
-    }
-
-    public final labuonapastafx.model.Cliente getClie() {
-        return this.clieProperty().get();
-    }
-
-    public final void setClie(final Cliente clie) {
-        this.clieProperty().set(clie);
-    }
-
-    public final ObjectProperty<Usuario> usuarProperty() {
-        return this.usuar;
-    }
-
-    public final Usuario getUsuario() {
-        return this.usuarProperty().get();
-    }
-
-    public final void setUsuar(final labuonapastafx.model.Usuario usuar) {
-        this.usuarProperty().set(usuar);
+    public final ObjectProperty<Usuario> usuarioProperty() {
+        return this.usuario;
     }
 
     public final ObjectProperty<LocalDate> dtPedidoProperty() {
         return this.dtPedido;
     }
 
-    public final LocalDate getDtPedido() {
-        return this.dtPedidoProperty().get();
-    }
-
-    public final void setDtPedido(final LocalDate dtPedido) {
-        this.dtPedidoProperty().set(dtPedido);
-    }
-
     public final ObjectProperty<LocalDate> dtRetiradaProperty() {
         return this.dtRetirada;
     }
 
-    public final LocalDate getDtRetirada() {
-        return this.dtRetiradaProperty().get();
+    public final StringProperty horaDeProperty() {
+        return this.horaDe;
     }
 
-    public final void setDtRetirada(final LocalDate dtRetirada) {
-        this.dtRetiradaProperty().set(dtRetirada);
-    }
-
-    public final ListProperty<ItemPedido> itensProperty() {
-        return this.itens;
-    }
-
-    public final ObservableList<ItemPedido> getItens() {
-        return this.itensProperty().get();
-    }
-
-    public final void setItens(final ObservableList<ItemPedido> itens) {
-        this.itensProperty().set(itens);
+    public final StringProperty horaAteProperty() {
+        return this.horaAte;
     }
 
     public final StringProperty observacaoProperty() {
         return this.observacao;
     }
 
-    public final String getObsercao() {
-        return this.observacaoProperty().get();
-    }
-
-    public final void setObservacao(final String observacao) {
-        this.observacaoProperty().set(observacao);
-    }
-
     public final ObjectProperty<Byte> retiradoProperty() {
         return this.retirado;
-    }
-
-    public final byte getRetirado() {
-        return this.retiradoProperty().get();
-    }
-
-    public final void setRetirado(final Byte entregueAcesso) {
-        this.retiradoProperty().set(entregueAcesso);
-    }
-
-    public final boolean isRetirado() {
-        return getRetirado() == 1;
     }
 
     public final StringProperty geladeiraProperty() {
         return this.geladeira;
     }
 
+    public final ListProperty<ItemPedido> itensProperty() {
+        return this.itens;
+    }
+
+    public final Integer getPedId() {
+        return this.pedIdProperty().get();
+    }
+
+    public final Integer getNumeroPedido() {
+        return this.numeroPedidoProperty().get();
+    }
+
+    public final String getHoraDe() {
+        return this.horaDeProperty().getValue();
+    }
+
+    public final String getHoraAte() {
+        return this.horaAteProperty().getValue();
+    }
+
     public final String getGeladeira() {
         return this.geladeiraProperty().get();
     }
 
-    public final void setGeladeira(final String geladeira) {
-        this.geladeiraProperty().set(geladeira);
+    public final Cliente getCliente() {
+        return this.clienteProperty().get();
     }
+
+    public final Usuario getUsuario() {
+        return this.usuarioProperty().get();
+    }
+
+    public final LocalDate getDtPedido() {
+        return this.dtPedidoProperty().get();
+    }
+
+    public final LocalDate getDtRetirada() {
+        return this.dtRetiradaProperty().get();
+    }
+
+    public final ObservableList<ItemPedido> getItens() {
+        return this.itensProperty().get();
+    }
+
+    public final String getObsercao() {
+        return this.observacaoProperty().get();
+    }
+
+    public final byte getRetirado() {
+        return this.retiradoProperty().get();
+    }
+
+    public final Pedido setPedId(final int pedId) {
+        this.pedIdProperty().set(pedId);
+        return this;
+    }
+
+    public final Pedido setUsuario(final Usuario usuario) {
+        this.usuarioProperty().set(usuario);
+        return this;
+    }
+
+    public final Pedido setNumeroPedido(final int numeroPedido) {
+        this.numeroPedidoProperty().set(numeroPedido);
+        return this;
+    }
+
+    public final Pedido setHoraDe(final String horaDe) {
+        this.horaDeProperty().set(horaDe);
+        return this;
+    }
+
+    public final Pedido setHoraAte(final String horaAte) {
+        this.horaAteProperty().set(horaAte);
+        return this;
+    }
+
+    public final Pedido setDtRetirada(final LocalDate dtRetirada) {
+        this.dtRetiradaProperty().set(dtRetirada);
+        return this;
+    }
+
+    public final Pedido setItens(final ObservableList<ItemPedido> itens) {
+        this.itensProperty().set(itens);
+        return this;
+    }
+
+    public final Pedido setObservacao(final String observacao) {
+        this.observacaoProperty().set(observacao);
+        return this;
+    }
+
+    public final Pedido setRetirado(final Byte entregueAcesso) {
+        this.retiradoProperty().set(entregueAcesso);
+        return this;
+    }
+
+    public final Pedido setGeladeira(final String geladeira) {
+        this.geladeiraProperty().set(geladeira);
+        return this;
+    }
+
+    public final boolean isRetirado() {
+        return getRetirado() == 1;
+    }
+
 }

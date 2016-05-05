@@ -155,6 +155,12 @@ public class ClienteDao {
 
             stm.executeUpdate();
         } catch (SQLException e) {
+            System.out.println("getMessage = " + e.getMessage());
+            System.out.println("getSQLState = " + e.getSQLState());
+            System.out.println("getErrorCode = " + e.getErrorCode());
+            System.out.println("getLocalizedMessage = " + e.getLocalizedMessage());
+            System.out.println("getCause = " + e.getCause());
+
             throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
         }
 

@@ -8,15 +8,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import labuonapastafx.model.Controllable;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import labuonapastafx.persistencia.ConfigXML;
+import labuonapastafx.persistencia.PedidoDao;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 /**
@@ -45,20 +41,14 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
      */
     @FXML
     public void botaoAlterarListener(ActionEvent event) {
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document dc = db.parse((new File("Arquivo.fxml")));
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (validarInformacoes()) {
+            ConfigXML.getInstance().alterarXMLTextByElement("inicial", txtNumero.getText());
+            ConfigXML.getInstance().alterarXMLTextByElement("ultimo", txtNumero.getText());
+            ConfigXML.getInstance().commitAlteracoes();
+            showAlert("Alterar Número do pedido.", "Alteração efetuada com sucesso.");
+            lblNumeroAtual.setText(txtNumero.getText());
+            txtNumero.requestFocus();
         }
-
     }
 
     @FXML
@@ -67,37 +57,29 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
     }
 
     /**
-     * Limpar os campos do fomulario de usuarios
-     */
-    private void limparCampos() {
-
-    }
-
-    /**
-     * Obter os valores dos componentes do formulario de usuarios
-     */
-    private void getValueFields() {
-
-    }
-
-    /**
      * Validar as informações passadas pelo usuário
      */
     private boolean validarInformacoes() {
+
+        if (txtNumero.getText().equals("")) {
+            showAlert("Informação Inválida", "Informe o número inicial do pedido");
+            txtNumero.requestFocus();
+            return false;
+        }
 
         return true;
 
     }
 
     /**
-     * Mostrar tela de mensagem para apontar erro ao usuário.
+     * Mostrar tela de mensagem para usuário.
      *
      * @param msg Mensagem que se deseja passar para o usuário.
      */
-    private void showAlert(String msg) {
+    private void showAlert(String header, String msg) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Informação Inválida");
-        alert.setHeaderText(null);
+        alert.setTitle("Número de Pedido");
+        alert.setHeaderText(header);
         alert.setContentText(msg);
         alert.showAndWait();
     }
@@ -110,7 +92,19 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        txtNumero.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 5) {
+                txtNumero.setText(oldValue);
+            } else {
+                String value = txtNumero.getText();
+                //Permitir apenas a inclusão de números.
+                value = value.replaceAll("[^0-9]", "");
+                txtNumero.setText(value);
+            }
+        });
 
+        txtNumero.setText(ConfigXML.getInstance().obterXMLTextByElement("inicial"));
+        lblNumeroAtual.setText(ConfigXML.getInstance().obterXMLTextByElement("ultimo"));
     }
 
     /**

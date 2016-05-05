@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import labuonapastafx.controller.MenuController;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
 
