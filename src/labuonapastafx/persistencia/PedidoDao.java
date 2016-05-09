@@ -1,11 +1,12 @@
 package labuonapastafx.persistencia;
 
+import javafx.collections.FXCollections;
 import labuonapastafx.model.*;
 
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Responsável por pela persistência nas bases de dados {@code Pedido} e {@code ItemPedido}.
@@ -19,6 +20,8 @@ public class PedidoDao {
     private static final String SELECT_ALL = "SELECT cd_pedido, nr_pedido, cd_usuario, " +
             "cd_cliente, dt_pedido, dt_retirada, hr_de, hr_ate, nr_geladeira, ds_observacao, " +
             "st_retirado FROM pedido";
+
+    private static final String MSG_COMPLEMENTO = " - CONTATE O ADMINISTRADOR.";
 
     /**
      * Incluir um novo {@code pedido}.
@@ -75,8 +78,14 @@ public class PedidoDao {
                 ped.setPedId(rs.getInt(1));
             }
 
+
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir pedido: " + e.getMessage());
+
+            String msgErro = "Erro na inclusão do Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "incluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         incluirItens(ped);
@@ -99,30 +108,30 @@ public class PedidoDao {
              PreparedStatement stm = con.prepareStatement(sql)) {
 
             for (ItemPedido itemPedido : ped.getItens()) {
-                try {
-                    stm.setInt(1, ped.getPedId());
-                    stm.setInt(2, itemPedido.getCodigo());
-                    stm.setInt(3, itemPedido.getProduto().getProdId());
+                stm.setInt(1, ped.getPedId());
+                stm.setInt(2, itemPedido.getCodigo());
+                stm.setInt(3, itemPedido.getProduto().getProdId());
 
-                    stm.setNull(4, Types.INTEGER);
+                stm.setNull(4, Types.INTEGER);
 
-                    if (itemPedido.getMolho() != null
-                            && itemPedido.getMolho().getProdId() != 0) {
-                        stm.setInt(4, itemPedido.getMolho().getProdId());
-                    }
-
-                    stm.setBigDecimal(5, itemPedido.getQtde());
-                    stm.addBatch();
-                } catch (SQLException e) {
-                    throw new RuntimeException(
-                            "Erro ao incluir itens do pedido: " + e.getMessage());
+                if (itemPedido.getMolho() != null
+                        && itemPedido.getMolho().getProdId() != 0) {
+                    stm.setInt(4, itemPedido.getMolho().getProdId());
                 }
+
+                stm.setBigDecimal(5, itemPedido.getQtde());
+                stm.addBatch();
+
             }
 
             stm.executeBatch();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir itens do pedido: " + e.getMessage());
+            String msgErro = "Erro na inclusão de Itens do Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "incluirItens", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -141,8 +150,11 @@ public class PedidoDao {
             stm.setInt(1, clie.getClieId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir os pedidos do Cliente: "
-                    + e.getMessage());
+            String msgErro = "Erro ao excluir os Pedidos por Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "excluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -164,8 +176,11 @@ public class PedidoDao {
             stm.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir o pedido do Cliente: "
-                    + e.getMessage());
+            String msgErro = "Erro ao excluir o Pedido Informado" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "excluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -187,8 +202,11 @@ public class PedidoDao {
             stm.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erro ao excluir itens dos pedidos do Cliente: " + e.getMessage());
+            String msgErro = "Erro ao excluir os Itens do Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "excluirItens", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -243,8 +261,11 @@ public class PedidoDao {
             stm.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erro ao atualizar o Pedido do Cliente: " + e.getMessage());
+            String msgErro = "Erro ao alterar Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "alterar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         excluirItens(ped);
@@ -260,7 +281,7 @@ public class PedidoDao {
      * @return Lista dos pedidos feito por esse Cliente, ordenada descendentemente por data em que
      * foi feito o pedido.
      */
-    public List<Pedido> obterPedidos(Cliente clie) {
+    public List<Pedido> listarPedidos(Cliente clie) {
         String sql = SELECT_ALL + " WHERE cd_cliente = ? ORDER BY dt_pedido DESC";
 
         List<Pedido> pedidos = new ArrayList<>();
@@ -276,8 +297,11 @@ public class PedidoDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: "
-                    + e.getMessage());
+            String msgErro = "Erro ao listar os Pedidos por Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listarPedidos", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return pedidos;
@@ -290,7 +314,7 @@ public class PedidoDao {
      * @return Lista de todos os pedidos feito na data informada em diante, ordenado de forma
      * crescente por data.
      */
-    public List<Pedido> obterPedidos(LocalDate date) {
+    public List<Pedido> listarPedidos(LocalDate date) {
         String sql = SELECT_ALL + " WHERE dt_pedido >= ? ORDER BY dt_pedido ASC";
 
         List<Pedido> pedidos = new ArrayList<>();
@@ -306,8 +330,11 @@ public class PedidoDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: "
-                    + e.getMessage());
+            String msgErro = "Erro ao listar os Pedidos por Data" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listarPedidos", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return pedidos;
@@ -319,7 +346,7 @@ public class PedidoDao {
      *
      * @return Lista de todos os pedidos.
      */
-    public List<Pedido> obterPedidos() {
+    public List<Pedido> listarPedidos() {
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -334,7 +361,11 @@ public class PedidoDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar pedidos do Cliente: " + e.getMessage());
+            String msgErro = "Erro ao listar os Pedidos" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listarPedidos", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return pedidos;
@@ -372,20 +403,26 @@ public class PedidoDao {
         LocalDate dtPedido = rs.getDate(5).toLocalDate();
         LocalDate dtRetirada = rs.getDate(6).toLocalDate();
 
-        List<ItemPedido> itens = obterItensPedido(rs.getInt(1));
+        List<ItemPedido> itens = listarItensPedido(rs.getInt(1));
 
         String horaDe = rs.getString(7) == null ? "" : rs.getString(7);
         String horaAte = rs.getString(8) == null ? "" : rs.getString(8);
         String geladeira = rs.getString(9) == null ? "" : rs.getString(9);
         String observacao = rs.getString(10) == null ? "" : rs.getString(10);
 
-        return new Pedido(rs.getInt(1), usuarTab, clieTab, dtPedido, dtRetirada, itens)
+        return new Pedido()
+                .setPedId(rs.getInt(1))
+                .setUsuario(usuarTab)
+                .setCliente(clieTab)
+                .setDtPedido(dtPedido)
+                .setDtRetirada(dtRetirada)
                 .setNumeroPedido(rs.getInt(2))
                 .setHoraDe(horaDe)
                 .setHoraAte(horaAte)
                 .setGeladeira(geladeira)
                 .setObservacao(observacao)
-                .setRetirado(rs.getByte(11));
+                .setRetirado(rs.getByte(11))
+                .setItens(FXCollections.observableList(itens));
     }
 
     /**
@@ -393,7 +430,7 @@ public class PedidoDao {
      *
      * @param cdPedido Código do pedido que se deseja obter os itens.
      */
-    private List<ItemPedido> obterItensPedido(int cdPedido) {
+    private List<ItemPedido> listarItensPedido(int cdPedido) {
 
         String sql = "SELECT nr_item, cd_produto, cd_molho, vl_quantidade FROM item_pedido "
                 + "WHERE cd_pedido = ?";
@@ -424,8 +461,11 @@ public class PedidoDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erro ao consultar itens dos pedidos do Cliente: " + e.getMessage());
+            String msgErro = "Erro ao listar os Itens do Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listarItensPedido", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return itens;
@@ -436,9 +476,9 @@ public class PedidoDao {
      * Obter o último número de pedido para um determinado período de tempo.
      *
      * @param dtInicial Data do início do período.
-     * @param dtFinal Data do fim do período.
+     * @param dtFinal   Data do fim do período.
      * @return Integer contendo o último pedido cadastrado para o período. Se não existir vai
-     *  retornar 0.
+     * retornar 0.
      */
     public Integer obterUltimoNumeroPedido(Date dtInicial, Date dtFinal) {
         String sql = "SELECT MAX(cd_pedido) FROM pedido WHERE dt_retirada >= ? " +
@@ -459,8 +499,11 @@ public class PedidoDao {
             numeroPedido = rs.getInt(1);
 
         } catch (SQLException e) {
-            throw new RuntimeException(
-                    "Erro ao consultar último número de pedido: " + e.getMessage());
+            String msgErro = "Erro ao obter último número de Pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "obterUltimoNumeroPedido", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return numeroPedido;

@@ -1,10 +1,10 @@
 package labuonapastafx.persistencia;
 
+import labuonapastafx.model.Cliente;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import labuonapastafx.model.Cliente;
 
 /**
  * Responsável pelos procedimentos de persistências na base de dados {@code Cliente}.
@@ -155,13 +155,12 @@ public class ClienteDao {
 
             stm.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("getMessage = " + e.getMessage());
-            System.out.println("getSQLState = " + e.getSQLState());
-            System.out.println("getErrorCode = " + e.getErrorCode());
-            System.out.println("getLocalizedMessage = " + e.getLocalizedMessage());
-            System.out.println("getCause = " + e.getCause());
+            String msgErro = "Erro na Inclusão do cliente";
 
-            throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
+            Log.logar(ClienteDao.class.getName(), "incluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
+
         }
 
     }
@@ -327,5 +326,6 @@ public class ClienteDao {
         return clies;
 
     }
+
 
 }

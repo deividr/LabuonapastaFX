@@ -20,8 +20,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import labuonapastafx.model.Controllable;
-import labuonapastafx.model.FoneFieldListener;
-import labuonapastafx.model.LimitedTextListener;
+import labuonapastafx.util.FoneFieldListener;
+import labuonapastafx.util.LimitedTextListener;
 import labuonapastafx.model.Cliente;
 
 /**

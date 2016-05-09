@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.*;
+import labuonapastafx.util.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,6 +82,7 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
     private PedidoController pedidoController;
     private ClienteNe clieNe;
     private PedidoNe pedidoNe;
+    private Pedido pedido;
     private List<ItemPedido> itens;
 
     //Variáveis para controle do formulário da tela.
@@ -118,6 +120,8 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
             window.setResizable(false);
             window.initOwner(LabuonapastaFX.getStage());
             window.centerOnScreen();
+            window.getIcons().add(new Image(pedidoController.getClass()
+                    .getResource("../view/imagens/brasao_menu.png").toString()));
 
             window.show();
 
@@ -273,12 +277,16 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
                 clie = clieNe.obterClienteTelefone(telefone);
             }
 
-            Pedido pedido = new Pedido(LabuonapastaFX.user, clie, LocalDate.now(), dtRetirada,
-                    itens)
+            Pedido pedido = new Pedido()
+                    .setUsuario(LabuonapastaFX.user)
+                    .setCliente(clie)
+                    .setDtPedido(LocalDate.now())
+                    .setDtRetirada(dtRetirada)
                     .setHoraDe(horaDe)
                     .setHoraAte(horaAte)
                     .setGeladeira(geladeira)
-                    .setObservacao(observacao);
+                    .setObservacao(observacao)
+                    .setItens(FXCollections.observableList(itens));
 
             pedido = pedidoNe.incluir(pedido);
 
@@ -313,7 +321,7 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
                 clie = clieNe.obterClienteTelefone(telefone);
             }
 
-            pedidoController.getPedidoSel().setUsuario(LabuonapastaFX.user)
+            pedidoController.getPedidoSel()
                     .setDtRetirada(dtRetirada)
                     .setHoraDe(horaDe)
                     .setHoraAte(horaAte)
@@ -375,8 +383,12 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
         gridForm.getChildren().stream().forEach((c) -> {
             if (c instanceof TextField) {
                 ((TextField) c).setText("");
-            } else if (c instanceof ChoiceBox) {
-                ((ChoiceBox<?>) c).getSelectionModel().clearSelection();
+            } else if (c instanceof ComboBox) {
+                if (((ComboBox<?>) c).isEditable()) {
+                    ((ComboBox<?>) c).setValue(null);
+                } else {
+                    ((ComboBox<?>) c).getSelectionModel().clearSelection();
+                }
             } else if (c instanceof DatePicker) {
                 ((DatePicker) c).setValue(LocalDate.now());
             } else if (c instanceof TextArea) {
@@ -649,7 +661,8 @@ public class ManutencaoPedidoController extends StackPane implements Initializab
 
         });
 
-        FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
+        //FxUtil.autoCompleteComboBox(cbxProduto, FxUtil.AutoCompleteMode.STARTS_WITH);
+        new AutoCompleteComboBoxListener<>(cbxProduto);
 
     }
 

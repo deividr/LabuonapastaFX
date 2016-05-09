@@ -52,7 +52,7 @@ public class LoginController extends AnchorPane implements Initializable {
                     String.valueOf(txtSenha.getText()));
 
             if (usuarioSenhaValida) {
-                LabuonapastaFX.getInstance().goToMenu(usuarioNe.obterUsuario(txtLogin.getText()));
+                LabuonapastaFX.getInstance().goToMenu();
             } else {
                 sendMessage("Usuario ou senha invalida");
             }

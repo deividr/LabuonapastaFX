@@ -11,7 +11,9 @@ import javafx.stage.Stage;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +42,7 @@ public class LabuonapastaFX extends Application {
         instance = this;
         stage = primaryStage;
         user = new UsuarioNe().obterUsuario("deivid");
-        goToMenu(user);
+        goToMenu();
     }
 
     public static Stage getStage() {
@@ -54,7 +56,7 @@ public class LabuonapastaFX extends Application {
     /**
      * Setar o Usuário que está logado no sistema.
      * 
-     * @param user
+     * @param user Usuário que está logado no sistema.
      */
     public static void setUsuario(Usuario user) {
     	LabuonapastaFX.user = user;    	
@@ -80,9 +82,8 @@ public class LabuonapastaFX extends Application {
     /**
      * Efetuar a construção da tela de Menu.
      *
-     * @param user
      */
-    public void goToMenu(Usuario user) {
+    public void goToMenu() {
 
         stage.close();
 
@@ -101,7 +102,7 @@ public class LabuonapastaFX extends Application {
     /**
      * Efetuar a transição de telas remodulando o conteúdo.
      *
-     * @param fxml
+     * @param fxml Caminho e nome do FXML que será carregado.
      * @return Objeto Initializable referente a tela a ser carregada
      * @throws Exception
      */

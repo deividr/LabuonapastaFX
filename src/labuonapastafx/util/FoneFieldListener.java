@@ -1,16 +1,16 @@
-package labuonapastafx.model;
+package labuonapastafx.util;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 
-public class QuantityFieldListener implements ChangeListener<String> {
+public class FoneFieldListener implements ChangeListener<String> {
 
     private final TextField field;
     private String value;
 
-    public QuantityFieldListener(TextField field) {
+    public FoneFieldListener(TextField field) {
         this.field = field;
     }
 
@@ -19,7 +19,8 @@ public class QuantityFieldListener implements ChangeListener<String> {
 
         value = field.getText();
         value = value.replaceAll("[^0-9]", "");
-        value = value.replaceAll("([0-9])([0-9]{3})$", "$1,$2");
+        value = value.replaceAll("([0-9]{2})([0-9]{1,11})$", "($1)$2");
+        value = value.replaceAll("([0-9]{4,5})([0-9]{4})", "$1-$2");
 
         Platform.runLater(() -> {
             field.setText(value);
@@ -30,19 +31,9 @@ public class QuantityFieldListener implements ChangeListener<String> {
 
         field.textProperty().addListener((ObservableValue<? extends String> observableValue,
                                           String oldValue1, String newValue1) -> {
-            if (newValue1.length() > 7)
+            if (newValue1.length() > 14) {
                 field.setText(oldValue1);
-        });
-
-        field.focusedProperty().addListener((ObservableValue<? extends Boolean> observableValue,
-                                             Boolean aBoolean, Boolean fieldChange) -> {
-            if (!fieldChange) {
-                final int length = field.getText().length();
-                if (length > 0 && length < 4)
-                    field.setText(field.getText() + "000");
             }
         });
-
     }
-
 }

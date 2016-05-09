@@ -22,10 +22,6 @@ public class PedidoNe {
      * @return Objeto do tipo Pedido contendo as informações atualizadas.
      */
     public Pedido incluir(Pedido pedido) {
-
-        pedido.setPedId(0);
-        pedido.setRetirado((byte) 0);
-
         return pedDao.incluir(pedido);
     }
 
@@ -36,7 +32,7 @@ public class PedidoNe {
      * @return List com todos os pedidos pertecentes ao cliente informado.
      */
     public List<Pedido> obterPedidos(Cliente clie) {
-        return pedDao.obterPedidos(clie);
+        return pedDao.listarPedidos(clie);
     }
 
     /**
@@ -46,7 +42,7 @@ public class PedidoNe {
      * @return Lista de pedidos que atendem ao argumento passado.
      */
     public List<Pedido> obterPedidos(LocalDate date) {
-        return pedDao.obterPedidos(date);
+        return pedDao.listarPedidos(date);
     }
 
     /**

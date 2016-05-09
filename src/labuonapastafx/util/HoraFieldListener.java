@@ -1,4 +1,4 @@
-package labuonapastafx.model;
+package labuonapastafx.util;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;

@@ -13,7 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import labuonapastafx.LabuonapastaFX;
 import labuonapastafx.model.Controllable;
-import labuonapastafx.model.LimitedTextListener;
+import labuonapastafx.util.LimitedTextListener;
 import labuonapastafx.model.Usuario;
 
 /**

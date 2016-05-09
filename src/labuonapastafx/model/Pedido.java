@@ -5,57 +5,30 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.Serializable;
+import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public class Pedido implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private IntegerProperty pedId;
-    private IntegerProperty numeroPedido;
-    private ObjectProperty<Cliente> cliente;
-    private ObjectProperty<Usuario> usuario;
-    private ObjectProperty<LocalDate> dtPedido;
-    private ObjectProperty<LocalDate> dtRetirada;
-    private StringProperty geladeira, horaDe, horaAte;
-    private ListProperty<ItemPedido> itens;
-    private StringProperty observacao;
-    private ObjectProperty<Byte> retirado;
-/*
+    private IntegerProperty pedId = new SimpleIntegerProperty(0);
+    private IntegerProperty numeroPedido = new SimpleIntegerProperty(0);
+    private ObjectProperty<Cliente> cliente = new SimpleObjectProperty<>();
+    private ObjectProperty<Usuario> usuario = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> dtPedido = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> dtRetirada = new SimpleObjectProperty<>();
+    private StringProperty geladeira = new SimpleStringProperty("");
+    private StringProperty horaDe = new SimpleStringProperty("");
+    private StringProperty horaAte = new SimpleStringProperty("");
+    private ListProperty<ItemPedido> itens = new SimpleListProperty<>();
+    private StringProperty observacao = new SimpleStringProperty("");
+    private ObjectProperty<Byte> retirado = new SimpleObjectProperty<>((byte) 0);
+
     public Pedido() {
-        this(null, null, LocalDate.now(), LocalDate.now(), null);
-    }
-*/
-    public Pedido(Usuario usuario, Cliente cliente, LocalDate dtPedido,
-                  LocalDate dtRetirada, List<ItemPedido> itens) {
-        this.pedId = new SimpleIntegerProperty();
-        this.numeroPedido = new SimpleIntegerProperty();
-        this.cliente = new SimpleObjectProperty<>(cliente);
-        this.usuario = new SimpleObjectProperty<>(usuario);
-        this.dtPedido = new SimpleObjectProperty<>(dtPedido);
-        this.dtRetirada = new SimpleObjectProperty<>(dtRetirada);
-        this.horaDe = new SimpleStringProperty();
-        this.horaAte = new SimpleStringProperty();
-        this.geladeira = new SimpleStringProperty();
 
-        ObservableList<ItemPedido> itensObs = null;
-
-        if (itens != null && !itens.isEmpty()) {
-            //Se a lista de pedidos for diferente de null e vazia carrega o atributo da classe.
-            itensObs = FXCollections.observableArrayList(itens);
-        }
-
-        this.itens = new SimpleListProperty<>(itensObs);
-        this.observacao = new SimpleStringProperty();
-        this.retirado = new SimpleObjectProperty<>((byte)0);
-    }
-
-    public Pedido(int pedId, Usuario usuario, Cliente cliente, LocalDate dtPedido,
-                  LocalDate dtRetirada, List<ItemPedido> itens) {
-        this(usuario, cliente, dtPedido, dtRetirada, itens);
-
-        pedIdProperty().setValue(pedId);
     }
 
     public final IntegerProperty pedIdProperty() {
@@ -154,38 +127,114 @@ public class Pedido implements Serializable {
         return this.retiradoProperty().get();
     }
 
-    public final Pedido setPedId(final int pedId) {
-        this.pedIdProperty().set(pedId);
+    public final Pedido setPedId(final Integer pedId) {
+        this.pedIdProperty().setValue(pedId);
         return this;
     }
 
-    public final Pedido setUsuario(final Usuario usuario) {
-        this.usuarioProperty().set(usuario);
+    public final Pedido setNumeroPedido(final Integer numeroPedido) {
+
+        if (numeroPedido != null) {
+            this.numeroPedidoProperty().set(numeroPedido);
+        } else {
+            throw new IllegalArgumentException("Número do Pedido Inválido");
+        }
+
         return this;
     }
 
-    public final Pedido setNumeroPedido(final int numeroPedido) {
-        this.numeroPedidoProperty().set(numeroPedido);
+    public Pedido setUsuario(final Usuario usuario) {
+
+        if (usuario != null) {
+            this.usuarioProperty().setValue(usuario);
+        } else {
+            throw new IllegalArgumentException("Usuário inválido");
+        }
+
+        return this;
+    }
+
+    public Pedido setCliente(Cliente cliente) {
+
+        if (cliente != null) {
+            this.clienteProperty().setValue(cliente);
+        } else {
+            throw new IllegalArgumentException("Cliente inválido");
+        }
+
+        return this;
+
+    }
+
+    public Pedido setDtPedido(final LocalDate dtPedido) {
+
+        if (dtPedido != null) {
+            this.dtPedidoProperty().set(dtPedido);
+        } else {
+            throw new DateTimeException("Data do pedido inválida");
+        }
+
+        return this;
+
+    }
+
+    public final Pedido setDtRetirada(final LocalDate dtRetirada) {
+
+        if (dtRetirada != null) {
+            this.dtRetiradaProperty().set(dtRetirada);
+        } else {
+            throw new DateTimeException("Data da retirada inválida");
+        }
+
         return this;
     }
 
     public final Pedido setHoraDe(final String horaDe) {
-        this.horaDeProperty().set(horaDe);
+
+        if (!horaDe.equals("")) {
+            //Verificar se o formato da data está correto:
+            if (!horaDe.matches("[0-9]{2}:[0-9]{2}")) {
+                throw new DateTimeException("Hora De Inválida");
+            }
+
+            LocalTime.of(Integer.parseInt(horaDe.substring(0, 2)),
+                    Integer.parseInt(horaDe.substring(3, 5)));
+
+            this.horaDeProperty().set(horaDe);
+        }
+
         return this;
     }
 
     public final Pedido setHoraAte(final String horaAte) {
-        this.horaAteProperty().set(horaAte);
+
+        if (!horaAte.equals("")) {
+            //Verificar se o formato da data está correto:
+            if (!horaAte.matches("[0-9]{2}:[0-9]{2}")) {
+                throw new DateTimeException("Hora Até Inválida");
+            }
+
+            LocalTime.of(Integer.parseInt(horaAte.substring(0, 2)),
+                    Integer.parseInt(horaAte.substring(3, 5)));
+
+            this.horaAteProperty().set(horaAte);
+        }
+
         return this;
     }
 
-    public final Pedido setDtRetirada(final LocalDate dtRetirada) {
-        this.dtRetiradaProperty().set(dtRetirada);
-        return this;
-    }
+    public final Pedido setItens(final List<ItemPedido> itens) {
+        ObservableList<ItemPedido> itensObs;
 
-    public final Pedido setItens(final ObservableList<ItemPedido> itens) {
-        this.itensProperty().set(itens);
+        if (itens != null && !itens.isEmpty()) {
+            //Se a lista de pedidos for diferente de null e vazia carrega o atributo da classe.
+            itensObs = FXCollections.observableArrayList(itens);
+        } else {
+            throw new IllegalArgumentException("Lista de itens está vazia");
+        }
+
+        this.itensProperty().set(itensObs);
+
         return this;
     }
 
@@ -194,8 +243,20 @@ public class Pedido implements Serializable {
         return this;
     }
 
-    public final Pedido setRetirado(final Byte entregueAcesso) {
-        this.retiradoProperty().set(entregueAcesso);
+    /**
+     * Alterar o conteúdo do campo retirado, essa informação indica se o pedido foi ou não retirado.
+     *
+     * @param retirado Se informado 0 = Pedido não retirado, se informado 1 = Pedido Retirado.
+     * @return Retorna o próprio objeto.
+     * @throws IllegalArgumentException Caso o conteúdo informado for difente de 0 e 1.
+     */
+    public final Pedido setRetirado(final Byte retirado) {
+
+        if (retirado != 0 && retirado != 1) {
+            throw new IllegalArgumentException("Retirado inválido");
+        }
+
+        this.retiradoProperty().set(retirado);
         return this;
     }
 

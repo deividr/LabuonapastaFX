@@ -24,6 +24,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import labuonapastafx.model.*;
+import labuonapastafx.util.LimitedTextListener;
+import labuonapastafx.util.MoneyFieldListener;
 
 /**
  * Classe controladora do panel de manutenção dos Produtos do sistema. Fornece
