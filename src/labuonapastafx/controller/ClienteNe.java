@@ -21,7 +21,7 @@ public class ClienteNe {
      */
     public Cliente obterCodCliente(int cdCliente) {
 
-        return clienteDao.lerCodCliente(cdCliente);
+        return clienteDao.ler(cdCliente);
 
     }
 
@@ -33,7 +33,7 @@ public class ClienteNe {
      */
     public Cliente obterClienteNome(String nome) {
 
-        return clienteDao.lerNome(nome);
+        return clienteDao.ler(nome);
 
     }
 

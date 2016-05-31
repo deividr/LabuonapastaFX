@@ -11,9 +11,7 @@ import javafx.stage.Stage;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.Usuario;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +20,7 @@ import java.util.logging.Logger;
  *
  * @author Deivid
  */
+
 public class LabuonapastaFX extends Application {
 
     public static final String VIEW_LOGIN = "view/Login.fxml";

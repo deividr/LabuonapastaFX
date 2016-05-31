@@ -9,15 +9,13 @@ import javafx.scene.input.KeyEvent;
 
 public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
 
-    private ComboBox comboBox;
-    private StringBuilder sb;
+    private ComboBox<T> comboBox;
     private ObservableList<T> data;
     private boolean moveCaretToPos = false;
     private int caretPos;
 
-    public AutoCompleteComboBoxListener(final ComboBox comboBox) {
+    public AutoCompleteComboBoxListener(final ComboBox<T> comboBox) {
         this.comboBox = comboBox;
-        sb = new StringBuilder();
         data = comboBox.getItems();
 
         this.comboBox.setEditable(true);
@@ -59,7 +57,7 @@ public class AutoCompleteComboBoxListener<T> implements EventHandler<KeyEvent> {
             return;
         }
 
-        ObservableList list = FXCollections.observableArrayList();
+        ObservableList<T> list = FXCollections.observableArrayList();
         for (int i=0; i<data.size(); i++) {
             if(data.get(i).toString().toLowerCase().startsWith(
                     AutoCompleteComboBoxListener.this.comboBox

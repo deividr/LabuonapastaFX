@@ -13,6 +13,8 @@ import labuonapastafx.model.UnidadeEnum;
 
 public class ProdutoDao {
 
+    private static final String MSG_COMPLEMENTO = " - CONTATE O ADMINISTRADOR.";
+
     /**
      * Obter o produto referente ao nome informado.
      *
@@ -23,8 +25,9 @@ public class ProdutoDao {
 
         Produto produto = null;
 
-        String sql = "SELECT cd_produto, nm_produto, st_unidade, "
-                + "vl_produto, cd_tipo_produto, cd_ativo FROM produto WHERE nm_produto = ?";
+        String sql = "SELECT cd_produto, nm_produto, st_unidade, vl_produto, cd_tipo_produto, " +
+                "cd_ativo FROM produto WHERE nm_produto = ?";
+
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -32,14 +35,20 @@ public class ProdutoDao {
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
-                ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt(5));
-                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
-                produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
-                        produtoEnum, rs.getByte(6));
+                ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt("cd_tipo_produto"));
+                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString("st_unidade"));
+
+                produto = new Produto(rs.getInt("cd_produto"), rs.getString("nm_produto"),
+                        unidade, rs.getBigDecimal("vl_produto"),
+                        produtoEnum, rs.getByte("cd_ativo"));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar produto: " + e.getMessage());
+            String msgErro = "Erro ao consultar Produto por nome" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "ler", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return produto;
@@ -51,7 +60,7 @@ public class ProdutoDao {
      * @param cdProduto Código do produto que se deseja obter.
      * @return Produto correspondente ao código informado.
      */
-    public Produto lerCodProduto(int cdProduto) {
+    public Produto ler(int cdProduto) {
 
         Produto produto = null;
 
@@ -64,14 +73,20 @@ public class ProdutoDao {
             ResultSet rs = stm.executeQuery();
 
             if (rs.next()) {
-                ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt(5));
-                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
-                produto = new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
-                        produtoEnum, rs.getByte(6));
+                ProdutoEnum produtoEnum = ProdutoEnum.valueOf(rs.getInt("cd_tipo_produto"));
+                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString("st_unidade"));
+
+                produto = new Produto(rs.getInt("cd_produto"), rs.getString("nm_produto"),
+                        unidade, rs.getBigDecimal("vl_produto"),
+                        produtoEnum, rs.getByte("cd_ativo"));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar produto: " + e.getMessage());
+            String msgErro = "Erro ao consultar Produto por código" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "ler", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return produto;
@@ -95,7 +110,11 @@ public class ProdutoDao {
             stm.setInt(4, produto.getTipo().getCodigo());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir produto: " + e.getMessage());
+            String msgErro = "Erro ao incluir Produto" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "incluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -118,7 +137,11 @@ public class ProdutoDao {
             stm.setInt(5, produto.getProdId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar usuário: " + e.getMessage());
+            String msgErro = "Erro ao atualizar Produto" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "atualizar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -140,7 +163,11 @@ public class ProdutoDao {
             stm.setInt(1, cdProduto);
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir produto: " + e.getMessage());
+            String msgErro = "Erro ao excluir Produto" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "excluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -162,7 +189,11 @@ public class ProdutoDao {
             stm.setInt(1, cdProduto);
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir logicamente usuario: " + e.getMessage());
+            String msgErro = "Erro ao excluir logicamente o Produto" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "exclusaoLogica", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -187,16 +218,21 @@ public class ProdutoDao {
             while (rs.next()) {
                 // Obter o UnidadeEnum e ProdutoEnum relativo ao domínio
                 // armazenado na base.
-                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
-                ProdutoEnum tipo = ProdutoEnum.valueOf(Integer.parseInt(rs.getString(5)));
+                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString("st_unidade"));
+                ProdutoEnum tipo =
+                        ProdutoEnum.valueOf(Integer.parseInt(rs.getString("cd_tipo_produto")));
 
                 // Carregar o usuario da base de dados
-                produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade,
-                        rs.getBigDecimal(4), tipo, rs.getByte(6)));
+                produtos.add(new Produto(rs.getInt("cd_produto"), rs.getString("nm_produto"),
+                        unidade, rs.getBigDecimal("vl_produto"), tipo, rs.getByte("cd_ativo")));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
+            String msgErro = "Erro ao listar Produtos" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return produtos;
@@ -210,8 +246,8 @@ public class ProdutoDao {
      */
     public List<Produto> listar(String nome) {
 
-        String sql = "SELECT cd_produto, nm_produto, st_unidade, "
-                + "vl_produto, cd_tipo_produto, cd_ativo FROM produto " + "WHERE nm_produto LIKE ?";
+        String sql = "SELECT cd_produto, nm_produto, st_unidade, vl_produto, cd_tipo_produto, " +
+                "cd_ativo FROM produto " + "WHERE nm_produto LIKE ?";
 
         List<Produto> produtos = new ArrayList<>();
 
@@ -223,16 +259,21 @@ public class ProdutoDao {
             while (rs.next()) {
                 // Obter o UnidadeEnum e ProdutoEnum relativo ao domínio
                 // armazenado na base.
-                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString(3));
-                ProdutoEnum tipo = ProdutoEnum.valueOf(Integer.parseInt(rs.getString(5)));
+                UnidadeEnum unidade = UnidadeEnum.valueOfCod(rs.getString("st_unidade"));
+                ProdutoEnum tipo = ProdutoEnum.valueOf(
+                        Integer.parseInt(rs.getString("cd_tipo_produto")));
 
                 // Carregar o usuario da base de dados
-                produtos.add(new Produto(rs.getInt(1), rs.getString(2), unidade, rs.getBigDecimal(4),
-                        tipo, rs.getByte(6)));
+                produtos.add(new Produto(rs.getInt("cd_produto"), rs.getString("nm_produto"),
+                        unidade, rs.getBigDecimal("vl_produto"), tipo, rs.getByte("cd_ativo")));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
+            String msgErro = "Erro ao listar Produtos por nome" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return produtos;

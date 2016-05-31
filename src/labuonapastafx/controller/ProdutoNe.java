@@ -36,7 +36,7 @@ public class ProdutoNe {
      */
     public Produto obterCodProduto(int cdProduto) {
 
-        return produtoDao.lerCodProduto(cdProduto);
+        return produtoDao.ler(cdProduto);
 
     }
 

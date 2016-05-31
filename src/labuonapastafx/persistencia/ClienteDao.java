@@ -15,13 +15,15 @@ import java.util.List;
  */
 public class ClienteDao {
 
+    private static final String MSG_COMPLEMENTO = " - CONTATE O ADMINISTRADOR.";
+
     /**
      * Obter o {@code Cliente} referente ao Id informado.
      *
      * @param cdCliente Código interno do cliente no cadastro.
      * @return Objeto {@code Cliente} referente ao Id informado.
      */
-    public Cliente lerCodCliente(int cdCliente) {
+    public Cliente ler(int cdCliente) {
         Cliente cliente;
 
         String sql = "SELECT cd_cliente, nm_cliente, nr_telefone1, nr_telefone2, ds_email, "
@@ -35,7 +37,12 @@ public class ClienteDao {
             cliente = readNextCliente(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
+            String msgErro = "Erro ao consultar Cliente pelo código do Cliente"
+                    + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "ler(int cdCliente)", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return cliente;
@@ -47,7 +54,7 @@ public class ClienteDao {
      * @param nome {@code Cliente} que se deseja obter.
      * @return retorna o {@code Cliente} correspondente ao nome informado.
      */
-    public Cliente lerNome(String nome) {
+    public Cliente ler(String nome) {
 
         Cliente cliente;
 
@@ -62,7 +69,12 @@ public class ClienteDao {
             cliente = readNextCliente(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
+            String msgErro = "Erro ao consultar Cliente pelo nome do Cliente"
+                    + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "ler(String nome)", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return cliente;
@@ -91,7 +103,12 @@ public class ClienteDao {
             cliente = readNextCliente(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar cliente: " + e.getMessage());
+            String msgErro = "Erro ao consultar Cliente pelo telefone do Cliente"
+                    + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "ler(String telefone)", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return cliente;
@@ -107,12 +124,12 @@ public class ClienteDao {
     private Cliente readNextCliente(ResultSet rs) throws SQLException {
         if (rs.next()) {
 
-            String tel2 = rs.getString(4) == null ? "" : rs.getString(4);
-            String email = rs.getString(5) == null ? "" : rs.getString(5);
-            String endereco = rs.getString(6) == null ? "" : rs.getString(6);
+            String tel2 = rs.getString("nr_telefone2") == null ? "" : rs.getString(4);
+            String email = rs.getString("ds_email") == null ? "" : rs.getString(5);
+            String endereco = rs.getString("ds_endereco") == null ? "" : rs.getString(6);
 
-            return new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3), tel2,
-                    email, endereco, rs.getDate(7));
+            return new Cliente(rs.getInt("cd_cliente"), rs.getString("nm_cliente"),
+                    rs.getString("nr_telefone1"), tel2, email, endereco, rs.getDate("dt_criacao"));
         } else {
             return null;
         }
@@ -155,12 +172,11 @@ public class ClienteDao {
 
             stm.executeUpdate();
         } catch (SQLException e) {
-            String msgErro = "Erro na Inclusão do cliente";
+            String msgErro = "Erro ao incluir Cliente" + MSG_COMPLEMENTO;
 
             Log.logar(ClienteDao.class.getName(), "incluir", msgErro, e);
 
             throw new RuntimeException(msgErro);
-
         }
 
     }
@@ -201,7 +217,11 @@ public class ClienteDao {
             stm.setInt(6, cliente.getClieId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
+            String msgErro = "Erro ao atualizar Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "atualizar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
     }
 
@@ -219,7 +239,11 @@ public class ClienteDao {
             stm.setInt(1, cdCliente);
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir cliente: " + e.getMessage());
+            String msgErro = "Erro ao excluir Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "excluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -244,7 +268,11 @@ public class ClienteDao {
             clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar clientes: " + e.getMessage());
+            String msgErro = "Erro ao listar Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return clientes;
@@ -271,7 +299,11 @@ public class ClienteDao {
             clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
+            String msgErro = "Erro ao listar Cliente" + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return clientes;
@@ -300,7 +332,11 @@ public class ClienteDao {
             clientes = carregarClientes(rs);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar produtos: " + e.getMessage());
+            String msgErro = "Erro ao listar Cliente por telefone" + MSG_COMPLEMENTO;
+
+            Log.logar(ClienteDao.class.getName(), "listarTelefone", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return clientes;
@@ -314,9 +350,9 @@ public class ClienteDao {
         List<Cliente> clies = new ArrayList<>();
 
         while (rs.next()) {
-            String tel2 = rs.getString(4) == null ? "" : rs.getString(4);
-            String email = rs.getString(5) == null ? "" : rs.getString(5);
-            String endereco = rs.getString(6) == null ? "" : rs.getString(6);
+            String tel2 = rs.getString("nr_telefone2") == null ? "" : rs.getString(4);
+            String email = rs.getString("ds_email") == null ? "" : rs.getString(5);
+            String endereco = rs.getString("ds_endereco") == null ? "" : rs.getString(6);
 
             // Carregar o cliente da base de dados
             clies.add(new Cliente(rs.getInt(1), rs.getString(2), rs.getString(3),

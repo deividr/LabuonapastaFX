@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="fundo-opcao" stylesheets="@css/Labuonapasta.css" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="labuonapastafx.controller.NumeroPedidoController">
     <children>
@@ -24,12 +23,6 @@
                             <children>
                                 <Label text="Iniciar numeração em:" GridPane.columnIndex="1" />
                                 <TextField fx:id="txtNumero" alignment="CENTER_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="30.0" prefWidth="148.0" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                        <Label text="Número atual está em:" />
-                        <Label fx:id="lblNumeroAtual" alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="148.0">
-                           <font>
-                              <Font name="System Bold Italic" size="20.0" />
-                           </font>
-                        </Label>
                                 <HBox alignment="CENTER_LEFT" fillHeight="false" maxHeight="-Infinity" maxWidth="-Infinity">
                                     <children>
                                         <Button mnemonicParsing="false" onAction="#botaoAlterarListener" prefHeight="34.0" prefWidth="140.0" text="Alterar">

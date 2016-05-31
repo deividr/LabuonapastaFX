@@ -115,21 +115,35 @@
                                         </Separator>
                                     </children>
                                 </HBox>
-                                <TableView fx:id="tblPedido" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#tabelaPedidoListener" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tblPedido" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#tabelaPedidoListener" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="tblcolNumero" minWidth="48.0" prefWidth="78.0" resizable="false" text="Núm." />
-                                        <TableColumn fx:id="tblcolCliente" maxWidth="391.0" minWidth="41.0" prefWidth="344.0" text="Cliente" />
-                                        <TableColumn fx:id="tblcolTelefone" prefWidth="130.0" resizable="false" text="Telefone" />
-                                        <TableColumn fx:id="tblcolRetirada" prefWidth="112.0" text="Retirada" />
-                                        <TableColumn fx:id="tblcolDe" prefWidth="75.0" text="De" />
-                                        <TableColumn fx:id="tblcolAte" prefWidth="75.0" text="Até" />
-                                        <TableColumn fx:id="tblcolGeladeira" prefWidth="75.0" text="Geladeira" />
-                                        <TableColumn fx:id="tblcolSolicitado" prefWidth="106.0" text="Solicitado" />
+                                        <TableColumn fx:id="tblcolNumero" editable="false" minWidth="48.0" prefWidth="78.0" resizable="false" text="Núm." />
+                                        <TableColumn fx:id="tblcolCliente" editable="false" maxWidth="428.0" minWidth="41.0" prefWidth="422.0" text="Cliente" />
+                                        <TableColumn fx:id="tblcolTelefone" editable="false" prefWidth="128.0" resizable="false" text="Telefone" />
+                                        <TableColumn fx:id="tblcolRetirada" editable="false" prefWidth="87.0" text="Retirada" />
+                                        <TableColumn fx:id="tblcolDe" editable="false" prefWidth="65.0" text="De" />
+                                        <TableColumn fx:id="tblcolAte" editable="false" prefWidth="66.0" text="Até" />
+                                        <TableColumn fx:id="tblcolGeladeira" editable="false" prefWidth="90.0" text="Geladeira" />
+                                        <TableColumn fx:id="tblcolSolicitado" editable="false" prefWidth="90.0" text="Solicitado" />
+                                        <TableColumn fx:id="tblcolRetirado" editable="true" prefWidth="75.0" text="Retirado" />
                                     </columns>
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
                                 </TableView>
+                        <HBox spacing="20.0">
+                           <children>
+                              <Label prefHeight="21.0" prefWidth="61.0" styleClass="label-retirado" text="Retirado">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <Label prefHeight="21.0" prefWidth="83.0" styleClass="label-nao-retirado" text="Não retirou" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
                             </children>
                         </VBox>
                     </content>

@@ -20,6 +20,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import labuonapastafx.model.AcessoEnum;
+import labuonapastafx.model.Controllable;
 import labuonapastafx.util.LimitedTextListener;
 import labuonapastafx.model.Usuario;
 
@@ -32,7 +33,7 @@ import labuonapastafx.model.Usuario;
  * @version %I%, %G%
  * @since 1.0
  */
-public class UsuarioController extends StackPane implements Initializable {
+public class UsuarioController extends StackPane implements Initializable, Controllable {
 
     @FXML
     private TitledPane titledPane;

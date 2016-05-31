@@ -1,6 +1,7 @@
 package labuonapastafx.controller;
 
 import labuonapastafx.model.*;
+import labuonapastafx.persistencia.ConfigXML;
 import labuonapastafx.persistencia.PedidoDao;
 
 import java.time.LocalDate;
@@ -21,8 +22,78 @@ public class PedidoNe {
      *               informar o código e nem a data em que foi efetuada o pedido.
      * @return Objeto do tipo Pedido contendo as informações atualizadas.
      */
-    public Pedido incluir(Pedido pedido) {
-        return pedDao.incluir(pedido);
+    public void incluir(Pedido pedido) {
+
+        //Calcular quantos dias serão subtraídos para obter o primeiro
+        // dia da semana (Segunda-Feira).
+        int dias = pedido.getDataRetirada().getDayOfWeek().getValue() - 1;
+
+        LocalDate primeiroDia = pedido.getDataRetirada().minusDays(dias);
+
+        LocalDate ultimoDia = primeiroDia.plusDays(6);
+
+        /*
+         * Sincronizar esse ponto para que não ocorra duplicidade de número de pedidos.
+         */
+        synchronized (this) {
+            int numeroPedido = pedDao.obterUltimoNumeroPedido(java.sql.Date.valueOf(primeiroDia),
+                    java.sql.Date.valueOf(ultimoDia));
+
+            //Se ainda não existe pedido para o período informado, então iremos obter
+            // qual é o número inicial cadastrado para os pedidos novos.
+            if (numeroPedido == 0) {
+                numeroPedido = Integer.parseInt(ConfigXML.getInstance()
+                        .obterXMLTextByElement("inicial"));
+            } else {
+                numeroPedido += 1; //Adicionar 1 ao número do pedido.
+            }
+
+            pedido.setNumeroPedido(numeroPedido);
+
+            pedDao.incluir(pedido);
+        }
+
+    }
+
+    /**
+     * Efetuar alterações no Pedido conforme passado por parâmetro.
+     *
+     * @param pedido Pedido que se deseja alterar as informações. O código do
+     *               pedido precisa ser de um pedido que realmente existe na base,
+     *               por tanto não deve ser alterado.
+     */
+    public void alterar(Pedido pedido) {
+
+        /* Calcular quantos dias serão subtraídos para obter o primeiro
+         * dia da semana (Segunda-Feira).
+         */
+        int dias = pedido.getDataRetirada().getDayOfWeek().getValue() - 1;
+
+        LocalDate primeiroDia = pedido.getDataRetirada().minusDays(dias);
+
+        LocalDate ultimoDia = primeiroDia.plusDays(6);
+
+        synchronized (this) {
+
+            /* Verifica se o pedido já existe para o período informado. Dessa forma não corre o
+             * risco de incluir o mesmo número em um mesmo perído caso ocorra a mudança da data
+             * de retirada.
+             */
+            boolean existe = pedDao.verificarNumeroPedido(java.sql.Date.valueOf(primeiroDia),
+                    java.sql.Date.valueOf(ultimoDia), pedido);
+
+            if (existe) {
+                //Se o número já existe para o período informado, cria outro número.
+                int numeroPedido = pedDao
+                        .obterUltimoNumeroPedido(java.sql.Date.valueOf(primeiroDia),
+                                java.sql.Date.valueOf(ultimoDia));
+
+                pedido.setNumeroPedido(numeroPedido);
+            }
+
+            pedDao.alterar(pedido);
+        }
+
     }
 
     /**
@@ -54,21 +125,6 @@ public class PedidoNe {
 
         pedDao.excluir(clie);
 
-    }
-
-    /**
-     * Efetuar alterações no Pedido conforme passado por parâmetro.
-     *
-     * @param pedido Pedido que se deseja alterar as informações. O código do
-     *               pedido precisa ser de um pedido que realmente existe na base,
-     *               por tanto não deve ser alterado.
-     * @return True se a alteração ocorreu com sucesso, e false se houve algum problema.
-     */
-    public boolean alterar(Pedido pedido) {
-
-        pedDao.alterar(pedido);
-
-        return true;
     }
 
     public boolean excluirPedido(Pedido ped) {

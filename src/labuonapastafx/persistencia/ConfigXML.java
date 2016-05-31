@@ -70,15 +70,12 @@ public class ConfigXML {
         Element rootElement = doc.createElement("configuracoes");
         Element pedido = doc.createElement("pedido");
         Element inicial = doc.createElement("inicial");
-        Element ultimo = doc.createElement("ultimo");
 
         // Criar a hieraquia entres os elementos.
         doc.appendChild(rootElement);
         rootElement.appendChild(pedido);
         pedido.appendChild(inicial);
         inicial.appendChild(doc.createTextNode("0"));
-        pedido.appendChild(ultimo);
-        ultimo.appendChild(doc.createTextNode("0"));
 
         commitAlteracoes();
     }

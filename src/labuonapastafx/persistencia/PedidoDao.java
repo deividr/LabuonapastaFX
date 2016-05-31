@@ -27,13 +27,12 @@ public class PedidoDao {
      * Incluir um novo {@code pedido}.
      *
      * @param ped Pedido que se deseja incluir.
-     * @return Retorna o objeto Pedido com o número do pedido atualizado para o que foi gravado.
      */
-    public Pedido incluir(Pedido ped) {
+    public void incluir(Pedido ped) {
 
         String sql = "INSERT INTO pedido (nr_pedido, cd_cliente, cd_usuario, dt_pedido, " +
                 "dt_retirada, hr_de, hr_ate, nr_geladeira, ds_observacao, st_retirado) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,0)";
+                "VALUES (?,?,?,?,?,?,?,?,?,false)";
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql,
@@ -42,8 +41,8 @@ public class PedidoDao {
             stm.setInt(1, ped.getNumeroPedido());
             stm.setInt(2, ped.getCliente().getClieId());
             stm.setInt(3, ped.getUsuario().getUserId());
-            stm.setDate(4, java.sql.Date.valueOf(ped.getDtPedido()));
-            stm.setDate(5, java.sql.Date.valueOf(ped.getDtRetirada()));
+            stm.setDate(4, java.sql.Date.valueOf(ped.getDataPedido()));
+            stm.setDate(5, java.sql.Date.valueOf(ped.getDataRetirada()));
 
             if (ped.getHoraDe().equals("")) {
                 stm.setNull(6, Types.CHAR);
@@ -89,8 +88,6 @@ public class PedidoDao {
         }
 
         incluirItens(ped);
-
-        return ped;
 
     }
 
@@ -218,45 +215,43 @@ public class PedidoDao {
      */
     public void alterar(Pedido ped) {
 
-        String sql = "UPDATE pedido SET cd_usuario = ?, cd_cliente = ?, dt_retirada = ?, " +
-                "hr_de = ?, hr_ate = ?, nr_geladeira = ?, ds_observacao = ?, st_retirado = ? " +
-                "WHERE cd_pedido = ?";
+        String sql = "UPDATE pedido SET cd_usuario = ?, dt_retirada = ?, hr_de = ?, hr_ate = ?, " +
+                "nr_geladeira = ?, ds_observacao = ?, st_retirado = ? WHERE cd_pedido = ?";
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
 
-            java.sql.Date dtRetirada = java.sql.Date.valueOf(ped.getDtRetirada());
+            java.sql.Date dtRetirada = java.sql.Date.valueOf(ped.getDataRetirada());
 
             stm.setInt(1, ped.getUsuario().getUserId());
-            stm.setInt(2, ped.getCliente().getClieId());
-            stm.setDate(3, dtRetirada);
+            stm.setDate(2, dtRetirada);
 
             if (ped.getHoraDe().equals("")) {
-                stm.setNull(4, Types.CHAR);
+                stm.setNull(3, Types.CHAR);
             } else {
-                stm.setString(4, ped.getHoraDe());
+                stm.setString(3, ped.getHoraDe());
             }
 
             if (ped.getHoraAte().equals("")) {
-                stm.setNull(5, Types.CHAR);
+                stm.setNull(4, Types.CHAR);
             } else {
-                stm.setString(5, ped.getHoraAte());
+                stm.setString(4, ped.getHoraAte());
             }
 
             if (ped.getGeladeira().equals("")) {
-                stm.setNull(6, Types.CHAR);
+                stm.setNull(5, Types.CHAR);
             } else {
-                stm.setString(6, ped.getGeladeira());
+                stm.setString(5, ped.getGeladeira());
             }
 
             if (ped.getObsercao().equals("")) {
-                stm.setNull(7, Types.CHAR);
+                stm.setNull(6, Types.CHAR);
             } else {
-                stm.setString(7, ped.getObsercao());
+                stm.setString(6, ped.getObsercao());
             }
 
-            stm.setByte(8, ped.getRetirado());
-            stm.setInt(9, ped.getPedId());
+            stm.setBoolean(7, ped.isRetirado());
+            stm.setInt(8, ped.getPedId());
 
             stm.executeUpdate();
 
@@ -275,6 +270,33 @@ public class PedidoDao {
     }
 
     /**
+     * Marcar o pedido como entregue ou não na tabela.
+     *
+     * @param pedido Objeto Pedido que será marcado como entregue ou não.
+     */
+    public void marcarPedidoEntregue(Pedido pedido, boolean status) {
+
+        String sql = "UPDATE pedido SET st_retirado = ? WHERE cd_pedido = ?";
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+
+            stm.setBoolean(1, status);
+            stm.setInt(2, pedido.getPedId());
+
+            stm.executeUpdate();
+
+        } catch (SQLException e) {
+            String msgErro = "Erro ao marcar Pedido como entregue" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "marcarPedidoEntregue", msgErro, e);
+
+            throw new RuntimeException(msgErro);
+        }
+
+    }
+
+    /**
      * Obter pedidos que pertence a um determinado {@code Cliente}.
      *
      * @param clie Cliente que se deseja consultar os pedidos.
@@ -282,7 +304,7 @@ public class PedidoDao {
      * foi feito o pedido.
      */
     public List<Pedido> listarPedidos(Cliente clie) {
-        String sql = SELECT_ALL + " WHERE cd_cliente = ? ORDER BY dt_pedido DESC";
+        String sql = SELECT_ALL + " WHERE cd_cliente = ? ORDER BY dt_retirada DESC";
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -310,12 +332,13 @@ public class PedidoDao {
     /**
      * Obter pedidos que pertence a um determinado {@code Cliente}.
      *
-     * @param date Data que se deseja consultar os pedidos.
+     * @param date Data que se deseja consultar os pedidos. Pesquisa será feita pela campo
+     *             Data de Retirada e não Data do Pedido.
      * @return Lista de todos os pedidos feito na data informada em diante, ordenado de forma
      * crescente por data.
      */
     public List<Pedido> listarPedidos(LocalDate date) {
-        String sql = SELECT_ALL + " WHERE dt_pedido >= ? ORDER BY dt_pedido ASC";
+        String sql = SELECT_ALL + " WHERE dt_retirada >= ? ORDER BY dt_retirada ASC";
 
         List<Pedido> pedidos = new ArrayList<>();
 
@@ -340,37 +363,6 @@ public class PedidoDao {
         return pedidos;
     }
 
-
-    /**
-     * Obter pedidos que pertence a um determinado {@code Cliente}.
-     *
-     * @return Lista de todos os pedidos.
-     */
-    public List<Pedido> listarPedidos() {
-
-        List<Pedido> pedidos = new ArrayList<>();
-
-        try (Connection con = Conexao.getConexao();
-             PreparedStatement stm = con.prepareStatement(SELECT_ALL)) {
-
-            ResultSet rs = stm.executeQuery();
-
-            while (rs.next()) {
-                // Carregar o Pedido
-                pedidos.add(readNextPedido(rs, null, null));
-            }
-
-        } catch (SQLException e) {
-            String msgErro = "Erro ao listar os Pedidos" + MSG_COMPLEMENTO;
-
-            Log.logar(PedidoDao.class.getName(), "listarPedidos", msgErro, e);
-
-            throw new RuntimeException(msgErro);
-        }
-
-        return pedidos;
-    }
-
     /**
      * Construir um objeto Pedido com as informações do ResultSet informado.
      *
@@ -386,7 +378,7 @@ public class PedidoDao {
 
         //Se usuário já vier preenchido não é necessário consultar a base de usuário.
         if (usuar == null) {
-            usuarTab = new UsuarioDao().lerCodUsuario(rs.getInt(3));
+            usuarTab = new UsuarioDao().ler(rs.getInt("cd_usuario"));
         } else {
             usuarTab = usuar;
         }
@@ -395,33 +387,34 @@ public class PedidoDao {
 
         //Se cliente já vier preenchido não é necessário consultar a base de cliente.
         if (clie == null) {
-            clieTab = new ClienteDao().lerCodCliente(rs.getInt(4));
+            clieTab = new ClienteDao().ler(rs.getInt("cd_cliente"));
         } else {
             clieTab = clie;
         }
 
-        LocalDate dtPedido = rs.getDate(5).toLocalDate();
-        LocalDate dtRetirada = rs.getDate(6).toLocalDate();
+        LocalDate dtPedido = rs.getDate("dt_pedido").toLocalDate();
+        LocalDate dtRetirada = rs.getDate("dt_retirada").toLocalDate();
 
-        List<ItemPedido> itens = listarItensPedido(rs.getInt(1));
+        List<ItemPedido> itens = listarItensPedido(rs.getInt("cd_pedido"));
 
-        String horaDe = rs.getString(7) == null ? "" : rs.getString(7);
-        String horaAte = rs.getString(8) == null ? "" : rs.getString(8);
-        String geladeira = rs.getString(9) == null ? "" : rs.getString(9);
-        String observacao = rs.getString(10) == null ? "" : rs.getString(10);
+        String horaDe = rs.getString("hr_de") == null ? "" : rs.getString("hr_de");
+        String horaAte = rs.getString("hr_ate") == null ? "" : rs.getString("hr_ate");
+        String geladeira = rs.getString("nr_geladeira") == null ? "" : rs.getString("nr_geladeira");
+        String observacao = rs.getString("ds_observacao") == null ? ""
+                : rs.getString("ds_observacao");
 
         return new Pedido()
-                .setPedId(rs.getInt(1))
+                .setPedId(rs.getInt("cd_pedido"))
                 .setUsuario(usuarTab)
                 .setCliente(clieTab)
-                .setDtPedido(dtPedido)
-                .setDtRetirada(dtRetirada)
-                .setNumeroPedido(rs.getInt(2))
+                .setDataPedido(dtPedido)
+                .setDataRetirada(dtRetirada)
+                .setNumeroPedido(rs.getInt("nr_pedido"))
                 .setHoraDe(horaDe)
                 .setHoraAte(horaAte)
                 .setGeladeira(geladeira)
                 .setObservacao(observacao)
-                .setRetirado(rs.getByte(11))
+                .setRetirado(rs.getBoolean("st_retirado"))
                 .setItens(FXCollections.observableList(itens));
     }
 
@@ -449,10 +442,10 @@ public class PedidoDao {
 
                 ProdutoDao prodDao = new ProdutoDao();
 
-                Produto prod = prodDao.lerCodProduto(rs.getInt(2));
+                Produto prod = prodDao.ler(rs.getInt(2));
 
                 if (rs.getInt(3) != 0) {
-                    molho = prodDao.lerCodProduto(rs.getInt(3));
+                    molho = prodDao.ler(rs.getInt(3));
                 } else {
                     molho = new Produto();
                 }
@@ -480,8 +473,8 @@ public class PedidoDao {
      * @return Integer contendo o último pedido cadastrado para o período. Se não existir vai
      * retornar 0.
      */
-    public Integer obterUltimoNumeroPedido(Date dtInicial, Date dtFinal) {
-        String sql = "SELECT MAX(cd_pedido) FROM pedido WHERE dt_retirada >= ? " +
+    public int obterUltimoNumeroPedido(Date dtInicial, Date dtFinal) {
+        String sql = "SELECT MAX(nr_pedido) FROM pedido WHERE dt_retirada >= ? " +
                 "AND dt_retirada <= ?";
 
         Integer numeroPedido;
@@ -508,5 +501,42 @@ public class PedidoDao {
 
         return numeroPedido;
     }
+
+
+    /**
+     * Verificar se o número do pedido informado já existe no período solicitado.
+     *
+     * @param dtInicial Data do início do período.
+     * @param dtFinal   Data do fim do período.
+     * @param pedido Pedido a ser consultado.
+     * @return Integer contendo o último pedido cadastrado para o período. Se não existir vai
+     * retornar 0.
+     */
+    public boolean verificarNumeroPedido(Date dtInicial, Date dtFinal, Pedido pedido) {
+        String sql = "SELECT nr_pedido FROM pedido WHERE dt_retirada >= ? " +
+                "AND dt_retirada <= ? AND cd_pedido <> ? AND nr_pedido = ?";
+
+        try (Connection con = Conexao.getConexao();
+             PreparedStatement stm = con.prepareStatement(sql)) {
+
+            stm.setDate(1, dtInicial);
+            stm.setDate(2, dtFinal);
+            stm.setInt(3, pedido.getPedId());
+            stm.setInt(4, pedido.getNumeroPedido());
+
+            ResultSet rs = stm.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+            String msgErro = "Erro ao verificar o número do pedido" + MSG_COMPLEMENTO;
+
+            Log.logar(PedidoDao.class.getName(), "verificarNumeroPedido", msgErro, e);
+
+            throw new RuntimeException(msgErro);
+        }
+
+    }
+
 
 }

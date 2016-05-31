@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import javafx.scene.control.Hyperlink;
 import labuonapastafx.LabuonapastaFX;
+import labuonapastafx.model.Controllable;
 
 /**
  * Classe para controlar o objeto FXML da tela de Login.

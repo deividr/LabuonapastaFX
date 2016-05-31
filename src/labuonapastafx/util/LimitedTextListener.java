@@ -20,7 +20,7 @@ public class LimitedTextListener implements ChangeListener<String> {
             if (newValue.length() > maxLength) {
                 field.setText(oldValue);
             } else {
-                field.setText(newValue);
+                field.setText(newValue.replaceAll("[^a-zA-Z0-9 ]", ""));
             }
         } catch (Exception e) {
             field.setText(oldValue);

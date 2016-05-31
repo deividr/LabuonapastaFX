@@ -73,8 +73,8 @@
                                         <Label text="Telefone:" GridPane.columnIndex="1" />
                                         <Label text="Nome:" GridPane.columnIndex="3" />
                                         <TextField fx:id="txtNumPed" disable="true" editable="false" focusTraversable="false" GridPane.rowIndex="1" />
-                                        <TextField fx:id="txtTelefone" alignment="CENTER_RIGHT" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                                        <TextField fx:id="txtNome" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtTelefone" alignment="CENTER_RIGHT" disable="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                                        <TextField fx:id="txtNome" disable="true" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.rowIndex="1" />
                                         <Label text="Data de Retirada:" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                                         <Label text="Hora De:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                                         <Label text="Hora Até:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
@@ -133,18 +133,6 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
                               </Button>
-                                        <Button mnemonicParsing="false" onAction="#limparCampos" prefHeight="34.0" prefWidth="111.0" text="Limpar">
-                                            <HBox.margin>
-                                                <Insets bottom="10.0" left="10.0" right="15.0" top="10.0" />
-                                            </HBox.margin>
-                                            <graphic>
-                                                <ImageView pickOnBounds="true" preserveRatio="true">
-                                                    <image>
-                                                        <Image url="@imagens/atualizar.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </Button>
                                         <Button mnemonicParsing="false" onAction="#botaoSairListener" prefHeight="34.0" prefWidth="111.0" text="Sair">
                                             <HBox.margin>
                                                 <Insets bottom="10.0" left="10.0" top="10.0" />

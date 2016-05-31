@@ -35,7 +35,7 @@ public class UsuarioNe {
      */
     public Usuario obterCodUsuario(int cdUsuario) {
 
-        return usuarioDao.lerCodUsuario(cdUsuario);
+        return usuarioDao.ler(cdUsuario);
 
     }
 

@@ -4,15 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import labuonapastafx.model.Controllable;
 import labuonapastafx.persistencia.ConfigXML;
-import labuonapastafx.persistencia.PedidoDao;
-
 import java.net.URL;
-import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 /**
@@ -28,8 +24,6 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
 
     @FXML
     private TextField txtNumero;
-    @FXML
-    private Label lblNumeroAtual;
 
     // Variaveis de controle geral
     private MenuController menuControl;
@@ -43,10 +37,8 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
     public void botaoAlterarListener(ActionEvent event) {
         if (validarInformacoes()) {
             ConfigXML.getInstance().alterarXMLTextByElement("inicial", txtNumero.getText());
-            ConfigXML.getInstance().alterarXMLTextByElement("ultimo", txtNumero.getText());
             ConfigXML.getInstance().commitAlteracoes();
             showAlert("Alterar Número do pedido.", "Alteração efetuada com sucesso.");
-            lblNumeroAtual.setText(txtNumero.getText());
             txtNumero.requestFocus();
         }
     }
@@ -104,7 +96,6 @@ public class NumeroPedidoController extends StackPane implements Initializable, 
         });
 
         txtNumero.setText(ConfigXML.getInstance().obterXMLTextByElement("inicial"));
-        lblNumeroAtual.setText(ConfigXML.getInstance().obterXMLTextByElement("ultimo"));
     }
 
     /**

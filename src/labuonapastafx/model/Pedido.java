@@ -18,14 +18,14 @@ public class Pedido implements Serializable {
     private IntegerProperty numeroPedido = new SimpleIntegerProperty(0);
     private ObjectProperty<Cliente> cliente = new SimpleObjectProperty<>();
     private ObjectProperty<Usuario> usuario = new SimpleObjectProperty<>();
-    private ObjectProperty<LocalDate> dtPedido = new SimpleObjectProperty<>();
-    private ObjectProperty<LocalDate> dtRetirada = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> dataPedido = new SimpleObjectProperty<>();
+    private ObjectProperty<LocalDate> dataRetirada = new SimpleObjectProperty<>();
     private StringProperty geladeira = new SimpleStringProperty("");
     private StringProperty horaDe = new SimpleStringProperty("");
     private StringProperty horaAte = new SimpleStringProperty("");
     private ListProperty<ItemPedido> itens = new SimpleListProperty<>();
     private StringProperty observacao = new SimpleStringProperty("");
-    private ObjectProperty<Byte> retirado = new SimpleObjectProperty<>((byte) 0);
+    private BooleanProperty retirado = new SimpleBooleanProperty(false);
 
     public Pedido() {
 
@@ -47,12 +47,12 @@ public class Pedido implements Serializable {
         return this.usuario;
     }
 
-    public final ObjectProperty<LocalDate> dtPedidoProperty() {
-        return this.dtPedido;
+    public final ObjectProperty<LocalDate> dataPedidoProperty() {
+        return this.dataPedido;
     }
 
-    public final ObjectProperty<LocalDate> dtRetiradaProperty() {
-        return this.dtRetirada;
+    public final ObjectProperty<LocalDate> dataRetiradaProperty() {
+        return this.dataRetirada;
     }
 
     public final StringProperty horaDeProperty() {
@@ -67,7 +67,7 @@ public class Pedido implements Serializable {
         return this.observacao;
     }
 
-    public final ObjectProperty<Byte> retiradoProperty() {
+    public final BooleanProperty retiradoProperty() {
         return this.retirado;
     }
 
@@ -107,12 +107,12 @@ public class Pedido implements Serializable {
         return this.usuarioProperty().get();
     }
 
-    public final LocalDate getDtPedido() {
-        return this.dtPedidoProperty().get();
+    public final LocalDate getDataPedido() {
+        return this.dataPedidoProperty().get();
     }
 
-    public final LocalDate getDtRetirada() {
-        return this.dtRetiradaProperty().get();
+    public final LocalDate getDataRetirada() {
+        return this.dataRetiradaProperty().get();
     }
 
     public final ObservableList<ItemPedido> getItens() {
@@ -121,10 +121,6 @@ public class Pedido implements Serializable {
 
     public final String getObsercao() {
         return this.observacaoProperty().get();
-    }
-
-    public final byte getRetirado() {
-        return this.retiradoProperty().get();
     }
 
     public final Pedido setPedId(final Integer pedId) {
@@ -166,10 +162,10 @@ public class Pedido implements Serializable {
 
     }
 
-    public Pedido setDtPedido(final LocalDate dtPedido) {
+    public Pedido setDataPedido(final LocalDate dataPedido) {
 
-        if (dtPedido != null) {
-            this.dtPedidoProperty().set(dtPedido);
+        if (dataPedido != null) {
+            this.dataPedidoProperty().set(dataPedido);
         } else {
             throw new DateTimeException("Data do pedido inválida");
         }
@@ -178,10 +174,10 @@ public class Pedido implements Serializable {
 
     }
 
-    public final Pedido setDtRetirada(final LocalDate dtRetirada) {
+    public final Pedido setDataRetirada(final LocalDate dataRetirada) {
 
-        if (dtRetirada != null) {
-            this.dtRetiradaProperty().set(dtRetirada);
+        if (dataRetirada != null) {
+            this.dataRetiradaProperty().set(dataRetirada);
         } else {
             throw new DateTimeException("Data da retirada inválida");
         }
@@ -250,12 +246,7 @@ public class Pedido implements Serializable {
      * @return Retorna o próprio objeto.
      * @throws IllegalArgumentException Caso o conteúdo informado for difente de 0 e 1.
      */
-    public final Pedido setRetirado(final Byte retirado) {
-
-        if (retirado != 0 && retirado != 1) {
-            throw new IllegalArgumentException("Retirado inválido");
-        }
-
+    public final Pedido setRetirado(final boolean retirado) {
         this.retiradoProperty().set(retirado);
         return this;
     }
@@ -266,7 +257,7 @@ public class Pedido implements Serializable {
     }
 
     public final boolean isRetirado() {
-        return getRetirado() == 1;
+        return retiradoProperty().getValue();
     }
 
 }

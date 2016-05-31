@@ -58,3 +58,23 @@
 .button {
     -fx-cursor: hand;
 }
+
+.pedido-retirado .table-cell {
+    -fx-background-color: #007054;
+    -fx-text-fill: white;
+}
+
+.pedido-nao-retirado .table-cell {
+    -fx-background-color: #A30029;
+    -fx-text-fill: white;
+}
+
+.label-retirado {
+    -fx-background-color: #007054;
+    -fx-text-fill: white;
+}
+
+.label-nao-retirado {
+    -fx-background-color: #A30029;
+    -fx-text-fill: white;
+}

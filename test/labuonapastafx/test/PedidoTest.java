@@ -5,6 +5,7 @@ import labuonapastafx.controller.PedidoNe;
 import labuonapastafx.controller.ProdutoNe;
 import labuonapastafx.controller.UsuarioNe;
 import labuonapastafx.model.*;
+import labuonapastafx.persistencia.PedidoDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import static org.junit.Assert.*;
 public class PedidoTest {
 
     private PedidoNe pedNe;
+    private PedidoDao pedDao;
     private UsuarioNe usuarNe;
     private ClienteNe clieNe;
     private ProdutoNe prodNe;
@@ -36,6 +38,7 @@ public class PedidoTest {
         usuarNe = new UsuarioNe();
         clieNe = new ClienteNe();
         prodNe = new ProdutoNe();
+        pedDao = new PedidoDao();
 
         clieNe.incluirCliente("Teste Pedido", "11369874565", "", "", "");
         clie = clieNe.obterClienteNome("Teste Pedido");
@@ -103,8 +106,8 @@ public class PedidoTest {
         pedido = new Pedido()
                 .setUsuario(usuar)
                 .setCliente(clie)
-                .setDtPedido(LocalDate.now())
-                .setDtRetirada(dtRetirada)
+                .setDataPedido(LocalDate.now())
+                .setDataRetirada(dtRetirada)
                 .setHoraDe("09:00")
                 .setHoraAte("10:00")
                 .setGeladeira("010")
@@ -112,7 +115,7 @@ public class PedidoTest {
                 .setItens(itens);
 
         //Pedido será incluído e retornado com o número do pedido atualizado.
-        pedido = pedNe.incluir(pedido);
+        pedNe.incluir(pedido);
     }
 
     @Test
@@ -124,9 +127,9 @@ public class PedidoTest {
 
         assertEquals("Teste Pedido", pedido.getCliente().getNome());
 
-        assertEquals(LocalDate.now(), pedido.getDtPedido());
+        assertEquals(LocalDate.now(), pedido.getDataPedido());
 
-        assertEquals(dtRetirada, pedido.getDtRetirada());
+        assertEquals(dtRetirada, pedido.getDataRetirada());
 
         assertEquals("09:00", pedido.getHoraDe());
 
@@ -185,7 +188,7 @@ public class PedidoTest {
 
         //pedido.setUsuario(usuarNe.obterUsuario("deivid"));
 
-        pedido.setDtRetirada(LocalDate.now().plusDays(4));
+        pedido.setDataRetirada(LocalDate.now().plusDays(4));
         pedido.setHoraDe("11:00");
         pedido.setHoraAte("12:00");
         pedido.setGeladeira("020");
@@ -198,7 +201,7 @@ public class PedidoTest {
 
         pedido.setItens(FXCollections.observableArrayList(itens));
 
-        assertTrue(pedNe.alterar(pedido));
+        pedNe.alterar(pedido);
 
         pedido = pedNe.obterPedidos(clie).get(0);
 
@@ -206,9 +209,9 @@ public class PedidoTest {
 
         assertEquals("Teste Pedido", pedido.getCliente().getNome());
 
-        assertEquals(LocalDate.now(), pedido.getDtPedido());
+        assertEquals(LocalDate.now(), pedido.getDataPedido());
 
-        assertEquals(LocalDate.now().plusDays(4), pedido.getDtRetirada());
+        assertEquals(LocalDate.now().plusDays(4), pedido.getDataRetirada());
 
         assertEquals("11:00", pedido.getHoraDe());
 
@@ -259,6 +262,17 @@ public class PedidoTest {
         pedNe.excluirPedido(pedido);
 
         assertEquals(0, pedNe.obterPedidos(clie).size());
+
+    }
+
+    @Test
+    public void testMarcarPedidoRetirado() {
+        incluirPedido();
+
+        //Marcar o pedido como entregue ao cliente
+        pedDao.marcarPedidoEntregue(pedido, true);
+
+        assertEquals(true, pedNe.obterPedidos(pedido.getCliente()).get(0).isRetirado());
 
     }
 

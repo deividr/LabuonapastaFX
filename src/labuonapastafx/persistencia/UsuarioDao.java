@@ -19,6 +19,8 @@ import labuonapastafx.model.Usuario;
  */
 public class UsuarioDao {
 
+    private static final String MSG_COMPLEMENTO = " - CONTATE O ADMINISTRADOR.";
+
     /**
      * Obter o usuario relacionado ao login passado como parametro.
      *
@@ -39,15 +41,20 @@ public class UsuarioDao {
 
             if (rs.next()) {
                 // obter o AcessoEnum relativo ao dominio int armazenado na base.
-                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt(4));
+                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt("st_acesso"));
 
                 //carregar o usuario da base de dados
-                usuarioBase = new Usuario(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        acesso, rs.getString(5), rs.getByte(6));
+                usuarioBase = new Usuario(rs.getInt("cd_usuario"), rs.getString("nm_login"),
+                        rs.getString("nm_usuario"), acesso, rs.getString("ds_senha"),
+                        rs.getByte("cd_ativo"));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar usuario: " + e.getMessage());
+            String msgErro = "Erro ao consultar usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "ler", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return usuarioBase;
@@ -59,7 +66,7 @@ public class UsuarioDao {
      * @param cdUsuario Código do Usuário que se deseja obter as informações.
      * @return Usuário que possua o login que foi informado.
      */
-    public Usuario lerCodUsuario(int cdUsuario) {
+    public Usuario ler(int cdUsuario) {
 
         Usuario usuarioBase = null;
 
@@ -73,15 +80,20 @@ public class UsuarioDao {
 
             if (rs.next()) {
                 // obter o AcessoEnum relativo ao dominio int armazenado na base.
-                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt(4));
+                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt("st_acesso"));
 
                 //carregar o usuario da base de dados
-                usuarioBase = new Usuario(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        acesso, rs.getString(5), rs.getByte(6));
+                usuarioBase = new Usuario(rs.getInt("cd_usuario"), rs.getString("nm_login"),
+                        rs.getString("nm_usuario"), acesso, rs.getString("ds_senha"),
+                        rs.getByte("cd_ativo"));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao consultar usuário: " + e.getMessage());
+            String msgErro = "Erro ao consultar usuário por código" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "ler", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return usuarioBase;
@@ -105,7 +117,11 @@ public class UsuarioDao {
             stm.setString(4, usuario.getSenha());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao incluir usuario: " + e.getMessage());
+            String msgErro = "Erro ao incluir Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "incluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -130,7 +146,11 @@ public class UsuarioDao {
             stm.setInt(6, usuario.getUserId());
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar usuario: " + e.getMessage());
+            String msgErro = "Erro ao atualizar Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "ler", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -152,7 +172,11 @@ public class UsuarioDao {
             stm.setInt(1, cdUsuario);
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao deletar usuario: " + e.getMessage());
+            String msgErro = "Erro ao excluir Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "excluir", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -173,7 +197,11 @@ public class UsuarioDao {
             stm.setInt(1, cdUsuario);
             stm.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao excluir logicamente usuario: " + e.getMessage());
+            String msgErro = "Erro ao excluir logicamente Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "exclusaoLogica", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
     }
@@ -189,7 +217,7 @@ public class UsuarioDao {
         String sql = "SELECT cd_usuario, nm_login, nm_usuario, "
                 + "st_acesso, ds_senha, cd_ativo FROM usuario";
 
-        List<Usuario> usuarios = new ArrayList<Usuario>();
+        List<Usuario> usuarios = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -197,15 +225,20 @@ public class UsuarioDao {
 
             while (rs.next()) {
                 // Obter o AcessoEnum relativo ao dominio int armazenado na base.
-                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt(4));
+                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt("st_acesso"));
 
-                // Carregar o usuario da base de dados
-                usuarios.add(new Usuario(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        acesso, rs.getString(5), rs.getByte(6)));
+                //carregar o usuario da base de dados
+                usuarios.add(new Usuario(rs.getInt("cd_usuario"), rs.getString("nm_login"),
+                        rs.getString("nm_usuario"), acesso, rs.getString("ds_senha"),
+                        rs.getByte("cd_ativo")));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar usuario: " + e.getMessage());
+            String msgErro = "Erro ao listar Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return usuarios;
@@ -216,7 +249,7 @@ public class UsuarioDao {
         String sql = "SELECT cd_usuario, nm_login, nm_usuario, "
                 + "st_acesso, ds_senha, cd_ativo FROM usuario WHERE nm_login LIKE ?";
 
-        ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+        ArrayList<Usuario> usuarios = new ArrayList<>();
 
         try (Connection con = Conexao.getConexao();
              PreparedStatement stm = con.prepareStatement(sql)) {
@@ -225,15 +258,20 @@ public class UsuarioDao {
 
             while (rs.next()) {
                 // Obter o AcessoEnum relativo ao dominio int armazenado na base.
-                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt(4));
+                AcessoEnum acesso = AcessoEnum.valueOf(rs.getInt("st_acesso"));
 
-                // Carregar o usuario da base de dados
-                usuarios.add(new Usuario(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        acesso, rs.getString(5), rs.getByte(6)));
+                //carregar o usuario da base de dados
+                usuarios.add(new Usuario(rs.getInt("cd_usuario"), rs.getString("nm_login"),
+                        rs.getString("nm_usuario"), acesso, rs.getString("ds_senha"),
+                        rs.getByte("cd_ativo")));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar usuário: " + e.getMessage());
+            String msgErro = "Erro ao listar Usuário" + MSG_COMPLEMENTO;
+
+            Log.logar(UsuarioDao.class.getName(), "listar", msgErro, e);
+
+            throw new RuntimeException(msgErro);
         }
 
         return usuarios;
